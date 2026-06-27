@@ -91,6 +91,7 @@
         }
 
         .unit {
+            container-type: inline-size;
             min-height: 104px;
             padding: 16px 10px;
             border: 1px solid rgba(255, 248, 239, 0.2);
@@ -99,15 +100,18 @@
             color: var(--ink);
             text-align: center;
             backdrop-filter: blur(10px);
+            overflow: hidden;
         }
 
         .number {
             display: block;
+            max-width: 100%;
             color: var(--rose);
-            font-size: clamp(2rem, 4vw, 3.1rem);
+            font-size: clamp(2rem, 28cqw, 3rem);
             line-height: 1;
             font-weight: 800;
             font-variant-numeric: tabular-nums;
+            white-space: nowrap;
         }
 
         .label {
