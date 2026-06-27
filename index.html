@@ -3,339 +3,210 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Heart For You</title>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <meta name="theme-color" content="#211714">
+    <title>For Iris | July 9</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Inter:wght@500;600;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --paper: #fff8ef;
+            --ink: #241815;
+            --rose: #9d514a;
+            --gold: #d1aa69;
+        }
+
         * {
-            margin: 0;
-            padding: 0;
             box-sizing: border-box;
         }
-        
+
         body {
-            font-family: 'Montserrat', sans-serif;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            margin: 0;
             min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            overflow-x: hidden;
-            color: #4a4a4a;
+            font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            color: var(--paper);
+            background: var(--ink);
         }
-        
-        .container {
-            width: 90%;
-            max-width: 800px;
-            margin: 40px auto;
+
+        main {
+            min-height: 100vh;
+            display: grid;
+            place-items: center;
+            padding: 28px;
+            background:
+                linear-gradient(90deg, rgba(24, 15, 13, 0.82), rgba(24, 15, 13, 0.56), rgba(24, 15, 13, 0.22)),
+                linear-gradient(180deg, rgba(24, 15, 13, 0.06), rgba(24, 15, 13, 0.64)),
+                url("assets/anniversary-window.jpg");
+            background-size: cover;
+            background-position: center;
         }
-        
-        .card {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 20px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
-            padding: 50px;
-            backdrop-filter: blur(10px);
-            transition: transform 0.4s ease, box-shadow 0.4s ease;
-            position: relative;
-            overflow: hidden;
-            text-align: center;
-        }
-        
-        .card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 20px 45px rgba(0, 0, 0, 0.15);
-        }
-        
-        h1 {
-            font-family: 'Playfair Display', serif;
-            font-size: 3.5rem;
-            margin-bottom: 20px;
-            color: #d46a6a;
-            position: relative;
-            display: inline-block;
-        }
-        
-        h1:after {
-            content: '';
-            position: absolute;
-            bottom: -10px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 100px;
-            height: 3px;
-            background: linear-gradient(to right, #d46a6a, #ff9a9e);
-        }
-        
-        .subtitle {
-            font-size: 1.2rem;
-            margin-bottom: 30px;
-            font-weight: 300;
-            color: #888;
-        }
-        
-        p {
-            line-height: 1.8;
-            margin-bottom: 25px;
-            font-size: 1.1rem;
-            max-width: 600px;
-            margin-left: auto;
+
+        .content {
+            width: min(760px, 100%);
             margin-right: auto;
         }
-        
-        .btn {
-            background: linear-gradient(45deg, #d46a6a, #ff9a9e);
-            color: white;
-            border: none;
-            padding: 15px 40px;
-            font-size: 1.1rem;
-            border-radius: 50px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 5px 15px rgba(212, 106, 106, 0.4);
-            outline: none;
-            font-weight: 500;
-            letter-spacing: 1px;
+
+        .date {
             display: inline-flex;
             align-items: center;
-            gap: 10px;
-            margin-top: 20px;
-        }
-        
-        .btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(212, 106, 106, 0.5);
-        }
-        
-        .btn:active {
-            transform: translateY(1px);
-        }
-        
-        .message {
-            display: none;
-            margin-top: 40px;
-            padding: 30px;
-            background: rgba(255, 255, 255, 0.8);
-            border-radius: 15px;
-            animation: fadeIn 1.2s ease;
-            border-left: 4px solid #d46a6a;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        .floating-hearts {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            top: 0;
-            left: 0;
-            pointer-events: none;
-            z-index: -1;
-        }
-        
-        .floating-heart {
-            position: absolute;
-            font-size: 1.5rem;
-            color: rgba(212, 106, 106, 0.5);
-            animation: float 8s linear infinite;
-            opacity: 0;
-        }
-        
-        @keyframes float {
-            0% {
-                top: 100%;
-                opacity: 0;
-                transform: translateX(0) rotate(0deg);
-            }
-            10% {
-                opacity: 1;
-            }
-            90% {
-                opacity: 0.8;
-            }
-            100% {
-                top: -10%;
-                opacity: 0;
-                transform: translateX(30px) rotate(360deg);
-            }
-        }
-        
-        .countdown {
-            text-align: center;
-            margin-top: 40px;
-            padding-top: 30px;
-            border-top: 1px solid #eee;
-        }
-        
-        .countdown-text {
-            font-size: 1.1rem;
-            margin-bottom: 20px;
-            color: #888;
-        }
-        
-        .countdown-timer {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            flex-wrap: wrap;
-        }
-        
-        .countdown-unit {
-            background: linear-gradient(45deg, #d46a6a, #ff9a9e);
-            color: white;
-            padding: 15px;
-            border-radius: 10px;
-            min-width: 80px;
-            box-shadow: 0 5px 15px rgba(212, 106, 106, 0.3);
-        }
-        
-        .countdown-number {
-            font-size: 2rem;
+            gap: 12px;
+            margin: 0 0 18px;
+            color: rgba(255, 248, 239, 0.82);
+            font-size: 0.82rem;
             font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
         }
-        
-        .countdown-label {
-            font-size: 0.9rem;
-            opacity: 0.9;
-            margin-top: 5px;
+
+        .date::before {
+            content: "";
+            width: 42px;
+            height: 1px;
+            background: var(--gold);
         }
-        
-        .footer {
+
+        h1 {
+            margin: 0;
+            max-width: 720px;
+            font-family: "Cormorant Garamond", Georgia, serif;
+            font-size: clamp(4rem, 10vw, 8.6rem);
+            line-height: 0.86;
+            letter-spacing: 0;
+        }
+
+        .message {
+            max-width: 600px;
+            margin: 28px 0 0;
+            color: rgba(255, 248, 239, 0.88);
+            font-size: clamp(1.08rem, 2vw, 1.35rem);
+            line-height: 1.7;
+        }
+
+        .timer {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 12px;
+            width: min(620px, 100%);
+            margin-top: 36px;
+        }
+
+        .unit {
+            min-height: 104px;
+            padding: 16px 10px;
+            border: 1px solid rgba(255, 248, 239, 0.2);
+            border-radius: 8px;
+            background: rgba(255, 248, 239, 0.9);
+            color: var(--ink);
             text-align: center;
-            padding: 20px;
-            font-size: 0.9rem;
-            color: #888;
-            margin-top: 30px;
+            backdrop-filter: blur(10px);
         }
-        
-        .love-date {
-            font-style: italic;
-            color: #d46a6a;
-            font-weight: 500;
+
+        .number {
+            display: block;
+            color: var(--rose);
+            font-size: clamp(2rem, 4vw, 3.1rem);
+            line-height: 1;
+            font-weight: 800;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .label {
+            display: block;
+            margin-top: 10px;
+            color: rgba(36, 24, 21, 0.66);
+            font-size: 0.78rem;
+            font-weight: 800;
+            text-transform: uppercase;
+        }
+
+        .since {
+            margin: 18px 0 0;
+            color: rgba(255, 248, 239, 0.72);
+            font-size: 0.98rem;
+            font-weight: 600;
+        }
+
+        @media (max-width: 620px) {
+            main {
+                align-items: end;
+                padding: 22px 14px 44px;
+                background:
+                    linear-gradient(180deg, rgba(24, 15, 13, 0.52), rgba(24, 15, 13, 0.84)),
+                    url("assets/anniversary-window.jpg");
+                background-size: cover;
+                background-position: 63% center;
+            }
+
+            h1 {
+                font-size: clamp(3.6rem, 18vw, 5.3rem);
+            }
+
+            .timer {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .unit {
+                min-height: 94px;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="card">
-            <h1>My Heart For You</h1>
-            <p class="subtitle">Every day with you is a wonderful addition to my life's journey</p>
-            <p>From the moment we met, I knew there was something special about you. Your smile, your laughter, your kindness - everything about you captivates me.</p>
-            
-            <button class="btn" id="showLove">
-                <i class="fas fa-heart"></i> Unlock My Feelings
-            </button>
-            
-            <div class="message" id="loveMessage">
-                <h2>I Love You</h2>
-                <p>These words may be simple, but my feelings for you are anything but. You've brought so much joy and meaning into my life, and I can't imagine my future without you in it.</p>
-                <p>Will you continue this beautiful journey with me?</p>
-            </div>
-            
-            <div class="countdown">
-                <p class="countdown-text">Time since I realized I love you <span class="love-date">(June 19, 2018)</span>:</p>
-                <div class="countdown-timer">
-                    <div class="countdown-unit">
-                        <div class="countdown-number" id="days">0</div>
-                        <div class="countdown-label">Days</div>
-                    </div>
-                    <div class="countdown-unit">
-                        <div class="countdown-number" id="hours">0</div>
-                        <div class="countdown-label">Hours</div>
-                    </div>
-                    <div class="countdown-unit">
-                        <div class="countdown-number" id="minutes">0</div>
-                        <div class="countdown-label">Minutes</div>
-                    </div>
-                    <div class="countdown-unit">
-                        <div class="countdown-number" id="seconds">0</div>
-                        <div class="countdown-label">Seconds</div>
-                    </div>
+    <main>
+        <section class="content" aria-label="Anniversary message for Iris">
+            <p class="date">July 9, 2021</p>
+            <h1>Happy Anniversary, Iris.</h1>
+            <p class="message">
+                Even when you are away on a business trip, I want you to know this:
+                I love you, I miss you, and I am grateful for every day since we became husband and wife.
+            </p>
+
+            <div class="timer" aria-live="polite">
+                <div class="unit">
+                    <span class="number" id="days">0</span>
+                    <span class="label">Days</span>
+                </div>
+                <div class="unit">
+                    <span class="number" id="hours">0</span>
+                    <span class="label">Hours</span>
+                </div>
+                <div class="unit">
+                    <span class="number" id="minutes">0</span>
+                    <span class="label">Minutes</span>
+                </div>
+                <div class="unit">
+                    <span class="number" id="seconds">0</span>
+                    <span class="label">Seconds</span>
                 </div>
             </div>
-            
-            <div class="floating-hearts" id="heartsContainer"></div>
-        </div>
-        
-        <div class="footer">
-            <p>Made with <i class="fas fa-heart" style="color: #d46a6a;"></i> for IRIS special</p>
-        </div>
-    </div>
+
+            <p class="since" id="officialLine">We made it official.</p>
+        </section>
+    </main>
 
     <script>
-        // Create floating hearts
-        function createHearts() {
-            const heartsContainer = document.getElementById('heartsContainer');
-            const containerWidth = heartsContainer.offsetWidth;
-            const containerHeight = heartsContainer.offsetHeight;
-            
-            // Clear existing hearts
-            heartsContainer.innerHTML = '';
-            
-            for (let i = 0; i < 15; i++) {
-                const heart = document.createElement('div');
-                heart.classList.add('floating-heart');
-                heart.innerHTML = '<i class="fas fa-heart"></i>';
-                
-                // Random properties
-                const left = Math.random() * containerWidth;
-                const delay = Math.random() * 8;
-                const duration = 5 + Math.random() * 5;
-                const size = 0.5 + Math.random() * 1.5;
-                
-                heart.style.left = `${left}px`;
-                heart.style.animationDelay = `${delay}s`;
-                heart.style.animationDuration = `${duration}s`;
-                heart.style.fontSize = `${size}rem`;
-                
-                heartsContainer.appendChild(heart);
-            }
+        const registeredAt = new Date(2021, 6, 9, 0, 0, 0);
+        const dayMs = 1000 * 60 * 60 * 24;
+        const hourMs = 1000 * 60 * 60;
+        const minuteMs = 1000 * 60;
+
+        function updateTimer() {
+            const diff = Math.max(0, new Date() - registeredAt);
+            const days = Math.floor(diff / dayMs);
+            const hours = Math.floor((diff % dayMs) / hourMs);
+            const minutes = Math.floor((diff % hourMs) / minuteMs);
+            const seconds = Math.floor((diff % minuteMs) / 1000);
+
+            document.getElementById("days").textContent = days.toLocaleString("en-US");
+            document.getElementById("hours").textContent = hours;
+            document.getElementById("minutes").textContent = minutes;
+            document.getElementById("seconds").textContent = seconds;
+            document.getElementById("officialLine").textContent =
+                `We made it official ${days.toLocaleString("en-US")} days ago.`;
         }
-        
-        // Show love message
-        document.getElementById('showLove').addEventListener('click', function() {
-            const message = document.getElementById('loveMessage');
-            const button = document.getElementById('showLove');
-            
-            if (message.style.display === 'block') {
-                message.style.display = 'none';
-                button.innerHTML = '<i class="fas fa-heart"></i> Unlock My Feelings';
-            } else {
-                message.style.display = 'block';
-                button.innerHTML = '<i class="fas fa-times"></i> Close Message';
-                
-                // Add more hearts
-                createHearts();
-            }
-        });
-        
-        // Update countdown timer
-        function updateCountdown() {
-            // Set your special date here (year, month (0-11), day, hour, minute, second)
-            const loveDate = new Date(2018, 5, 19, 0, 0, 0); // June 19, 2018
-            const now = new Date();
-            const diff = now - loveDate;
-            
-            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-            
-            document.getElementById('days').textContent = days;
-            document.getElementById('hours').textContent = hours;
-            document.getElementById('minutes').textContent = minutes;
-            document.getElementById('seconds').textContent = seconds;
-        }
-        
-        // Initialize
-        window.addEventListener('load', function() {
-            createHearts();
-            updateCountdown();
-            setInterval(updateCountdown, 1000);
-        });
+
+        updateTimer();
+        setInterval(updateTimer, 1000);
     </script>
 </body>
 </html>
