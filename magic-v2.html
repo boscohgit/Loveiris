@@ -1,0 +1,1517 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#f5f5f7">
+    <meta name="description" content="Every day since June 19, 2018, counted in real time.">
+    <title>Our Time | A New Story</title>
+    <style>
+        :root {
+            color-scheme: light dark;
+            --paper: #f5f5f7;
+            --paper-bright: #ffffff;
+            --ink: #101014;
+            --muted: #6e6e73;
+            --line: rgba(16, 16, 20, 0.14);
+            --night: #050506;
+            --night-soft: #161618;
+            --blue: #1388f5;
+            --orange: #ff7a3d;
+            --safe-top: max(24px, env(safe-area-inset-top));
+            --safe-bottom: max(24px, env(safe-area-inset-bottom));
+            --page-pad: 72px;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            background: var(--paper);
+            scroll-behavior: smooth;
+        }
+
+        body {
+            margin: 0;
+            overflow-x: hidden;
+            background: var(--paper);
+            color: var(--ink);
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text",
+                "Helvetica Neue", Arial, sans-serif;
+            font-synthesis: none;
+            letter-spacing: 0;
+            text-rendering: optimizeLegibility;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body,
+        button,
+        input {
+            letter-spacing: 0;
+        }
+
+        ::selection {
+            background: rgba(19, 136, 245, 0.2);
+        }
+
+        .scroll-progress {
+            position: fixed;
+            inset: 0 0 auto;
+            z-index: 100;
+            height: 3px;
+            transform: translateZ(0);
+            pointer-events: none;
+        }
+
+        .scroll-progress span {
+            display: block;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, var(--orange), #f8f8fa 50%, var(--blue));
+            transform: scaleX(0);
+            transform-origin: left center;
+            will-change: transform;
+        }
+
+        .noise {
+            position: fixed;
+            inset: 0;
+            z-index: 90;
+            width: 100%;
+            height: 100%;
+            opacity: 0.035;
+            pointer-events: none;
+            mix-blend-mode: multiply;
+        }
+
+        .section {
+            position: relative;
+            isolation: isolate;
+        }
+
+        .section-inner {
+            width: min(100%, 1440px);
+            margin: 0 auto;
+            padding-right: var(--page-pad);
+            padding-left: var(--page-pad);
+        }
+
+        .eyebrow {
+            margin: 0 0 22px;
+            color: var(--blue);
+            font-size: 1rem;
+            font-weight: 700;
+            line-height: 1.35;
+        }
+
+        .display {
+            margin: 0;
+            font-weight: 700;
+            line-height: 0.92;
+        }
+
+        .blur-fade {
+            opacity: 0;
+            filter: blur(8px);
+            transform: translateY(12px);
+            transition:
+                opacity 900ms cubic-bezier(0.22, 1, 0.36, 1),
+                filter 900ms cubic-bezier(0.22, 1, 0.36, 1),
+                transform 900ms cubic-bezier(0.22, 1, 0.36, 1);
+            transition-delay: var(--delay, 0ms);
+        }
+
+        .blur-fade.is-visible {
+            opacity: 1;
+            filter: blur(0);
+            transform: translateY(0);
+        }
+
+        .hero {
+            min-height: 100svh;
+            overflow: hidden;
+            background: var(--paper);
+        }
+
+        #time-field {
+            position: absolute;
+            inset: 0;
+            z-index: -1;
+            width: 100%;
+            height: 100%;
+        }
+
+        .hero::after {
+            position: absolute;
+            inset: 0;
+            z-index: -1;
+            background: rgba(245, 245, 247, 0.36);
+            content: "";
+            pointer-events: none;
+        }
+
+        .hero__content {
+            display: flex;
+            min-height: 100svh;
+            align-items: center;
+            justify-content: center;
+            padding-top: var(--safe-top);
+            padding-bottom: var(--safe-bottom);
+            text-align: center;
+        }
+
+        .hero__copy {
+            width: min(100%, 1100px);
+        }
+
+        .hero__kicker {
+            margin: 0 0 36px;
+            color: var(--muted);
+            font-size: 1.06rem;
+            font-weight: 600;
+            line-height: 1.45;
+        }
+
+        .hero__measure {
+            display: flex;
+            align-items: baseline;
+            justify-content: center;
+            gap: 18px;
+            color: var(--ink);
+            font-variant-numeric: tabular-nums;
+        }
+
+        .hero__number {
+            min-width: 6ch;
+            font-size: 10rem;
+            font-weight: 750;
+            line-height: 0.84;
+            text-align: right;
+        }
+
+        .hero__unit {
+            color: var(--muted);
+            font-size: 2rem;
+            font-weight: 650;
+        }
+
+        .hero h1 {
+            margin: 30px 0 0;
+            color: var(--ink);
+            font-size: 3.75rem;
+            line-height: 1;
+        }
+
+        .hero__scroll-cue {
+            position: absolute;
+            right: 0;
+            bottom: calc(var(--safe-bottom) + 10px);
+            left: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            color: var(--muted);
+            font-size: 0.72rem;
+            font-weight: 700;
+            line-height: 1;
+            text-transform: uppercase;
+        }
+
+        .hero__scroll-cue::after {
+            width: 1px;
+            height: 34px;
+            background: var(--ink);
+            content: "";
+            animation: cue 1800ms ease-in-out infinite;
+            transform-origin: top;
+        }
+
+        @keyframes cue {
+            0%,
+            100% {
+                opacity: 0.25;
+                transform: scaleY(0.55);
+            }
+            50% {
+                opacity: 0.9;
+                transform: scaleY(1);
+            }
+        }
+
+        .story {
+            height: 220svh;
+            background: var(--paper-bright);
+        }
+
+        .story__sticky {
+            position: sticky;
+            top: 0;
+            display: flex;
+            min-height: 100svh;
+            align-items: center;
+            overflow: hidden;
+            padding-top: var(--safe-top);
+            padding-bottom: var(--safe-bottom);
+        }
+
+        .origins__heading {
+            width: min(100%, 780px);
+        }
+
+        .origins__heading h2 {
+            font-size: 5.5rem;
+        }
+
+        .origins__heading h2 span {
+            color: #85858b;
+        }
+
+        .origins__visual {
+            position: relative;
+            display: grid;
+            min-height: 390px;
+            margin-top: 48px;
+            grid-template-columns: 1fr 1fr;
+            gap: 90px;
+            padding-top: 18px;
+        }
+
+        .origin-copy {
+            position: relative;
+            z-index: 2;
+            max-width: 470px;
+            opacity: var(--origins-opacity, 0.18);
+            transform: translateY(var(--origins-shift, 22px));
+            transition: opacity 100ms linear, transform 100ms linear;
+        }
+
+        .origin-copy:last-of-type {
+            justify-self: end;
+            text-align: right;
+        }
+
+        .origin-copy p {
+            margin: 0;
+            color: var(--muted);
+            font-size: 1.2rem;
+            font-weight: 600;
+            line-height: 1.25;
+        }
+
+        .origin-copy strong {
+            display: block;
+            margin: 8px 0 10px;
+            color: var(--ink);
+            font-size: 4.6rem;
+            font-weight: 730;
+            line-height: 0.95;
+            white-space: nowrap;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .origin-copy:first-of-type strong {
+            color: var(--orange);
+        }
+
+        .origin-copy:last-of-type strong {
+            color: var(--blue);
+        }
+
+        .origin-beams {
+            position: absolute;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 250px;
+            overflow: visible;
+            pointer-events: none;
+        }
+
+        .beam-base {
+            fill: none;
+            stroke: rgba(16, 16, 20, 0.12);
+            stroke-width: 2;
+        }
+
+        .beam-fill {
+            fill: none;
+            stroke-linecap: round;
+            stroke-width: 4;
+            stroke-dasharray: 1;
+            stroke-dashoffset: calc(1 - var(--beam-progress, 0));
+            vector-effect: non-scaling-stroke;
+        }
+
+        .beam-fill--orange {
+            stroke: var(--orange);
+        }
+
+        .beam-fill--blue {
+            stroke: var(--blue);
+        }
+
+        .beam-spark {
+            opacity: var(--spark-opacity, 0);
+        }
+
+        .meeting-node {
+            position: absolute;
+            bottom: 14px;
+            left: 50%;
+            z-index: 3;
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+            gap: 10px;
+            opacity: var(--meeting-opacity, 0);
+            transform: translateX(-50%) scale(var(--meeting-scale, 0.72));
+        }
+
+        .meeting-node::before {
+            width: 12px;
+            height: 12px;
+            border: 3px solid var(--paper-bright);
+            border-radius: 50%;
+            background: var(--ink);
+            box-shadow: 0 0 0 1px rgba(16, 16, 20, 0.18), 0 0 28px rgba(16, 16, 20, 0.18);
+            content: "";
+        }
+
+        .meeting-node time {
+            color: var(--ink);
+            font-size: 0.8rem;
+            font-weight: 750;
+            white-space: nowrap;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .meeting-story {
+            height: 240svh;
+            background: var(--night);
+            color: #f5f5f7;
+        }
+
+        .meeting-story .story__sticky {
+            background: var(--night);
+        }
+
+        .meeting-beams {
+            position: absolute;
+            inset: 0;
+            z-index: -1;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .meeting-beams .beam-base {
+            stroke: rgba(255, 255, 255, 0.1);
+            stroke-width: 1.5;
+        }
+
+        .meeting-beams .beam-fill {
+            stroke-width: 3;
+            filter: url("#beam-glow");
+        }
+
+        .meeting-beams__after {
+            opacity: var(--after-opacity, 0);
+            stroke: rgba(255, 255, 255, 0.9);
+            stroke-dasharray: 4 12;
+            stroke-linecap: round;
+            stroke-width: 2;
+        }
+
+        .meeting__content {
+            position: relative;
+            z-index: 2;
+            width: min(100%, 1200px);
+            text-align: center;
+        }
+
+        .meeting__eyebrow {
+            margin-bottom: 26px;
+            color: rgba(255, 255, 255, 0.5);
+            opacity: var(--meeting-title-opacity, 0);
+            transform: translateY(var(--meeting-title-shift, 12px));
+        }
+
+        .meeting__date {
+            margin: 0;
+            color: #f5f5f7;
+            font-size: 9rem;
+            font-weight: 730;
+            line-height: 0.84;
+            opacity: var(--meeting-title-opacity, 0);
+            transform: scale(var(--meeting-title-scale, 0.9));
+            font-variant-numeric: tabular-nums;
+        }
+
+        .meeting__date span {
+            display: block;
+            margin-top: 20px;
+            color: rgba(255, 255, 255, 0.38);
+            font-size: 0.5em;
+        }
+
+        .text-reveal {
+            display: flex;
+            max-width: 900px;
+            margin: 58px auto 0;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0 0.25em;
+            color: rgba(255, 255, 255, 0.16);
+            font-size: 2.2rem;
+            font-weight: 650;
+            line-height: 1.18;
+        }
+
+        .text-reveal span {
+            color: rgba(255, 255, 255, var(--word-alpha, 0.16));
+            transition: color 80ms linear;
+        }
+
+        .now {
+            min-height: 125svh;
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+            background: var(--paper);
+            padding-top: calc(var(--safe-top) + 90px);
+            padding-bottom: calc(var(--safe-bottom) + 90px);
+        }
+
+        .now__header {
+            display: grid;
+            align-items: end;
+            grid-template-columns: 0.8fr 1.2fr;
+            gap: 80px;
+        }
+
+        .now__header h2 {
+            font-size: 5rem;
+        }
+
+        .now__header h2 span {
+            display: block;
+            color: #85858b;
+        }
+
+        .now__statement {
+            max-width: 620px;
+            margin: 0 0 6px auto;
+            color: var(--muted);
+            font-size: 1.5rem;
+            font-weight: 560;
+            line-height: 1.4;
+        }
+
+        .now__measure {
+            display: grid;
+            margin-top: 90px;
+            grid-template-columns: 1.25fr 1fr;
+            border-top: 1px solid var(--line);
+            border-bottom: 1px solid var(--line);
+        }
+
+        .now__days {
+            min-width: 0;
+            padding: 62px 56px 70px 0;
+            border-right: 1px solid var(--line);
+        }
+
+        .now__number {
+            display: block;
+            color: var(--ink);
+            font-size: 8rem;
+            font-weight: 740;
+            line-height: 0.9;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .now__days-label {
+            display: block;
+            margin-top: 18px;
+            color: var(--blue);
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        .clock {
+            display: grid;
+            min-width: 0;
+            grid-template-columns: repeat(3, 1fr);
+        }
+
+        .clock__unit {
+            display: flex;
+            min-width: 0;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 14px;
+            padding: 54px 18px;
+            text-align: center;
+        }
+
+        .clock__unit + .clock__unit {
+            border-left: 1px solid var(--line);
+        }
+
+        .clock__value {
+            min-width: 2ch;
+            color: var(--ink);
+            font-size: 3.8rem;
+            font-weight: 710;
+            line-height: 1;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .clock__label {
+            color: var(--muted);
+            font-size: 0.8rem;
+            font-weight: 720;
+            text-transform: uppercase;
+        }
+
+        .continuum {
+            position: relative;
+            height: 96px;
+            margin-top: 74px;
+        }
+
+        .continuum__line {
+            position: absolute;
+            top: 24px;
+            left: 0;
+            width: calc(100vw + 30%);
+            height: 1px;
+            overflow: visible;
+            background: var(--line);
+        }
+
+        .continuum__line::before {
+            position: absolute;
+            top: -1px;
+            left: 0;
+            width: 34%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--orange), var(--blue));
+            content: "";
+            animation: continuum 3800ms cubic-bezier(0.4, 0, 0.2, 1) infinite;
+        }
+
+        .continuum__line::after {
+            position: absolute;
+            top: -5px;
+            left: 0;
+            width: 11px;
+            height: 11px;
+            border-radius: 50%;
+            background: var(--blue);
+            box-shadow: 0 0 22px rgba(19, 136, 245, 0.65);
+            content: "";
+            animation: continuum-dot 3800ms cubic-bezier(0.4, 0, 0.2, 1) infinite;
+        }
+
+        @keyframes continuum {
+            0% {
+                opacity: 0;
+                transform: translateX(-105%);
+            }
+            18% {
+                opacity: 1;
+            }
+            80% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+                transform: translateX(330%);
+            }
+        }
+
+        @keyframes continuum-dot {
+            0% {
+                opacity: 0;
+                transform: translateX(0);
+            }
+            18% {
+                opacity: 1;
+            }
+            80% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+                transform: translateX(calc(130vw + 240px));
+            }
+        }
+
+        .continuum__labels {
+            position: absolute;
+            top: 44px;
+            right: 0;
+            left: 0;
+            display: flex;
+            justify-content: space-between;
+            color: var(--muted);
+            font-size: 0.76rem;
+            font-weight: 700;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .continuum__labels span:last-child {
+            color: var(--blue);
+        }
+
+        .finale {
+            min-height: 100svh;
+            overflow: hidden;
+            background: var(--night);
+            color: #f5f5f7;
+        }
+
+        #infinity-field {
+            position: absolute;
+            inset: 0;
+            z-index: -1;
+            width: 100%;
+            height: 100%;
+        }
+
+        .finale__inner {
+            display: flex;
+            min-height: 100svh;
+            align-items: center;
+            justify-content: center;
+            padding-top: var(--safe-top);
+            padding-bottom: var(--safe-bottom);
+            text-align: center;
+        }
+
+        .finale__copy {
+            width: min(100%, 1000px);
+        }
+
+        .finale__kicker {
+            margin: 0 0 38px;
+            color: rgba(255, 255, 255, 0.52);
+            font-size: 1rem;
+            font-weight: 650;
+        }
+
+        .finale h2 {
+            font-size: 7.8rem;
+        }
+
+        .finale h2 span {
+            display: block;
+            color: rgba(255, 255, 255, 0.48);
+        }
+
+        .finale__date {
+            margin: 42px 0 0;
+            color: var(--blue);
+            font-size: 0.9rem;
+            font-weight: 720;
+        }
+
+        @media (max-width: 1100px) {
+            :root {
+                --page-pad: 42px;
+            }
+
+            .hero__number {
+                font-size: 8rem;
+            }
+
+            .origins__heading h2 {
+                font-size: 4.6rem;
+            }
+
+            .origin-copy strong {
+                font-size: 3.8rem;
+            }
+
+            .meeting__date {
+                font-size: 7.4rem;
+            }
+
+            .now__header {
+                grid-template-columns: 1fr 1fr;
+                gap: 42px;
+            }
+
+            .now__number {
+                font-size: 6.3rem;
+            }
+
+            .clock__value {
+                font-size: 3rem;
+            }
+
+            .finale h2 {
+                font-size: 6.2rem;
+            }
+        }
+
+        @media (max-width: 760px) {
+            :root {
+                --page-pad: 24px;
+            }
+
+            .scroll-progress {
+                height: 2px;
+            }
+
+            .noise {
+                opacity: 0.026;
+            }
+
+            .hero__content {
+                align-items: center;
+            }
+
+            .hero__kicker {
+                margin-bottom: 28px;
+                font-size: 0.9rem;
+            }
+
+            .hero__measure {
+                display: block;
+            }
+
+            .hero__number {
+                display: block;
+                min-width: 0;
+                font-size: 6.4rem;
+                line-height: 0.88;
+                text-align: center;
+            }
+
+            .hero__unit {
+                display: block;
+                margin-top: 18px;
+                font-size: 1.2rem;
+            }
+
+            .hero h1 {
+                margin-top: 24px;
+                font-size: 2.7rem;
+            }
+
+            .hero__scroll-cue {
+                bottom: var(--safe-bottom);
+                font-size: 0.64rem;
+            }
+
+            .story {
+                height: 230svh;
+            }
+
+            .story__sticky {
+                align-items: center;
+            }
+
+            .eyebrow {
+                margin-bottom: 14px;
+                font-size: 0.88rem;
+            }
+
+            .origins__heading h2 {
+                font-size: 3.35rem;
+                line-height: 0.94;
+            }
+
+            .origins__visual {
+                display: block;
+                min-height: 380px;
+                margin-top: 36px;
+                padding-top: 0;
+            }
+
+            .origin-copy {
+                width: 84%;
+                max-width: none;
+            }
+
+            .origin-copy p {
+                font-size: 0.88rem;
+                line-height: 1.28;
+            }
+
+            .origin-copy strong {
+                margin: 8px 0;
+                font-size: 2.72rem;
+                line-height: 0.92;
+                white-space: nowrap;
+            }
+
+            .origin-copy:last-of-type {
+                width: 78%;
+                margin-top: 28px;
+                margin-left: auto;
+            }
+
+            .origin-beams {
+                bottom: 20px;
+                height: 170px;
+            }
+
+            .meeting-node {
+                bottom: 18px;
+            }
+
+            .meeting-story {
+                height: 230svh;
+            }
+
+            .meeting__eyebrow {
+                margin-bottom: 20px;
+            }
+
+            .meeting__date {
+                font-size: 4.5rem;
+                line-height: 0.86;
+            }
+
+            .meeting__date span {
+                margin-top: 14px;
+            }
+
+            .text-reveal {
+                max-width: 330px;
+                margin-top: 42px;
+                gap: 0 0.22em;
+                font-size: 1.68rem;
+                line-height: 1.18;
+            }
+
+            .now {
+                min-height: 120svh;
+                padding-top: calc(var(--safe-top) + 64px);
+                padding-bottom: calc(var(--safe-bottom) + 64px);
+            }
+
+            .now__header {
+                display: block;
+            }
+
+            .now__header h2 {
+                font-size: 3.5rem;
+                line-height: 0.94;
+            }
+
+            .now__statement {
+                max-width: 420px;
+                margin: 30px 0 0;
+                font-size: 1.1rem;
+            }
+
+            .now__measure {
+                display: block;
+                margin-top: 54px;
+            }
+
+            .now__days {
+                padding: 44px 0 42px;
+                border-right: 0;
+                border-bottom: 1px solid var(--line);
+                text-align: left;
+            }
+
+            .now__number {
+                font-size: 6rem;
+            }
+
+            .now__days-label {
+                margin-top: 14px;
+                font-size: 1.05rem;
+            }
+
+            .clock__unit {
+                gap: 9px;
+                padding: 30px 8px 34px;
+            }
+
+            .clock__value {
+                font-size: 2.5rem;
+            }
+
+            .clock__label {
+                font-size: 0.64rem;
+            }
+
+            .continuum {
+                margin-top: 54px;
+            }
+
+            .continuum__labels {
+                font-size: 0.68rem;
+            }
+
+            .finale h2 {
+                font-size: 4.15rem;
+                line-height: 0.9;
+            }
+
+            .finale__kicker {
+                margin-bottom: 28px;
+                font-size: 0.88rem;
+            }
+
+            .finale__date {
+                margin-top: 32px;
+                font-size: 0.78rem;
+            }
+        }
+
+        @media (max-width: 390px) {
+            :root {
+                --page-pad: 20px;
+            }
+
+            .hero__number {
+                font-size: 5.5rem;
+            }
+
+            .hero h1 {
+                font-size: 2.35rem;
+            }
+
+            .origins__heading h2 {
+                font-size: 3rem;
+            }
+
+            .origin-copy strong {
+                font-size: 2.38rem;
+            }
+
+            .meeting__date {
+                font-size: 3.9rem;
+            }
+
+            .now__header h2 {
+                font-size: 3.1rem;
+            }
+
+            .now__number {
+                font-size: 5.1rem;
+            }
+
+            .clock__value {
+                font-size: 2.1rem;
+            }
+
+            .finale h2 {
+                font-size: 3.7rem;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            html {
+                scroll-behavior: auto;
+            }
+
+            *,
+            *::before,
+            *::after {
+                animation-duration: 1ms !important;
+                animation-iteration-count: 1 !important;
+                scroll-behavior: auto !important;
+                transition-duration: 1ms !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="scroll-progress" aria-hidden="true"><span id="scroll-progress-bar"></span></div>
+
+    <svg class="noise" aria-hidden="true">
+        <filter id="noise-filter">
+            <feTurbulence type="fractalNoise" baseFrequency="0.62" numOctaves="4" stitchTiles="stitch"></feTurbulence>
+            <feColorMatrix type="saturate" values="0"></feColorMatrix>
+            <feComponentTransfer>
+                <feFuncR type="linear" slope="0.18"></feFuncR>
+                <feFuncG type="linear" slope="0.18"></feFuncG>
+                <feFuncB type="linear" slope="0.18"></feFuncB>
+            </feComponentTransfer>
+        </filter>
+        <rect width="100%" height="100%" filter="url(#noise-filter)" opacity="0.36"></rect>
+    </svg>
+
+    <main>
+        <section class="section hero" aria-labelledby="hero-title">
+            <canvas id="time-field" aria-hidden="true"></canvas>
+            <div class="section-inner hero__content">
+                <div class="hero__copy">
+                    <p class="hero__kicker blur-fade is-visible" style="--delay: 80ms">
+                        Together since <time datetime="2018-06-19">June 19, 2018</time>
+                    </p>
+                    <div class="hero__measure blur-fade is-visible" style="--delay: 180ms">
+                        <span class="hero__number number-ticker" id="hero-days">0</span>
+                        <span class="hero__unit">days</span>
+                    </div>
+                    <h1 class="display blur-fade is-visible" id="hero-title" style="--delay: 320ms">And counting.</h1>
+                </div>
+            </div>
+            <div class="hero__scroll-cue blur-fade is-visible" style="--delay: 780ms" aria-hidden="true">Our story</div>
+        </section>
+
+        <section class="section story origins" id="before" data-story="origins" aria-labelledby="origins-title">
+            <div class="story__sticky">
+                <div class="section-inner">
+                    <div class="origins__heading blur-fade">
+                        <p class="eyebrow">Two separate beginnings</p>
+                        <h2 class="display" id="origins-title">Before us.<br><span>Two minds.</span></h2>
+                    </div>
+
+                    <div class="origins__visual">
+                        <div class="origin-copy">
+                            <p>It takes</p>
+                            <strong class="number-ticker" data-value="10786">10,786 days</strong>
+                            <p>to finally meet you.</p>
+                        </div>
+
+                        <div class="origin-copy">
+                            <p>It takes</p>
+                            <strong class="number-ticker" data-value="9512">9,512 days</strong>
+                            <p>to finally meet me.</p>
+                        </div>
+
+                        <svg class="origin-beams" viewBox="0 0 1200 260" preserveAspectRatio="none" aria-hidden="true">
+                            <defs>
+                                <filter id="origin-glow" x="-30%" y="-30%" width="160%" height="160%">
+                                    <feGaussianBlur stdDeviation="5" result="blur"></feGaussianBlur>
+                                    <feMerge>
+                                        <feMergeNode in="blur"></feMergeNode>
+                                        <feMergeNode in="SourceGraphic"></feMergeNode>
+                                    </feMerge>
+                                </filter>
+                            </defs>
+                            <path class="beam-base" pathLength="1" d="M24 30 C250 28 382 232 600 232"></path>
+                            <path class="beam-base" pathLength="1" d="M1176 30 C950 28 818 232 600 232"></path>
+                            <path class="beam-fill beam-fill--orange" pathLength="1" d="M24 30 C250 28 382 232 600 232"></path>
+                            <path class="beam-fill beam-fill--blue" pathLength="1" d="M1176 30 C950 28 818 232 600 232"></path>
+                            <circle class="beam-spark" cx="600" cy="232" r="6" fill="#ffffff" filter="url(#origin-glow)"></circle>
+                        </svg>
+
+                        <div class="meeting-node">
+                            <time datetime="2018-06-19">June 19, 2018</time>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section story meeting-story" id="meeting" data-story="meeting" aria-labelledby="meeting-date">
+            <div class="story__sticky">
+                <svg class="meeting-beams" viewBox="0 0 1440 900" preserveAspectRatio="none" aria-hidden="true">
+                    <defs>
+                        <filter id="beam-glow" x="-50%" y="-50%" width="200%" height="200%">
+                            <feGaussianBlur stdDeviation="7" result="coloredBlur"></feGaussianBlur>
+                            <feMerge>
+                                <feMergeNode in="coloredBlur"></feMergeNode>
+                                <feMergeNode in="SourceGraphic"></feMergeNode>
+                            </feMerge>
+                        </filter>
+                    </defs>
+                    <path class="beam-base" pathLength="1" d="M-80 160 C300 170 390 450 720 450"></path>
+                    <path class="beam-base" pathLength="1" d="M1520 740 C1140 730 1050 450 720 450"></path>
+                    <path class="beam-fill beam-fill--orange" pathLength="1" d="M-80 160 C300 170 390 450 720 450"></path>
+                    <path class="beam-fill beam-fill--blue" pathLength="1" d="M1520 740 C1140 730 1050 450 720 450"></path>
+                    <path class="meeting-beams__after" pathLength="1" d="M720 450 C950 450 1220 450 1580 450"></path>
+                </svg>
+
+                <div class="section-inner meeting__content">
+                    <p class="eyebrow meeting__eyebrow">The day everything changed</p>
+                    <h2 class="meeting__date" id="meeting-date">
+                        06.19
+                        <span>2018</span>
+                    </h2>
+                    <p class="text-reveal" data-text-reveal="Two separate timelines became one."></p>
+                </div>
+            </div>
+        </section>
+
+        <section class="section now" id="now" aria-labelledby="now-title">
+            <div class="section-inner">
+                <div class="now__header">
+                    <h2 class="display blur-fade" id="now-title">Every day.<span>Since then.</span></h2>
+                    <p class="now__statement blur-fade" style="--delay: 120ms">
+                        Our time, still moving forward.
+                    </p>
+                </div>
+
+                <div class="now__measure blur-fade" style="--delay: 160ms" aria-live="off">
+                    <div class="now__days">
+                        <span class="now__number number-ticker" id="now-days">0</span>
+                        <span class="now__days-label">days together</span>
+                    </div>
+                    <div class="clock">
+                        <div class="clock__unit">
+                            <span class="clock__value" id="now-hours">00</span>
+                            <span class="clock__label">Hours</span>
+                        </div>
+                        <div class="clock__unit">
+                            <span class="clock__value" id="now-minutes">00</span>
+                            <span class="clock__label">Minutes</span>
+                        </div>
+                        <div class="clock__unit">
+                            <span class="clock__value" id="now-seconds">00</span>
+                            <span class="clock__label">Seconds</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="continuum blur-fade" style="--delay: 240ms" aria-hidden="true">
+                    <div class="continuum__line"></div>
+                    <div class="continuum__labels">
+                        <span>2018.06.19</span>
+                        <span>Still counting</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section finale" id="always" aria-labelledby="final-title">
+            <canvas id="infinity-field" aria-hidden="true"></canvas>
+            <div class="section-inner finale__inner">
+                <div class="finale__copy">
+                    <p class="finale__kicker blur-fade"><span id="final-days">0</span> days later</p>
+                    <h2 class="display blur-fade" id="final-title" style="--delay: 100ms">
+                        Still you.
+                        <span>Always you.</span>
+                    </h2>
+                    <p class="finale__date blur-fade" id="today-label" style="--delay: 220ms"></p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        (() => {
+            "use strict";
+
+            const DAY_MS = 24 * 60 * 60 * 1000;
+            const loveDate = new Date(2018, 5, 19, 0, 0, 0);
+            const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+            const formatter = new Intl.NumberFormat("en-US");
+
+            const clamp = (value, min = 0, max = 1) => Math.min(max, Math.max(min, value));
+            const mapRange = (value, start, end) => clamp((value - start) / (end - start));
+
+            const heroDays = document.querySelector("#hero-days");
+            const nowDays = document.querySelector("#now-days");
+            const finalDays = document.querySelector("#final-days");
+            const nowHours = document.querySelector("#now-hours");
+            const nowMinutes = document.querySelector("#now-minutes");
+            const nowSeconds = document.querySelector("#now-seconds");
+            const todayLabel = document.querySelector("#today-label");
+            const progressBar = document.querySelector("#scroll-progress-bar");
+
+            const getElapsed = () => {
+                const elapsed = Math.max(0, Date.now() - loveDate.getTime());
+                const days = Math.floor(elapsed / DAY_MS);
+                const dayRemainder = elapsed - days * DAY_MS;
+                const hours = Math.floor(dayRemainder / (60 * 60 * 1000));
+                const minutes = Math.floor((dayRemainder % (60 * 60 * 1000)) / (60 * 1000));
+                const seconds = Math.floor((dayRemainder % (60 * 1000)) / 1000);
+                return { days, hours, minutes, seconds };
+            };
+
+            const animateNumber = (element, target, duration = 1500, suffix = "") => {
+                if (!element) return;
+                if (reduceMotion) {
+                    element.textContent = `${formatter.format(target)}${suffix}`;
+                    return;
+                }
+
+                const start = performance.now();
+                const tick = (now) => {
+                    const progress = clamp((now - start) / duration);
+                    const eased = 1 - Math.pow(1 - progress, 4);
+                    const value = Math.round(target * eased);
+                    element.textContent = `${formatter.format(value)}${suffix}`;
+                    if (progress < 1) requestAnimationFrame(tick);
+                };
+                requestAnimationFrame(tick);
+            };
+
+            const initialElapsed = getElapsed();
+            heroDays.dataset.animating = "true";
+            animateNumber(heroDays, initialElapsed.days, 1700);
+            heroDays.dataset.tickerReady = "true";
+            window.setTimeout(() => {
+                delete heroDays.dataset.animating;
+                updateTimer();
+            }, 1750);
+            nowDays.textContent = formatter.format(initialElapsed.days);
+            finalDays.textContent = formatter.format(initialElapsed.days);
+
+            todayLabel.textContent = new Intl.DateTimeFormat("en-US", {
+                month: "long",
+                day: "numeric",
+                year: "numeric"
+            }).format(new Date());
+
+            const updateTimer = () => {
+                const elapsed = getElapsed();
+                const daysText = formatter.format(elapsed.days);
+                if (!heroDays.dataset.animating) heroDays.textContent = daysText;
+                nowDays.textContent = daysText;
+                finalDays.textContent = daysText;
+                nowHours.textContent = String(elapsed.hours).padStart(2, "0");
+                nowMinutes.textContent = String(elapsed.minutes).padStart(2, "0");
+                nowSeconds.textContent = String(elapsed.seconds).padStart(2, "0");
+            };
+
+            updateTimer();
+            window.setInterval(updateTimer, 250);
+
+            document.querySelectorAll("[data-text-reveal]").forEach((element) => {
+                const words = element.dataset.textReveal.split(" ");
+                element.replaceChildren(...words.map((word) => {
+                    const span = document.createElement("span");
+                    span.textContent = word;
+                    return span;
+                }));
+            });
+
+            const fadeObserver = new IntersectionObserver((entries) => {
+                entries.forEach((entry) => {
+                    if (!entry.isIntersecting) return;
+                    entry.target.classList.add("is-visible");
+
+                    entry.target.querySelectorAll(".number-ticker[data-value]").forEach((ticker) => {
+                        if (ticker.dataset.tickerReady) return;
+                        ticker.dataset.tickerReady = "true";
+                        animateNumber(ticker, Number(ticker.dataset.value), 1300, " days");
+                    });
+
+                    fadeObserver.unobserve(entry.target);
+                });
+            }, { threshold: 0.22 });
+
+            document.querySelectorAll(".blur-fade:not(.is-visible)").forEach((element) => {
+                fadeObserver.observe(element);
+            });
+
+            const tickerObserver = new IntersectionObserver((entries) => {
+                entries.forEach((entry) => {
+                    if (!entry.isIntersecting || entry.target.dataset.tickerReady) return;
+                    entry.target.dataset.tickerReady = "true";
+                    animateNumber(entry.target, Number(entry.target.dataset.value), 1300, " days");
+                    tickerObserver.unobserve(entry.target);
+                });
+            }, { threshold: 0.5 });
+
+            document.querySelectorAll(".number-ticker[data-value]").forEach((ticker) => {
+                tickerObserver.observe(ticker);
+            });
+
+            const storySections = [...document.querySelectorAll("[data-story]")];
+            let scrollFrame = 0;
+
+            const updateScroll = () => {
+                scrollFrame = 0;
+                const maxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+                progressBar.style.transform = `scaleX(${clamp(window.scrollY / maxScroll)})`;
+
+                storySections.forEach((section) => {
+                    const rect = section.getBoundingClientRect();
+                    const travel = Math.max(1, rect.height - window.innerHeight);
+                    const progress = reduceMotion ? 1 : clamp(-rect.top / travel);
+
+                    if (section.dataset.story === "origins") {
+                        const copyProgress = mapRange(progress, 0.04, 0.28);
+                        const beamProgress = mapRange(progress, 0.18, 0.78);
+                        const meetingOpacity = mapRange(progress, 0.68, 0.9);
+                        section.style.setProperty("--origins-copy", copyProgress.toFixed(3));
+                        section.style.setProperty("--origins-opacity", (0.18 + copyProgress * 0.82).toFixed(3));
+                        section.style.setProperty("--origins-shift", `${((1 - copyProgress) * 22).toFixed(2)}px`);
+                        section.style.setProperty("--beam-progress", beamProgress.toFixed(3));
+                        section.style.setProperty("--meeting-opacity", meetingOpacity.toFixed(3));
+                        section.style.setProperty("--meeting-scale", (0.72 + meetingOpacity * 0.28).toFixed(3));
+                        section.style.setProperty("--spark-opacity", meetingOpacity.toFixed(3));
+                    }
+
+                    if (section.dataset.story === "meeting") {
+                        const beamProgress = mapRange(progress, 0.03, 0.48);
+                        const titleOpacity = mapRange(progress, 0.34, 0.62);
+                        const afterOpacity = mapRange(progress, 0.68, 0.88);
+                        section.style.setProperty("--beam-progress", beamProgress.toFixed(3));
+                        section.style.setProperty("--meeting-title-opacity", titleOpacity.toFixed(3));
+                        section.style.setProperty("--meeting-title-shift", `${((1 - titleOpacity) * 12).toFixed(2)}px`);
+                        section.style.setProperty("--meeting-title-scale", (0.9 + titleOpacity * 0.1).toFixed(3));
+                        section.style.setProperty("--after-opacity", afterOpacity.toFixed(3));
+
+                        const words = section.querySelectorAll(".text-reveal span");
+                        words.forEach((word, index) => {
+                            const start = 0.54 + (index / Math.max(1, words.length)) * 0.23;
+                            const opacity = mapRange(progress, start, start + 0.12);
+                            word.style.setProperty("--word-alpha", (0.16 + opacity * 0.84).toFixed(3));
+                        });
+                    }
+                });
+            };
+
+            const requestScrollUpdate = () => {
+                if (scrollFrame) return;
+                scrollFrame = requestAnimationFrame(updateScroll);
+            };
+
+            window.addEventListener("scroll", requestScrollUpdate, { passive: true });
+            window.addEventListener("resize", requestScrollUpdate);
+            updateScroll();
+
+            const createCanvasScene = (canvas, draw) => {
+                const context = canvas.getContext("2d");
+                let width = 0;
+                let height = 0;
+                let dpr = 1;
+                let animationFrame = 0;
+                let visible = true;
+
+                const resize = () => {
+                    const rect = canvas.getBoundingClientRect();
+                    width = Math.max(1, rect.width);
+                    height = Math.max(1, rect.height);
+                    dpr = Math.min(window.devicePixelRatio || 1, 1.75);
+                    canvas.width = Math.round(width * dpr);
+                    canvas.height = Math.round(height * dpr);
+                    context.setTransform(dpr, 0, 0, dpr, 0, 0);
+                };
+
+                const render = (time) => {
+                    if (visible) draw(context, width, height, time);
+                    animationFrame = requestAnimationFrame(render);
+                };
+
+                const observer = new IntersectionObserver(([entry]) => {
+                    visible = entry.isIntersecting;
+                });
+
+                resize();
+                observer.observe(canvas);
+                window.addEventListener("resize", resize);
+                animationFrame = requestAnimationFrame(render);
+
+                return () => {
+                    observer.disconnect();
+                    window.removeEventListener("resize", resize);
+                    cancelAnimationFrame(animationFrame);
+                };
+            };
+
+            const heroCanvas = document.querySelector("#time-field");
+            let pointerX = 0;
+            let pointerY = 0;
+
+            window.addEventListener("pointermove", (event) => {
+                pointerX = event.clientX / Math.max(1, window.innerWidth) - 0.5;
+                pointerY = event.clientY / Math.max(1, window.innerHeight) - 0.5;
+            }, { passive: true });
+
+            createCanvasScene(heroCanvas, (context, width, height, time) => {
+                context.clearRect(0, 0, width, height);
+                const t = reduceMotion ? 0 : time * 0.00008;
+                const centerX = width * 0.5 + pointerX * 22;
+                const centerY = height * 0.49 + pointerY * 14;
+                const shortSide = Math.min(width, height);
+                const ringCount = width < 760 ? 5 : 7;
+
+                for (let ring = 0; ring < ringCount; ring += 1) {
+                    const radius = shortSide * (0.2 + ring * 0.085);
+                    const yScale = 0.6 + ring * 0.025;
+                    const points = 46 + ring * 8;
+
+                    for (let index = 0; index < points; index += 1) {
+                        const angle = (index / points) * Math.PI * 2 + t * (ring % 2 ? -1 : 1);
+                        const x = centerX + Math.cos(angle) * radius;
+                        const y = centerY + Math.sin(angle) * radius * yScale;
+                        const pulse = 0.32 + 0.28 * Math.sin(angle * 3 + t * 8 + ring);
+                        context.beginPath();
+                        context.fillStyle = `rgba(16, 16, 20, ${Math.max(0.03, pulse * 0.12)})`;
+                        context.arc(x, y, index % 8 === 0 ? 1.35 : 0.75, 0, Math.PI * 2);
+                        context.fill();
+                    }
+                }
+
+                const orbitRadius = shortSide * (width < 760 ? 0.37 : 0.46);
+                const drawOrbitPoint = (angle, color) => {
+                    const x = centerX + Math.cos(angle) * orbitRadius;
+                    const y = centerY + Math.sin(angle) * orbitRadius * 0.64;
+                    const glow = context.createRadialGradient(x, y, 0, x, y, 22);
+                    glow.addColorStop(0, color);
+                    glow.addColorStop(0.22, color);
+                    glow.addColorStop(1, "rgba(255,255,255,0)");
+                    context.fillStyle = glow;
+                    context.fillRect(x - 22, y - 22, 44, 44);
+                };
+
+                drawOrbitPoint(t * 4.2, "rgba(255, 122, 61, 0.8)");
+                drawOrbitPoint(Math.PI + t * 4.2, "rgba(19, 136, 245, 0.8)");
+            });
+
+            const infinityCanvas = document.querySelector("#infinity-field");
+            createCanvasScene(infinityCanvas, (context, width, height, time) => {
+                context.clearRect(0, 0, width, height);
+                const t = reduceMotion ? 0 : time * 0.00042;
+                const centerX = width * 0.5;
+                const centerY = height * 0.5;
+                const scaleX = Math.min(width * 0.44, 620);
+                const scaleY = Math.min(height * 0.28, 250);
+
+                const pointAt = (angle) => {
+                    const denominator = 1 + Math.sin(angle) * Math.sin(angle);
+                    return {
+                        x: centerX + scaleX * Math.cos(angle) / denominator,
+                        y: centerY + scaleY * Math.sin(angle) * Math.cos(angle) / denominator
+                    };
+                };
+
+                const drawPath = (color, start, end, widthValue, alpha) => {
+                    context.beginPath();
+                    for (let i = 0; i <= 240; i += 1) {
+                        const angle = start + (end - start) * (i / 240);
+                        const point = pointAt(angle);
+                        if (i === 0) context.moveTo(point.x, point.y);
+                        else context.lineTo(point.x, point.y);
+                    }
+                    context.strokeStyle = color;
+                    context.globalAlpha = alpha;
+                    context.lineWidth = widthValue;
+                    context.lineCap = "round";
+                    context.stroke();
+                    context.globalAlpha = 1;
+                };
+
+                drawPath("#ff7a3d", 0, Math.PI * 2, 1.4, 0.22);
+                drawPath("#1388f5", Math.PI, Math.PI * 3, 1.4, 0.22);
+
+                const pulseLength = 0.48;
+                const pulseStart = t % (Math.PI * 2);
+                drawPath("#ff9c70", pulseStart, pulseStart + pulseLength, 3.2, 0.88);
+                drawPath("#5bb0ff", pulseStart + Math.PI, pulseStart + Math.PI + pulseLength, 3.2, 0.88);
+
+                const firstPoint = pointAt(pulseStart + pulseLength);
+                const secondPoint = pointAt(pulseStart + Math.PI + pulseLength);
+                [firstPoint, secondPoint].forEach((point, index) => {
+                    const color = index === 0 ? "255, 122, 61" : "19, 136, 245";
+                    const glow = context.createRadialGradient(point.x, point.y, 0, point.x, point.y, 18);
+                    glow.addColorStop(0, `rgba(${color}, 0.9)`);
+                    glow.addColorStop(1, `rgba(${color}, 0)`);
+                    context.fillStyle = glow;
+                    context.fillRect(point.x - 18, point.y - 18, 36, 36);
+                });
+            });
+        })();
+    </script>
+</body>
+</html>
