@@ -1,0 +1,1202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#f5f5f7">
+    <meta name="description" content="Every day Bosco and Iris have shared, counted in real time.">
+    <title>Our Time | Bosco &amp; Iris</title>
+    <link rel="icon" href="data:,">
+    <style>
+        :root {
+            --black: #000000;
+            --white: #ffffff;
+            --canvas: #f5f5f7;
+            --ink: #1d1d1f;
+            --muted: #6e6e73;
+            --gold: #a06c21;
+            --blue: #0071e3;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: var(--canvas);
+            overscroll-behavior: none;
+        }
+
+        body {
+            margin: 0;
+            width: 100%;
+            height: 100%;
+            min-width: 320px;
+            overflow: hidden;
+            color: var(--ink);
+            background: var(--canvas);
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .scene-nav {
+            position: fixed;
+            top: 50%;
+            right: 24px;
+            z-index: 90;
+            display: grid;
+            gap: 12px;
+            transform: translateY(-50%);
+            mix-blend-mode: difference;
+        }
+
+        .scene-nav button {
+            appearance: none;
+            width: 5px;
+            height: 5px;
+            padding: 0;
+            border: 1px solid var(--white);
+            border-radius: 50%;
+            background: transparent;
+            cursor: pointer;
+            transition: background-color 400ms ease, transform 400ms ease;
+        }
+
+        .scene-nav button.is-active {
+            background: var(--white);
+            transform: scale(1.65);
+        }
+
+        main {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            height: 100svh;
+            overflow: hidden;
+        }
+
+        .journey-window {
+            position: absolute;
+            top: 0;
+            right: max(72px, calc((100vw - 1340px) / 2));
+            z-index: 8;
+            width: 120px;
+            height: 100%;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .journey-lines {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 300%;
+            overflow: visible;
+            will-change: transform;
+            transition: transform 1s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .journey-lines path {
+            fill: none;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            vector-effect: non-scaling-stroke;
+        }
+
+        .journey-lines__base {
+            stroke: #8e8e93;
+            stroke-width: 1;
+            opacity: 0.22;
+        }
+
+        .journey-lines__active {
+            stroke-width: 2;
+            opacity: 0;
+            clip-path: url(#journey-reveal);
+        }
+
+        .journey-lines--ready .journey-lines__active {
+            opacity: 1;
+        }
+
+        .journey-lines__active--bosco {
+            stroke: #ff7a45;
+        }
+
+        .journey-lines__active--iris {
+            stroke: #2997ff;
+        }
+
+        .journey-lines__start {
+            stroke: var(--white);
+            stroke-width: 1;
+        }
+
+        .scene {
+            position: absolute;
+            inset: 0;
+            isolation: isolate;
+            min-height: 100vh;
+            min-height: 100svh;
+            overflow: hidden;
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transition:
+                opacity 650ms cubic-bezier(0.22, 1, 0.36, 1),
+                visibility 0s 650ms;
+        }
+
+        .scene.is-active {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+            transition:
+                opacity 650ms cubic-bezier(0.22, 1, 0.36, 1),
+                visibility 0s;
+        }
+
+        .scene__visual {
+            position: absolute;
+            inset: -5%;
+            z-index: -2;
+            background-position: center;
+            background-size: cover;
+            will-change: transform;
+        }
+
+        .scene__veil {
+            position: absolute;
+            inset: 0;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .scene__content {
+            position: relative;
+            z-index: 1;
+            width: min(1200px, calc(100% - 56px));
+            min-height: 100vh;
+            min-height: 100svh;
+            margin: 0 auto;
+            padding: 100px 0 56px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .scene-label {
+            margin: 0 0 18px;
+            font-size: 1rem;
+            font-weight: 600;
+            line-height: 1.3;
+        }
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(34px);
+            transition:
+                opacity 900ms cubic-bezier(0.22, 1, 0.36, 1),
+                transform 900ms cubic-bezier(0.22, 1, 0.36, 1);
+            transition-delay: var(--delay, 0ms);
+        }
+
+        .scene.is-visible .reveal {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .scene.is-leaving-forward .reveal,
+        .scene.is-leaving-backward .reveal {
+            opacity: 0;
+            filter: blur(8px);
+            transition-delay: 0ms !important;
+            transition-duration: 320ms;
+        }
+
+        .scene.is-leaving-forward .reveal {
+            transform: translateY(-24px) scale(0.985);
+        }
+
+        .scene.is-leaving-backward .reveal {
+            transform: translateY(24px) scale(0.985);
+        }
+
+        .scene.is-entering-backward .reveal {
+            transform: translateY(-28px);
+        }
+
+        .scene--hero {
+            background: var(--canvas);
+        }
+
+        .scene--hero .scene__visual {
+            display: none;
+        }
+
+        .scene--hero .scene__veil {
+            display: none;
+        }
+
+        .before-copy {
+            width: min(720px, 58%);
+        }
+
+        .before-copy .scene-label {
+            color: var(--gold);
+        }
+
+        .before-title {
+            margin: 0;
+            font-size: 6.5rem;
+            font-weight: 700;
+            line-height: 0.94;
+        }
+
+        .before-title span {
+            display: block;
+            color: var(--muted);
+        }
+
+        .before-list {
+            width: min(640px, 100%);
+            margin-top: 44px;
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            border-top: 1px solid rgba(29, 29, 31, 0.2);
+        }
+
+        .before-person {
+            min-width: 0;
+            padding: 18px 24px 0 0;
+        }
+
+        .before-person + .before-person {
+            padding-left: 24px;
+            border-left: 1px solid rgba(29, 29, 31, 0.16);
+        }
+
+        .before-person__sentence {
+            margin: 0;
+            color: var(--muted);
+            font-size: 1.1rem;
+            font-weight: 500;
+            line-height: 1.35;
+        }
+
+        .before-person__sentence strong {
+            display: block;
+            margin: 4px 0;
+            color: var(--ink);
+            font-size: 3.25rem;
+            font-weight: 600;
+            line-height: 1;
+            font-variant-numeric: tabular-nums;
+            white-space: nowrap;
+        }
+
+        .hero-title {
+            margin: 0;
+            font-size: 7rem;
+            font-weight: 700;
+            line-height: 0.94;
+        }
+
+        .hero-number {
+            display: inline-block;
+            min-width: 5.25ch;
+            color: var(--ink);
+            font-variant-numeric: tabular-nums;
+        }
+
+        .hero-title__line {
+            display: block;
+            color: var(--muted);
+            font-weight: 600;
+        }
+
+        .hero-subtitle {
+            margin: 28px 0 0;
+            color: var(--muted);
+            font-size: 1.25rem;
+            font-weight: 500;
+            line-height: 1.5;
+        }
+
+        .scroll-cue {
+            position: absolute;
+            left: 50%;
+            bottom: 24px;
+            width: 1px;
+            height: 48px;
+            overflow: hidden;
+            background: rgba(29, 29, 31, 0.18);
+            transform: translateX(-50%);
+        }
+
+        .scroll-cue::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: var(--ink);
+            animation: scroll-cue 2s ease-in-out infinite;
+            transform: translateY(-100%);
+        }
+
+        .scene--origin {
+            color: var(--white);
+            background: var(--black);
+        }
+
+        .scene--origin .scene__visual {
+            display: none;
+        }
+
+        .scene--origin .scene__veil {
+            display: none;
+        }
+
+        .origin-copy {
+            width: min(720px, 58%);
+        }
+
+        .origin-copy .scene-label {
+            color: #8ab4f8;
+        }
+
+        .origin-copy .hero-number {
+            color: var(--white);
+        }
+
+        .origin-copy .hero-title__line {
+            color: rgba(255, 255, 255, 0.56);
+        }
+
+        .origin-copy .hero-subtitle {
+            color: rgba(255, 255, 255, 0.62);
+        }
+
+        .origin-title {
+            margin: 0;
+            font-size: 6.5rem;
+            font-weight: 700;
+            line-height: 0.92;
+        }
+
+        .origin-title span {
+            display: block;
+            color: rgba(255, 255, 255, 0.56);
+        }
+
+        .precision {
+            position: absolute;
+            left: 50%;
+            bottom: 58px;
+            z-index: 4;
+            width: min(1200px, calc(100% - 56px));
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            border-top: 1px solid rgba(255, 255, 255, 0.26);
+            opacity: 0;
+            transform: translateX(-50%) translateY(34px);
+            transition:
+                opacity 900ms 240ms cubic-bezier(0.22, 1, 0.36, 1),
+                transform 900ms 240ms cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .scene.is-visible .precision {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .scene.is-leaving-forward .precision,
+        .scene.is-leaving-backward .precision {
+            opacity: 0;
+            transition-delay: 0ms;
+            transition-duration: 320ms;
+        }
+
+        .scene.is-leaving-forward .precision {
+            transform: translateX(-50%) translateY(-24px);
+        }
+
+        .scene.is-leaving-backward .precision {
+            transform: translateX(-50%) translateY(24px);
+        }
+
+        .precision__item {
+            min-width: 0;
+            padding: 20px 22px 0 0;
+            border-right: 1px solid rgba(255, 255, 255, 0.18);
+        }
+
+        .precision__item + .precision__item {
+            padding-left: 22px;
+        }
+
+        .precision__item:last-child {
+            border-right: 0;
+        }
+
+        .precision__value {
+            display: block;
+            min-height: 3.5rem;
+            overflow: hidden;
+            font-size: 3.25rem;
+            font-weight: 600;
+            line-height: 1;
+            font-variant-numeric: tabular-nums;
+            white-space: nowrap;
+        }
+
+        .precision__value.is-ticking {
+            animation: digit-tick 420ms cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .precision__label {
+            display: block;
+            margin-top: 8px;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.7rem;
+            font-weight: 600;
+            line-height: 1;
+        }
+
+        .scene--final {
+            background: #eef2f6;
+        }
+
+        .scene--final::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            z-index: -2;
+            opacity: 0.26;
+            background: url("assets/together-paths-light.jpg") 74% center / cover no-repeat;
+            transform: scale(1.2);
+        }
+
+        .scene--final::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            z-index: -1;
+            background: rgba(238, 242, 246, 0.7);
+            backdrop-filter: blur(26px);
+            -webkit-backdrop-filter: blur(26px);
+        }
+
+        .final-copy {
+            align-items: center;
+            text-align: center;
+        }
+
+        .final-copy .scene-label {
+            color: var(--blue);
+        }
+
+        .final-title {
+            margin: 0;
+            font-size: 8rem;
+            font-weight: 700;
+            line-height: 0.92;
+        }
+
+        .final-title span {
+            display: block;
+            color: var(--muted);
+        }
+
+        .final-date {
+            margin: 32px 0 0;
+            color: var(--muted);
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+
+        .timeline {
+            width: min(620px, 84%);
+            margin-top: 54px;
+        }
+
+        .timeline__caption {
+            margin: 0 0 10px;
+            color: var(--blue);
+            font-size: 0.72rem;
+            font-weight: 600;
+            text-align: right;
+            opacity: 0;
+            transform: translateY(6px);
+            transition:
+                opacity 400ms 1.9s ease,
+                transform 400ms 1.9s ease;
+        }
+
+        .timeline__line {
+            position: relative;
+            width: 100%;
+            height: 2px;
+            background: rgba(29, 29, 31, 0.14);
+        }
+
+        .timeline__fill {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            width: 78%;
+            background: var(--ink);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 1.6s 420ms cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .timeline__future {
+            position: absolute;
+            top: 50%;
+            right: -18px;
+            left: 78%;
+            height: 1px;
+            overflow: hidden;
+            opacity: 0;
+            background: rgba(29, 29, 31, 0.2);
+            transition: opacity 400ms 1.75s ease;
+        }
+
+        .timeline__future::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            width: 48%;
+            background: var(--blue);
+            transform: translateX(-120%);
+            animation: future-flow 1.8s 2.1s ease-in-out infinite;
+            animation-play-state: paused;
+        }
+
+        .timeline__dot {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            opacity: 0;
+            background: var(--ink);
+            box-shadow: 0 0 0 5px rgba(29, 29, 31, 0.1);
+            transform: translate(-50%, -50%);
+            transition:
+                left 1.6s 420ms cubic-bezier(0.22, 1, 0.36, 1),
+                opacity 160ms 420ms ease;
+        }
+
+        .scene--final.is-visible .timeline__fill {
+            transform: scaleX(1);
+        }
+
+        .scene--final.is-visible .timeline__dot {
+            left: 78%;
+            opacity: 1;
+        }
+
+        .scene--final.is-visible .timeline__future,
+        .scene--final.is-visible .timeline__caption {
+            opacity: 1;
+        }
+
+        .scene--final.is-visible .timeline__caption {
+            transform: translateY(0);
+        }
+
+        .scene--final.is-visible .timeline__future::after {
+            animation-play-state: running;
+        }
+
+        .timeline__labels {
+            position: relative;
+            height: 1rem;
+            margin-top: 10px;
+            color: var(--muted);
+            font-size: 0.72rem;
+            font-weight: 600;
+        }
+
+        .timeline__labels span {
+            position: absolute;
+            top: 0;
+        }
+
+        .timeline__labels span:first-child {
+            left: 0;
+        }
+
+        .timeline__labels span:last-child {
+            left: 78%;
+            transform: translateX(-50%);
+        }
+
+        @keyframes digit-tick {
+            from { opacity: 0; filter: blur(6px); transform: translateY(38%); }
+            to { opacity: 1; filter: blur(0); transform: translateY(0); }
+        }
+
+        @keyframes scroll-cue {
+            0% { transform: translateY(-100%); }
+            45%, 55% { transform: translateY(0); }
+            100% { transform: translateY(100%); }
+        }
+
+        @keyframes future-flow {
+            0% { transform: translateX(-120%); opacity: 0; }
+            25% { opacity: 1; }
+            75% { opacity: 1; }
+            100% { transform: translateX(230%); opacity: 0; }
+        }
+
+        @media (max-width: 900px) {
+            .scene__content,
+            .precision {
+                width: calc(100% - 40px);
+            }
+
+            .before-title,
+            .hero-title {
+                font-size: 5.5rem;
+            }
+
+            .origin-title {
+                font-size: 5rem;
+            }
+
+            .final-title {
+                font-size: 6rem;
+            }
+        }
+
+        @media (max-width: 620px) {
+            .scene__content,
+            .precision {
+                width: calc(100% - 32px);
+            }
+
+            .scene-nav {
+                display: none;
+            }
+
+            .journey-window {
+                right: 0;
+                width: 34px;
+                opacity: 0.66;
+            }
+
+            .scene__content {
+                padding: 96px 0 36px;
+                justify-content: flex-start;
+            }
+
+            .scene--hero .scene__visual {
+                inset: -2%;
+                background-position: 68% 68%;
+            }
+
+            .scene--hero .scene__veil {
+                background: linear-gradient(180deg, rgba(245, 245, 247, 0.98) 0%, rgba(245, 245, 247, 0.9) 30%, rgba(245, 245, 247, 0.16) 62%, rgba(245, 245, 247, 0.72) 100%);
+            }
+
+            .before-copy,
+            .origin-copy {
+                width: calc(100% - 48px);
+            }
+
+            .before-title {
+                font-size: 4.25rem;
+            }
+
+            .before-list {
+                margin-top: 30px;
+                grid-template-columns: 1fr;
+            }
+
+            .before-person {
+                padding: 14px 0;
+            }
+
+            .before-person + .before-person {
+                padding-left: 0;
+                border-top: 1px solid rgba(29, 29, 31, 0.16);
+                border-left: 0;
+            }
+
+            .before-person__sentence strong {
+                font-size: 2.65rem;
+            }
+
+            .hero-title {
+                font-size: 4.25rem;
+            }
+
+            .hero-subtitle {
+                margin-top: 18px;
+                font-size: 1rem;
+            }
+
+            .scroll-cue {
+                display: none;
+            }
+
+            .scene--origin .scene__visual {
+                inset: -2%;
+                background-position: 61% 66%;
+            }
+
+            .scene--origin .scene__veil {
+                background: linear-gradient(180deg, rgba(0, 0, 0, 0.96) 0%, rgba(0, 0, 0, 0.74) 31%, rgba(0, 0, 0, 0.04) 54%, rgba(0, 0, 0, 0.96) 78%, rgba(0, 0, 0, 1) 100%);
+            }
+
+            .origin-title {
+                font-size: 4.15rem;
+            }
+
+            .precision {
+                bottom: 32px;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .precision__item {
+                min-height: 88px;
+                padding: 16px 12px 12px 0;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.18);
+            }
+
+            .precision__item + .precision__item {
+                padding-left: 16px;
+            }
+
+            .precision__item:nth-child(2) {
+                border-right: 0;
+            }
+
+            .precision__item:nth-child(n + 3) {
+                border-bottom: 0;
+            }
+
+            .precision__value {
+                min-height: 2.7rem;
+                font-size: 2.5rem;
+            }
+
+            .final-copy {
+                justify-content: center;
+            }
+
+            .final-title {
+                font-size: 4.7rem;
+            }
+
+            .final-date {
+                margin-top: 24px;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .before-title,
+            .hero-title,
+            .origin-title {
+                font-size: 3.65rem;
+            }
+
+            .final-title {
+                font-size: 4rem;
+            }
+        }
+
+        @media (max-height: 680px) and (max-width: 620px) {
+            .scene__content {
+                padding-top: 78px;
+            }
+
+            .before-title,
+            .hero-title,
+            .origin-title {
+                font-size: 3.5rem;
+            }
+
+            .before-list {
+                margin-top: 18px;
+            }
+
+            .before-person {
+                padding: 8px 0;
+            }
+
+            .before-person__sentence strong {
+                font-size: 2rem;
+            }
+
+            .before-person__sentence {
+                font-size: 0.95rem;
+            }
+
+            .hero-subtitle {
+                display: none;
+            }
+
+            .precision {
+                bottom: 16px;
+            }
+
+            .precision__item {
+                min-height: 74px;
+                padding-top: 10px;
+            }
+
+            .precision__value {
+                min-height: 2.25rem;
+                font-size: 2.1rem;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+
+            .scene__visual {
+                transform: none !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="scene-nav" aria-label="Story chapters">
+        <button class="is-active" type="button" aria-label="Before us" aria-current="step"></button>
+        <button type="button" aria-label="Together"></button>
+        <button type="button" aria-label="Always you"></button>
+    </nav>
+
+    <main>
+        <div class="journey-window">
+            <svg class="journey-lines" viewBox="0 0 120 300" preserveAspectRatio="none" aria-hidden="true">
+                <defs>
+                    <clipPath id="journey-reveal">
+                        <rect id="journeyReveal" x="0" y="0" width="120" height="0" />
+                    </clipPath>
+                </defs>
+                <path class="journey-lines__base" d="M34 0 L34 100 C34 104 62 108 88 111 C104 114 88 120 38 131 C18 136 18 146 78 158 C98 162 95 173 43 183 C23 187 24 198 75 208 C92 212 90 223 47 233 C28 238 30 249 69 258 C84 262 81 277 60 300" />
+                <path class="journey-lines__base" d="M86 12 L86 100 C86 104 58 108 32 111 C16 114 32 120 82 131 C102 136 102 146 42 158 C22 162 25 173 77 183 C97 187 96 198 45 208 C28 212 30 223 73 233 C92 238 90 249 51 258 C36 262 39 277 60 300" />
+                <path class="journey-lines__active journey-lines__active--bosco" d="M34 0 L34 100 C34 104 62 108 88 111 C104 114 88 120 38 131 C18 136 18 146 78 158 C98 162 95 173 43 183 C23 187 24 198 75 208 C92 212 90 223 47 233 C28 238 30 249 69 258 C84 262 81 277 60 300" />
+                <path class="journey-lines__active journey-lines__active--iris" d="M86 12 L86 100 C86 104 58 108 32 111 C16 114 32 120 82 131 C102 136 102 146 42 158 C22 162 25 173 77 183 C97 187 96 198 45 208 C28 212 30 223 73 233 C92 238 90 249 51 258 C36 262 39 277 60 300" />
+                <circle class="journey-lines__start" cx="34" cy="1.5" r="0.7" fill="#ff7a45" />
+                <circle class="journey-lines__start" cx="86" cy="13.5" r="0.7" fill="#2997ff" />
+            </svg>
+        </div>
+
+        <section class="scene scene--hero is-active is-visible" data-scene="0" aria-hidden="false">
+            <div class="scene__visual" aria-hidden="true"></div>
+            <div class="scene__veil" aria-hidden="true"></div>
+            <div class="scene__content">
+                <div class="before-copy">
+                    <p class="scene-label reveal">Two separate beginnings.</p>
+                    <h1 class="before-title reveal" style="--delay: 100ms">Before us.<span>Two minds.</span></h1>
+                    <div class="before-list reveal" style="--delay: 220ms">
+                        <div class="before-person">
+                            <p class="before-person__sentence">It takes <strong><span id="boscoDaysBefore">0</span> days</strong> to finally meet you.</p>
+                        </div>
+                        <div class="before-person">
+                            <p class="before-person__sentence">It takes <strong><span id="irisDaysBefore">0</span> days</strong> to finally meet me.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="scroll-cue" aria-hidden="true"></div>
+        </section>
+
+        <section class="scene scene--origin" data-scene="1" aria-hidden="true">
+            <div class="scene__visual" aria-hidden="true"></div>
+            <div class="scene__veil" aria-hidden="true"></div>
+            <div class="scene__content">
+                <div class="origin-copy">
+                    <p class="scene-label reveal">Together.</p>
+                    <h2 class="hero-title reveal" style="--delay: 100ms">
+                        <span class="hero-number" id="heroDays">0</span> days.
+                        <span class="hero-title__line">And counting.</span>
+                    </h2>
+                    <p class="hero-subtitle reveal" style="--delay: 220ms">Every day since June 19, 2018.</p>
+                </div>
+            </div>
+
+            <div class="precision" aria-label="Time together in days, hours, minutes, and seconds">
+                <div class="precision__item">
+                    <span class="precision__value" id="days">0</span>
+                    <span class="precision__label">Days</span>
+                </div>
+                <div class="precision__item">
+                    <span class="precision__value" id="hours">00</span>
+                    <span class="precision__label">Hours</span>
+                </div>
+                <div class="precision__item">
+                    <span class="precision__value" id="minutes">00</span>
+                    <span class="precision__label">Minutes</span>
+                </div>
+                <div class="precision__item">
+                    <span class="precision__value" id="seconds">00</span>
+                    <span class="precision__label">Seconds</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="scene scene--final" data-scene="2" aria-hidden="true">
+            <div class="scene__content final-copy">
+                <p class="scene-label reveal" id="daysLater">All these days later</p>
+                <h2 class="final-title reveal" style="--delay: 100ms">Still you.<span>Always you.</span></h2>
+                <div class="timeline reveal" style="--delay: 300ms" aria-hidden="true">
+                    <p class="timeline__caption">Still counting</p>
+                    <div class="timeline__line">
+                        <span class="timeline__fill"></span>
+                        <span class="timeline__future"></span>
+                        <span class="timeline__dot"></span>
+                    </div>
+                    <div class="timeline__labels">
+                        <span>2018.06.19</span>
+                        <span id="currentDate">Today</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        const loveDate = new Date(2018, 5, 19, 0, 0, 0);
+        const boscoBirthDate = new Date(1988, 11, 7, 0, 0, 0);
+        const irisBirthDate = new Date(1992, 5, 3, 0, 0, 0);
+        const dayMs = 24 * 60 * 60 * 1000;
+        const scenes = [...document.querySelectorAll(".scene")];
+        const sceneDots = [...document.querySelectorAll(".scene-nav button")];
+        const journeySvg = document.querySelector(".journey-lines");
+        const journeyReveal = document.getElementById("journeyReveal");
+        journeySvg.classList.add("journey-lines--ready");
+        const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        let activeSceneIndex = 0;
+        let transitionInProgress = false;
+        let journeyFrame = 0;
+        let wheelAccumulator = 0;
+        let wheelResetTimer = 0;
+        let touchStartY = null;
+        let heroNumberAnimated = false;
+
+        function calendarDaysBetween(start, end) {
+            const startDay = Date.UTC(start.getFullYear(), start.getMonth(), start.getDate());
+            const endDay = Date.UTC(end.getFullYear(), end.getMonth(), end.getDate());
+            return Math.max(0, Math.floor((endDay - startDay) / dayMs));
+        }
+
+        function formatDate(date) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, "0");
+            const day = String(date.getDate()).padStart(2, "0");
+            return `${year}.${month}.${day}`;
+        }
+
+        function populateHistory() {
+            document.getElementById("boscoDaysBefore").textContent =
+                calendarDaysBetween(boscoBirthDate, loveDate).toLocaleString("en-US");
+            document.getElementById("irisDaysBefore").textContent =
+                calendarDaysBetween(irisBirthDate, loveDate).toLocaleString("en-US");
+        }
+
+        function elapsedTime() {
+            const diff = Math.max(0, Date.now() - loveDate.getTime());
+            return {
+                days: Math.floor(diff / dayMs),
+                hours: Math.floor((diff % dayMs) / (60 * 60 * 1000)),
+                minutes: Math.floor((diff % (60 * 60 * 1000)) / (60 * 1000)),
+                seconds: Math.floor((diff % (60 * 1000)) / 1000)
+            };
+        }
+
+        function setTicker(id, value) {
+            const element = document.getElementById(id);
+            if (element.textContent === value) return;
+            element.textContent = value;
+            element.classList.remove("is-ticking");
+            void element.offsetWidth;
+            element.classList.add("is-ticking");
+        }
+
+        function updateTimer() {
+            const elapsed = elapsedTime();
+            const formattedDays = elapsed.days.toLocaleString("en-US");
+
+            setTicker("days", formattedDays);
+            setTicker("hours", String(elapsed.hours).padStart(2, "0"));
+            setTicker("minutes", String(elapsed.minutes).padStart(2, "0"));
+            setTicker("seconds", String(elapsed.seconds).padStart(2, "0"));
+            document.getElementById("daysLater").textContent = `${formattedDays} days later`;
+            document.getElementById("currentDate").textContent = formatDate(new Date());
+        }
+
+        function animateHeroNumber() {
+            const element = document.getElementById("heroDays");
+            const target = elapsedTime().days;
+            const start = Math.max(0, target - 90);
+            const duration = reduceMotion ? 1 : 900;
+            const startedAt = performance.now();
+
+            function step(now) {
+                const progress = Math.min(1, (now - startedAt) / duration);
+                const eased = 1 - Math.pow(1 - progress, 4);
+                const value = Math.round(start + (target - start) * eased);
+                element.textContent = value.toLocaleString("en-US");
+                if (progress < 1) requestAnimationFrame(step);
+            }
+
+            requestAnimationFrame(step);
+        }
+
+        function updateNavigation(index) {
+            sceneDots.forEach((dot, dotIndex) => {
+                const isActive = dotIndex === index;
+                dot.classList.toggle("is-active", isActive);
+                if (isActive) {
+                    dot.setAttribute("aria-current", "step");
+                } else {
+                    dot.removeAttribute("aria-current");
+                }
+            });
+        }
+
+        function animateJourney(index, immediate = false) {
+            const targetHeight = 300 * index / (scenes.length - 1);
+            const targetOffset = -index * 100 / scenes.length;
+            journeySvg.style.transform = `translate3d(0, ${targetOffset}%, 0)`;
+
+            cancelAnimationFrame(journeyFrame);
+            const startHeight = Number(journeyReveal.getAttribute("height")) || 0;
+            if (immediate || reduceMotion) {
+                journeyReveal.setAttribute("height", String(targetHeight));
+                return;
+            }
+
+            const startedAt = performance.now();
+            const duration = 1000;
+
+            function step(now) {
+                const progress = Math.max(0, Math.min(1, (now - startedAt) / duration));
+                const eased = 1 - Math.pow(1 - progress, 3);
+                const height = startHeight + (targetHeight - startHeight) * eased;
+                journeyReveal.setAttribute("height", String(height));
+                if (progress < 1) journeyFrame = requestAnimationFrame(step);
+            }
+
+            journeyFrame = requestAnimationFrame(step);
+        }
+
+        function goToScene(targetIndex) {
+            const nextIndex = Math.max(0, Math.min(scenes.length - 1, targetIndex));
+            if (transitionInProgress || nextIndex === activeSceneIndex) return;
+
+            transitionInProgress = true;
+            wheelAccumulator = 0;
+            const currentScene = scenes[activeSceneIndex];
+            const nextScene = scenes[nextIndex];
+            const movingForward = nextIndex > activeSceneIndex;
+            const leavingClass = movingForward ? "is-leaving-forward" : "is-leaving-backward";
+            const swapDelay = reduceMotion ? 0 : 300;
+            const unlockDelay = reduceMotion ? 20 : 1150;
+
+            currentScene.classList.remove("is-visible");
+            currentScene.classList.add(leavingClass);
+            updateNavigation(nextIndex);
+            animateJourney(nextIndex);
+
+            window.setTimeout(() => {
+                currentScene.classList.remove("is-active");
+                currentScene.setAttribute("aria-hidden", "true");
+                nextScene.classList.add("is-active");
+                nextScene.setAttribute("aria-hidden", "false");
+
+                if (!movingForward) nextScene.classList.add("is-entering-backward");
+                void nextScene.offsetWidth;
+                nextScene.classList.remove("is-entering-backward");
+                nextScene.classList.add("is-visible");
+                activeSceneIndex = nextIndex;
+
+                if (nextIndex === 1 && !heroNumberAnimated) {
+                    heroNumberAnimated = true;
+                    animateHeroNumber();
+                }
+            }, swapDelay);
+
+            window.setTimeout(() => {
+                currentScene.classList.remove(leavingClass);
+                transitionInProgress = false;
+            }, unlockDelay);
+        }
+
+        function handleWheel(event) {
+            if (Math.abs(event.deltaY) <= Math.abs(event.deltaX)) return;
+            event.preventDefault();
+            if (transitionInProgress) return;
+
+            wheelAccumulator += event.deltaY;
+            window.clearTimeout(wheelResetTimer);
+            wheelResetTimer = window.setTimeout(() => {
+                wheelAccumulator = 0;
+            }, 140);
+
+            if (Math.abs(wheelAccumulator) < 44) return;
+            goToScene(activeSceneIndex + Math.sign(wheelAccumulator));
+        }
+
+        function handleKeydown(event) {
+            if (event.target instanceof HTMLInputElement || event.target instanceof HTMLTextAreaElement) return;
+
+            const forwardKeys = ["ArrowDown", "PageDown", " "];
+            const backwardKeys = ["ArrowUp", "PageUp"];
+            if (forwardKeys.includes(event.key) && !event.shiftKey) {
+                event.preventDefault();
+                goToScene(activeSceneIndex + 1);
+            } else if (backwardKeys.includes(event.key) || (event.key === " " && event.shiftKey)) {
+                event.preventDefault();
+                goToScene(activeSceneIndex - 1);
+            } else if (event.key === "Home") {
+                event.preventDefault();
+                goToScene(0);
+            } else if (event.key === "End") {
+                event.preventDefault();
+                goToScene(scenes.length - 1);
+            }
+        }
+
+        sceneDots.forEach((dot, index) => {
+            dot.addEventListener("click", () => goToScene(index));
+        });
+
+        window.addEventListener("wheel", handleWheel, { passive: false });
+        window.addEventListener("keydown", handleKeydown);
+        window.addEventListener("touchstart", (event) => {
+            touchStartY = event.touches.length === 1 ? event.touches[0].clientY : null;
+        }, { passive: true });
+        window.addEventListener("touchend", (event) => {
+            if (touchStartY === null || !event.changedTouches.length) return;
+            const distance = touchStartY - event.changedTouches[0].clientY;
+            touchStartY = null;
+            if (Math.abs(distance) >= 48) goToScene(activeSceneIndex + Math.sign(distance));
+        }, { passive: true });
+
+        populateHistory();
+        updateTimer();
+        animateJourney(0, true);
+        setInterval(updateTimer, 1000);
+    </script>
+</body>
+</html>
