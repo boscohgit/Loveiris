@@ -35,6 +35,7 @@
         body {
             margin: 0;
             overflow-x: hidden;
+            overscroll-behavior-y: none;
             background: var(--paper);
             color: var(--ink);
             font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text",
@@ -85,6 +86,72 @@
             mix-blend-mode: multiply;
         }
 
+        .experience {
+            position: relative;
+            height: 560svh;
+            background: var(--night);
+        }
+
+        .stage {
+            position: sticky;
+            top: 0;
+            width: 100%;
+            height: 100svh;
+            overflow: hidden;
+            background: var(--night);
+        }
+
+        .stage > .section {
+            --scene-opacity: 0;
+            --scene-scale: 0.985;
+            --scene-blur: 10px;
+            --scene-visibility: hidden;
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            min-height: 100%;
+            background: transparent;
+            opacity: var(--scene-opacity);
+            visibility: var(--scene-visibility);
+            filter: blur(var(--scene-blur));
+            transform: scale(var(--scene-scale));
+            transform-origin: center;
+            pointer-events: none;
+            will-change: opacity, filter, transform;
+        }
+
+        .stage .meeting-story .story__sticky {
+            background: transparent;
+        }
+
+        .stage > .section:first-child {
+            --scene-opacity: 1;
+            --scene-scale: 1;
+            --scene-blur: 0px;
+            --scene-visibility: visible;
+        }
+
+        .stage > .section:nth-child(1) {
+            z-index: 1;
+        }
+
+        .stage > .section:nth-child(2) {
+            z-index: 2;
+        }
+
+        .stage > .section:nth-child(3) {
+            z-index: 3;
+        }
+
+        .stage > .section:nth-child(4) {
+            z-index: 4;
+        }
+
+        .stage > .section:nth-child(5) {
+            z-index: 5;
+        }
+
         .section {
             position: relative;
             isolation: isolate;
@@ -129,7 +196,8 @@
         }
 
         .hero {
-            min-height: 100svh;
+            height: 100%;
+            min-height: 100%;
             overflow: hidden;
             background: var(--paper);
         }
@@ -153,7 +221,7 @@
 
         .hero__content {
             display: flex;
-            min-height: 100svh;
+            min-height: 100%;
             align-items: center;
             justify-content: center;
             padding-top: var(--safe-top);
@@ -241,15 +309,15 @@
         }
 
         .story {
-            height: 220svh;
+            height: 100%;
             background: var(--paper-bright);
         }
 
         .story__sticky {
-            position: sticky;
-            top: 0;
+            position: relative;
             display: flex;
-            min-height: 100svh;
+            height: 100%;
+            min-height: 100%;
             align-items: center;
             overflow: hidden;
             padding-top: var(--safe-top);
@@ -287,7 +355,7 @@
             transition: opacity 100ms linear, transform 100ms linear;
         }
 
-        .origin-copy:last-of-type {
+        .origin-copy:nth-of-type(2) {
             justify-self: end;
             text-align: right;
         }
@@ -315,7 +383,7 @@
             color: var(--orange);
         }
 
-        .origin-copy:last-of-type strong {
+        .origin-copy:nth-of-type(2) strong {
             color: var(--blue);
         }
 
@@ -389,7 +457,7 @@
         }
 
         .meeting-story {
-            height: 240svh;
+            height: 100%;
             background: var(--night);
             color: #f5f5f7;
         }
@@ -476,13 +544,14 @@
         }
 
         .now {
-            min-height: 125svh;
+            height: 100%;
+            min-height: 100%;
             display: flex;
             align-items: center;
             overflow: hidden;
             background: var(--paper);
-            padding-top: calc(var(--safe-top) + 90px);
-            padding-bottom: calc(var(--safe-bottom) + 90px);
+            padding-top: calc(var(--safe-top) + 34px);
+            padding-bottom: calc(var(--safe-bottom) + 34px);
         }
 
         .now__header {
@@ -512,7 +581,7 @@
 
         .now__measure {
             display: grid;
-            margin-top: 90px;
+            margin-top: 56px;
             grid-template-columns: 1.25fr 1fr;
             border-top: 1px solid var(--line);
             border-bottom: 1px solid var(--line);
@@ -520,7 +589,7 @@
 
         .now__days {
             min-width: 0;
-            padding: 62px 56px 70px 0;
+            padding: 46px 56px 52px 0;
             border-right: 1px solid var(--line);
         }
 
@@ -554,7 +623,7 @@
             justify-content: center;
             flex-direction: column;
             gap: 14px;
-            padding: 54px 18px;
+            padding: 42px 18px;
             text-align: center;
         }
 
@@ -580,8 +649,8 @@
 
         .continuum {
             position: relative;
-            height: 96px;
-            margin-top: 74px;
+            height: 76px;
+            margin-top: 44px;
         }
 
         .continuum__line {
@@ -670,7 +739,8 @@
         }
 
         .finale {
-            min-height: 100svh;
+            height: 100%;
+            min-height: 100%;
             overflow: hidden;
             background: var(--night);
             color: #f5f5f7;
@@ -686,7 +756,7 @@
 
         .finale__inner {
             display: flex;
-            min-height: 100svh;
+            min-height: 100%;
             align-items: center;
             justify-content: center;
             padding-top: var(--safe-top);
@@ -810,10 +880,6 @@
                 font-size: 0.64rem;
             }
 
-            .story {
-                height: 230svh;
-            }
-
             .story__sticky {
                 align-items: center;
             }
@@ -830,8 +896,8 @@
 
             .origins__visual {
                 display: block;
-                min-height: 380px;
-                margin-top: 36px;
+                min-height: 350px;
+                margin-top: 28px;
                 padding-top: 0;
             }
 
@@ -852,23 +918,19 @@
                 white-space: nowrap;
             }
 
-            .origin-copy:last-of-type {
+            .origin-copy:nth-of-type(2) {
                 width: 78%;
                 margin-top: 28px;
                 margin-left: auto;
             }
 
             .origin-beams {
-                bottom: 20px;
-                height: 170px;
+                bottom: 0;
+                height: 140px;
             }
 
             .meeting-node {
-                bottom: 18px;
-            }
-
-            .meeting-story {
-                height: 230svh;
+                bottom: -2px;
             }
 
             .meeting__eyebrow {
@@ -893,9 +955,9 @@
             }
 
             .now {
-                min-height: 120svh;
-                padding-top: calc(var(--safe-top) + 64px);
-                padding-bottom: calc(var(--safe-bottom) + 64px);
+                min-height: 100%;
+                padding-top: calc(var(--safe-top) + 18px);
+                padding-bottom: calc(var(--safe-bottom) + 18px);
             }
 
             .now__header {
@@ -903,30 +965,30 @@
             }
 
             .now__header h2 {
-                font-size: 3.5rem;
+                font-size: 2.8rem;
                 line-height: 0.94;
             }
 
             .now__statement {
                 max-width: 420px;
-                margin: 30px 0 0;
-                font-size: 1.1rem;
+                margin: 16px 0 0;
+                font-size: 0.96rem;
             }
 
             .now__measure {
                 display: block;
-                margin-top: 54px;
+                margin-top: 24px;
             }
 
             .now__days {
-                padding: 44px 0 42px;
+                padding: 20px 0 22px;
                 border-right: 0;
                 border-bottom: 1px solid var(--line);
                 text-align: left;
             }
 
             .now__number {
-                font-size: 6rem;
+                font-size: 4.4rem;
             }
 
             .now__days-label {
@@ -936,11 +998,11 @@
 
             .clock__unit {
                 gap: 9px;
-                padding: 30px 8px 34px;
+                padding: 17px 8px 19px;
             }
 
             .clock__value {
-                font-size: 2.5rem;
+                font-size: 2.1rem;
             }
 
             .clock__label {
@@ -948,7 +1010,8 @@
             }
 
             .continuum {
-                margin-top: 54px;
+                height: 64px;
+                margin-top: 22px;
             }
 
             .continuum__labels {
@@ -997,11 +1060,11 @@
             }
 
             .now__header h2 {
-                font-size: 3.1rem;
+                font-size: 2.55rem;
             }
 
             .now__number {
-                font-size: 5.1rem;
+                font-size: 4rem;
             }
 
             .clock__value {
@@ -1045,8 +1108,9 @@
         <rect width="100%" height="100%" filter="url(#noise-filter)" opacity="0.36"></rect>
     </svg>
 
-    <main>
-        <section class="section hero" aria-labelledby="hero-title">
+    <main class="experience" id="experience">
+        <div class="stage" id="stage">
+        <section class="section hero" data-scene="hero" aria-labelledby="hero-title">
             <canvas id="time-field" aria-hidden="true"></canvas>
             <div class="section-inner hero__content">
                 <div class="hero__copy">
@@ -1063,7 +1127,7 @@
             <div class="hero__scroll-cue blur-fade is-visible" style="--delay: 780ms" aria-hidden="true">Our story</div>
         </section>
 
-        <section class="section story origins" id="before" data-story="origins" aria-labelledby="origins-title">
+        <section class="section story origins" id="before" data-scene="origins" data-story="origins" aria-labelledby="origins-title">
             <div class="story__sticky">
                 <div class="section-inner">
                     <div class="origins__heading blur-fade">
@@ -1109,7 +1173,7 @@
             </div>
         </section>
 
-        <section class="section story meeting-story" id="meeting" data-story="meeting" aria-labelledby="meeting-date">
+        <section class="section story meeting-story" id="meeting" data-scene="meeting" data-story="meeting" aria-labelledby="meeting-date">
             <div class="story__sticky">
                 <svg class="meeting-beams" viewBox="0 0 1440 900" preserveAspectRatio="none" aria-hidden="true">
                     <defs>
@@ -1139,7 +1203,7 @@
             </div>
         </section>
 
-        <section class="section now" id="now" aria-labelledby="now-title">
+        <section class="section now" id="now" data-scene="now" aria-labelledby="now-title">
             <div class="section-inner">
                 <div class="now__header">
                     <h2 class="display blur-fade" id="now-title">Every day.<span>Since then.</span></h2>
@@ -1179,7 +1243,7 @@
             </div>
         </section>
 
-        <section class="section finale" id="always" aria-labelledby="final-title">
+        <section class="section finale" id="always" data-scene="finale" aria-labelledby="final-title">
             <canvas id="infinity-field" aria-hidden="true"></canvas>
             <div class="section-inner finale__inner">
                 <div class="finale__copy">
@@ -1192,6 +1256,7 @@
                 </div>
             </div>
         </section>
+        </div>
     </main>
 
     <script>
@@ -1214,6 +1279,7 @@
             const nowSeconds = document.querySelector("#now-seconds");
             const todayLabel = document.querySelector("#today-label");
             const progressBar = document.querySelector("#scroll-progress-bar");
+            const stage = document.querySelector("#stage");
 
             const getElapsed = () => {
                 const elapsed = Math.max(0, Date.now() - loveDate.getTime());
@@ -1283,95 +1349,187 @@
                 }));
             });
 
-            const fadeObserver = new IntersectionObserver((entries) => {
-                entries.forEach((entry) => {
-                    if (!entry.isIntersecting) return;
-                    entry.target.classList.add("is-visible");
+            const experience = document.querySelector("#experience");
+            const scenes = [...document.querySelectorAll("[data-scene]")];
+            const originsSection = document.querySelector("[data-scene='origins']");
+            const meetingSection = document.querySelector("[data-scene='meeting']");
+            const sceneRanges = [
+                { enter: [0, 0], exit: [0.13, 0.17] },
+                { enter: [0.16, 0.2], exit: [0.35, 0.39] },
+                { enter: [0.39, 0.43], exit: [0.57, 0.61] },
+                { enter: [0.61, 0.65], exit: [0.79, 0.83] },
+                { enter: [0.83, 0.87], exit: [1, 1] }
+            ];
 
-                    entry.target.querySelectorAll(".number-ticker[data-value]").forEach((ticker) => {
-                        if (ticker.dataset.tickerReady) return;
-                        ticker.dataset.tickerReady = "true";
-                        animateNumber(ticker, Number(ticker.dataset.value), 1300, " days");
-                    });
+            const smoothStep = (start, end, value) => {
+                if (start === end) return value >= end ? 1 : 0;
+                const progress = clamp((value - start) / (end - start));
+                return progress * progress * (3 - 2 * progress);
+            };
 
-                    fadeObserver.unobserve(entry.target);
+            const revealScene = (scene) => {
+                if (scene.dataset.revealed) return;
+                scene.dataset.revealed = "true";
+                scene.querySelectorAll(".blur-fade").forEach((element) => {
+                    element.classList.add("is-visible");
                 });
-            }, { threshold: 0.22 });
-
-            document.querySelectorAll(".blur-fade:not(.is-visible)").forEach((element) => {
-                fadeObserver.observe(element);
-            });
-
-            const tickerObserver = new IntersectionObserver((entries) => {
-                entries.forEach((entry) => {
-                    if (!entry.isIntersecting || entry.target.dataset.tickerReady) return;
-                    entry.target.dataset.tickerReady = "true";
-                    animateNumber(entry.target, Number(entry.target.dataset.value), 1300, " days");
-                    tickerObserver.unobserve(entry.target);
+                scene.querySelectorAll(".number-ticker[data-value]").forEach((ticker) => {
+                    if (ticker.dataset.tickerReady) return;
+                    ticker.dataset.tickerReady = "true";
+                    animateNumber(ticker, Number(ticker.dataset.value), 1300, " days");
                 });
-            }, { threshold: 0.5 });
+            };
 
-            document.querySelectorAll(".number-ticker[data-value]").forEach((ticker) => {
-                tickerObserver.observe(ticker);
-            });
+            const sceneOpacity = (progress, range, index) => {
+                const entering = index === 0 ? 1 : smoothStep(range.enter[0], range.enter[1], progress);
+                const leaving = index === scenes.length - 1
+                    ? 1
+                    : 1 - smoothStep(range.exit[0], range.exit[1], progress);
+                return clamp(entering * leaving);
+            };
 
-            const storySections = [...document.querySelectorAll("[data-story]")];
+            const mixColor = (from, to, progress) => {
+                const amount = smoothStep(0, 1, progress);
+                const channels = from.map((channel, index) => (
+                    Math.round(channel + (to[index] - channel) * amount)
+                ));
+                return `rgb(${channels.join(", ")})`;
+            };
+
+            const updateStageColor = (progress) => {
+                const paper = [245, 245, 247];
+                const night = [5, 5, 6];
+
+                if (progress < 0.35) {
+                    stage.style.backgroundColor = mixColor(paper, paper, 1);
+                } else if (progress < 0.43) {
+                    stage.style.backgroundColor = mixColor(paper, night, mapRange(progress, 0.35, 0.43));
+                } else if (progress < 0.57) {
+                    stage.style.backgroundColor = mixColor(night, night, 1);
+                } else if (progress < 0.65) {
+                    stage.style.backgroundColor = mixColor(night, paper, mapRange(progress, 0.57, 0.65));
+                } else if (progress < 0.79) {
+                    stage.style.backgroundColor = mixColor(paper, paper, 1);
+                } else if (progress < 0.87) {
+                    stage.style.backgroundColor = mixColor(paper, night, mapRange(progress, 0.79, 0.87));
+                } else {
+                    stage.style.backgroundColor = mixColor(night, night, 1);
+                }
+            };
+
+            const updateOrigins = (globalProgress) => {
+                const progress = mapRange(globalProgress, 0.16, 0.35);
+                const copyProgress = mapRange(progress, 0.04, 0.28);
+                const beamProgress = mapRange(progress, 0.18, 0.78);
+                const meetingOpacity = mapRange(progress, 0.68, 0.9);
+                originsSection.style.setProperty("--origins-copy", copyProgress.toFixed(3));
+                originsSection.style.setProperty("--origins-opacity", (0.18 + copyProgress * 0.82).toFixed(3));
+                originsSection.style.setProperty("--origins-shift", `${((1 - copyProgress) * 22).toFixed(2)}px`);
+                originsSection.style.setProperty("--beam-progress", beamProgress.toFixed(3));
+                originsSection.style.setProperty("--meeting-opacity", meetingOpacity.toFixed(3));
+                originsSection.style.setProperty("--meeting-scale", (0.72 + meetingOpacity * 0.28).toFixed(3));
+                originsSection.style.setProperty("--spark-opacity", meetingOpacity.toFixed(3));
+            };
+
+            const updateMeeting = (globalProgress) => {
+                const progress = mapRange(globalProgress, 0.39, 0.57);
+                const beamProgress = mapRange(progress, 0.03, 0.48);
+                const titleOpacity = mapRange(progress, 0.34, 0.62);
+                const afterOpacity = mapRange(progress, 0.68, 0.88);
+                meetingSection.style.setProperty("--beam-progress", beamProgress.toFixed(3));
+                meetingSection.style.setProperty("--meeting-title-opacity", titleOpacity.toFixed(3));
+                meetingSection.style.setProperty("--meeting-title-shift", `${((1 - titleOpacity) * 12).toFixed(2)}px`);
+                meetingSection.style.setProperty("--meeting-title-scale", (0.9 + titleOpacity * 0.1).toFixed(3));
+                meetingSection.style.setProperty("--after-opacity", afterOpacity.toFixed(3));
+
+                const words = meetingSection.querySelectorAll(".text-reveal span");
+                words.forEach((word, index) => {
+                    const start = 0.54 + (index / Math.max(1, words.length)) * 0.23;
+                    const opacity = mapRange(progress, start, start + 0.12);
+                    word.style.setProperty("--word-alpha", (0.16 + opacity * 0.84).toFixed(3));
+                });
+            };
+
+            let targetProgress = 0;
+            let renderedProgress = 0;
             let scrollFrame = 0;
+            let hasRendered = false;
 
-            const updateScroll = () => {
-                scrollFrame = 0;
-                const maxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
-                progressBar.style.transform = `scaleX(${clamp(window.scrollY / maxScroll)})`;
+            const renderExperience = (progress) => {
+                const opacities = scenes.map((scene, index) => (
+                    sceneOpacity(progress, sceneRanges[index], index)
+                ));
+                let activeIndex = 0;
+                let highestOpacity = -1;
 
-                storySections.forEach((section) => {
-                    const rect = section.getBoundingClientRect();
-                    const travel = Math.max(1, rect.height - window.innerHeight);
-                    const progress = reduceMotion ? 1 : clamp(-rect.top / travel);
+                scenes.forEach((scene, index) => {
+                    const opacity = opacities[index];
+                    const visible = opacity > 0.002;
+                    const scale = 0.985 + opacity * 0.015;
+                    const blur = reduceMotion ? 0 : (1 - opacity) * 10;
 
-                    if (section.dataset.story === "origins") {
-                        const copyProgress = mapRange(progress, 0.04, 0.28);
-                        const beamProgress = mapRange(progress, 0.18, 0.78);
-                        const meetingOpacity = mapRange(progress, 0.68, 0.9);
-                        section.style.setProperty("--origins-copy", copyProgress.toFixed(3));
-                        section.style.setProperty("--origins-opacity", (0.18 + copyProgress * 0.82).toFixed(3));
-                        section.style.setProperty("--origins-shift", `${((1 - copyProgress) * 22).toFixed(2)}px`);
-                        section.style.setProperty("--beam-progress", beamProgress.toFixed(3));
-                        section.style.setProperty("--meeting-opacity", meetingOpacity.toFixed(3));
-                        section.style.setProperty("--meeting-scale", (0.72 + meetingOpacity * 0.28).toFixed(3));
-                        section.style.setProperty("--spark-opacity", meetingOpacity.toFixed(3));
-                    }
+                    scene.style.setProperty("--scene-opacity", opacity.toFixed(4));
+                    scene.style.setProperty("--scene-scale", scale.toFixed(4));
+                    scene.style.setProperty("--scene-blur", `${blur.toFixed(2)}px`);
+                    scene.style.setProperty("--scene-visibility", visible ? "visible" : "hidden");
+                    scene.dataset.sceneVisible = visible ? "true" : "false";
 
-                    if (section.dataset.story === "meeting") {
-                        const beamProgress = mapRange(progress, 0.03, 0.48);
-                        const titleOpacity = mapRange(progress, 0.34, 0.62);
-                        const afterOpacity = mapRange(progress, 0.68, 0.88);
-                        section.style.setProperty("--beam-progress", beamProgress.toFixed(3));
-                        section.style.setProperty("--meeting-title-opacity", titleOpacity.toFixed(3));
-                        section.style.setProperty("--meeting-title-shift", `${((1 - titleOpacity) * 12).toFixed(2)}px`);
-                        section.style.setProperty("--meeting-title-scale", (0.9 + titleOpacity * 0.1).toFixed(3));
-                        section.style.setProperty("--after-opacity", afterOpacity.toFixed(3));
-
-                        const words = section.querySelectorAll(".text-reveal span");
-                        words.forEach((word, index) => {
-                            const start = 0.54 + (index / Math.max(1, words.length)) * 0.23;
-                            const opacity = mapRange(progress, start, start + 0.12);
-                            word.style.setProperty("--word-alpha", (0.16 + opacity * 0.84).toFixed(3));
-                        });
+                    if (opacity > 0.16) revealScene(scene);
+                    if (opacity > highestOpacity) {
+                        highestOpacity = opacity;
+                        activeIndex = index;
                     }
                 });
+
+                scenes.forEach((scene, index) => {
+                    scene.setAttribute("aria-hidden", index === activeIndex ? "false" : "true");
+                });
+
+                updateOrigins(progress);
+                updateMeeting(progress);
+                updateStageColor(progress);
             };
 
-            const requestScrollUpdate = () => {
-                if (scrollFrame) return;
-                scrollFrame = requestAnimationFrame(updateScroll);
+            const animateScroll = () => {
+                const difference = targetProgress - renderedProgress;
+                renderedProgress = reduceMotion
+                    ? targetProgress
+                    : renderedProgress + difference * 0.12;
+                renderExperience(renderedProgress);
+
+                if (Math.abs(targetProgress - renderedProgress) > 0.0001) {
+                    scrollFrame = requestAnimationFrame(animateScroll);
+                } else {
+                    renderedProgress = targetProgress;
+                    renderExperience(renderedProgress);
+                    scrollFrame = 0;
+                }
             };
 
-            window.addEventListener("scroll", requestScrollUpdate, { passive: true });
-            window.addEventListener("resize", requestScrollUpdate);
-            updateScroll();
+            const updateScrollTarget = () => {
+                const rect = experience.getBoundingClientRect();
+                const travel = Math.max(1, experience.offsetHeight - window.innerHeight);
+                targetProgress = clamp(-rect.top / travel);
+                progressBar.style.transform = `scaleX(${targetProgress})`;
+
+                if (!hasRendered) {
+                    hasRendered = true;
+                    renderedProgress = targetProgress;
+                    renderExperience(renderedProgress);
+                    return;
+                }
+
+                if (!scrollFrame) scrollFrame = requestAnimationFrame(animateScroll);
+            };
+
+            revealScene(scenes[0]);
+            window.addEventListener("scroll", updateScrollTarget, { passive: true });
+            window.addEventListener("resize", updateScrollTarget);
+            updateScrollTarget();
 
             const createCanvasScene = (canvas, draw) => {
                 const context = canvas.getContext("2d");
+                const ownerScene = canvas.closest("[data-scene]");
                 let width = 0;
                 let height = 0;
                 let dpr = 1;
@@ -1389,7 +1547,8 @@
                 };
 
                 const render = (time) => {
-                    if (visible) draw(context, width, height, time);
+                    const sceneIsVisible = !ownerScene || ownerScene.dataset.sceneVisible === "true";
+                    if (visible && sceneIsVisible) draw(context, width, height, time);
                     animationFrame = requestAnimationFrame(render);
                 };
 
