@@ -34,7 +34,9 @@
 
         body {
             margin: 0;
+            height: 100svh;
             overflow-x: hidden;
+            overflow-y: hidden;
             overscroll-behavior-y: none;
             background: var(--paper);
             color: var(--ink);
@@ -88,17 +90,29 @@
 
         .experience {
             position: relative;
-            height: 560svh;
+            height: 100svh;
             background: var(--night);
         }
 
         .stage {
-            position: sticky;
-            top: 0;
+            position: relative;
             width: 100%;
             height: 100svh;
             overflow: hidden;
             background: var(--night);
+            cursor: pointer;
+            transition: opacity 180ms ease;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+        }
+
+        .stage:focus-visible {
+            outline: 2px solid var(--blue);
+            outline-offset: -6px;
+        }
+
+        .stage.is-resetting {
+            opacity: 0;
         }
 
         .stage > .section {
@@ -1109,7 +1123,7 @@
     </svg>
 
     <main class="experience" id="experience">
-        <div class="stage" id="stage">
+        <div class="stage" id="stage" role="button" tabindex="0" aria-label="Scene 1 of 5. Tap to continue.">
         <section class="section hero" data-scene="hero" aria-labelledby="hero-title">
             <canvas id="time-field" aria-hidden="true"></canvas>
             <div class="section-inner hero__content">
@@ -1124,7 +1138,7 @@
                     <h1 class="display blur-fade is-visible" id="hero-title" style="--delay: 320ms">And counting.</h1>
                 </div>
             </div>
-            <div class="hero__scroll-cue blur-fade is-visible" style="--delay: 780ms" aria-hidden="true">Our story</div>
+            <div class="hero__scroll-cue blur-fade is-visible" style="--delay: 780ms" aria-hidden="true">Tap to continue</div>
         </section>
 
         <section class="section story origins" id="before" data-scene="origins" data-story="origins" aria-labelledby="origins-title">
@@ -1450,10 +1464,13 @@
                 });
             };
 
-            let targetProgress = 0;
+            const sceneStops = [0, 0.34, 0.56, 0.78, 1];
+            let activeSceneIndex = 0;
+            let targetProgress = sceneStops[0];
             let renderedProgress = 0;
             let scrollFrame = 0;
             let hasRendered = false;
+            let isTransitioning = false;
 
             const renderExperience = (progress) => {
                 const opacities = scenes.map((scene, index) => (
@@ -1490,7 +1507,7 @@
                 updateStageColor(progress);
             };
 
-            const animateScroll = () => {
+            const animateScene = () => {
                 const difference = targetProgress - renderedProgress;
                 renderedProgress = reduceMotion
                     ? targetProgress
@@ -1498,34 +1515,65 @@
                 renderExperience(renderedProgress);
 
                 if (Math.abs(targetProgress - renderedProgress) > 0.0001) {
-                    scrollFrame = requestAnimationFrame(animateScroll);
+                    scrollFrame = requestAnimationFrame(animateScene);
                 } else {
                     renderedProgress = targetProgress;
                     renderExperience(renderedProgress);
                     scrollFrame = 0;
+                    isTransitioning = false;
                 }
             };
 
-            const updateScrollTarget = () => {
-                const rect = experience.getBoundingClientRect();
-                const travel = Math.max(1, experience.offsetHeight - window.innerHeight);
-                targetProgress = clamp(-rect.top / travel);
-                progressBar.style.transform = `scaleX(${targetProgress})`;
-
+            const showScene = (index, { instant = false } = {}) => {
+                activeSceneIndex = (index + scenes.length) % scenes.length;
+                targetProgress = sceneStops[activeSceneIndex];
+                progressBar.style.transform = `scaleX(${(activeSceneIndex + 1) / scenes.length})`;
+                stage.setAttribute(
+                    "aria-label",
+                    `Scene ${activeSceneIndex + 1} of ${scenes.length}. Tap to continue.`
+                );
                 if (!hasRendered) {
                     hasRendered = true;
                     renderedProgress = targetProgress;
                     renderExperience(renderedProgress);
                     return;
                 }
+                if (instant || reduceMotion) {
+                    renderedProgress = targetProgress;
+                    renderExperience(renderedProgress);
+                    isTransitioning = false;
+                    return;
+                }
+                isTransitioning = true;
+                if (!scrollFrame) scrollFrame = requestAnimationFrame(animateScene);
+            };
 
-                if (!scrollFrame) scrollFrame = requestAnimationFrame(animateScroll);
+            const advanceScene = () => {
+                if (isTransitioning) return;
+                if (activeSceneIndex === scenes.length - 1) {
+                    isTransitioning = true;
+                    stage.classList.add("is-resetting");
+                    window.setTimeout(() => {
+                        showScene(0, { instant: true });
+                        stage.classList.remove("is-resetting");
+                    }, reduceMotion ? 0 : 180);
+                    return;
+                }
+                showScene(activeSceneIndex + 1);
             };
 
             revealScene(scenes[0]);
-            window.addEventListener("scroll", updateScrollTarget, { passive: true });
-            window.addEventListener("resize", updateScrollTarget);
-            updateScrollTarget();
+            stage.addEventListener("click", advanceScene);
+            stage.addEventListener("keydown", (event) => {
+                if (["Enter", " ", "ArrowRight", "ArrowDown"].includes(event.key)) {
+                    event.preventDefault();
+                    advanceScene();
+                } else if (["ArrowLeft", "ArrowUp"].includes(event.key)) {
+                    event.preventDefault();
+                    if (!isTransitioning) showScene(activeSceneIndex - 1);
+                }
+            });
+            showScene(0, { instant: true });
 
             const createCanvasScene = (canvas, draw) => {
                 const context = canvas.getContext("2d");
