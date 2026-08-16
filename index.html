@@ -1553,8 +1553,8 @@
             const updateMeeting = (globalProgress) => {
                 const progress = mapRange(globalProgress, 0.52, 0.70);
                 const beamProgress = mapRange(progress, 0.03, 0.48);
-                const titleOpacity = mapRange(progress, 0.34, 0.62);
-                const afterOpacity = mapRange(progress, 0.68, 0.88);
+                const titleOpacity = mapRange(progress, 0, 0.10);
+                const afterOpacity = mapRange(progress, 0.08, 0.18);
                 meetingSection.style.setProperty("--beam-progress", beamProgress.toFixed(3));
                 meetingSection.style.setProperty("--meeting-title-opacity", titleOpacity.toFixed(3));
                 meetingSection.style.setProperty("--meeting-title-shift", `${((1 - titleOpacity) * 12).toFixed(2)}px`);
@@ -1563,7 +1563,7 @@
 
                 const words = meetingSection.querySelectorAll(".text-reveal span");
                 words.forEach((word, index) => {
-                    const start = 0.54 + (index / Math.max(1, words.length)) * 0.23;
+                    const start = 0.06 + (index / Math.max(1, words.length)) * 0.12;
                     const opacity = mapRange(progress, start, start + 0.12);
                     word.style.setProperty("--word-alpha", (0.16 + opacity * 0.84).toFixed(3));
                 });
@@ -1576,6 +1576,9 @@
             let scrollFrame = 0;
             let hasRendered = false;
             let isTransitioning = false;
+            let transitionStartProgress = 0;
+            let transitionStartedAt = 0;
+            const transitionDurationMs = window.matchMedia("(max-width: 760px)").matches ? 860 : 780;
             const tapGuardMs = window.matchMedia("(max-width: 760px)").matches ? 1600 : 0;
             let lastAdvanceAt = 0;
 
@@ -1617,13 +1620,15 @@
             };
 
             const animateScene = () => {
-                const difference = targetProgress - renderedProgress;
-                renderedProgress = reduceMotion
-                    ? targetProgress
-                    : renderedProgress + difference * 0.12;
+                const elapsed = performance.now() - transitionStartedAt;
+                const transitionProgress = reduceMotion
+                    ? 1
+                    : clamp(elapsed / transitionDurationMs);
+                const eased = 1 - Math.pow(1 - transitionProgress, 3);
+                renderedProgress = transitionStartProgress + (targetProgress - transitionStartProgress) * eased;
                 renderExperience(renderedProgress);
 
-                if (Math.abs(targetProgress - renderedProgress) > 0.0001) {
+                if (transitionProgress < 1) {
                     scrollFrame = requestAnimationFrame(animateScene);
                 } else {
                     renderedProgress = targetProgress;
@@ -1654,6 +1659,8 @@
                     return;
                 }
                 isTransitioning = true;
+                transitionStartProgress = renderedProgress;
+                transitionStartedAt = performance.now();
                 if (!scrollFrame) scrollFrame = requestAnimationFrame(animateScene);
             };
 
