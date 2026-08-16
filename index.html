@@ -166,6 +166,10 @@
             z-index: 5;
         }
 
+        .stage > .section:nth-child(6) {
+            z-index: 6;
+        }
+
         .section {
             position: relative;
             isolation: isolate;
@@ -805,6 +809,68 @@
             font-weight: 720;
         }
 
+        .qixi {
+            height: 100%;
+            min-height: 100%;
+            overflow: hidden;
+            background: var(--night);
+            color: #f5f5f7;
+        }
+
+        #qixi-field {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .qixi::before {
+            position: absolute;
+            inset: 0;
+            z-index: 1;
+            background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.035), transparent 42%);
+            content: "";
+            pointer-events: none;
+        }
+
+        .qixi__inner {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            min-height: 100%;
+            align-items: center;
+            justify-content: center;
+            padding-top: var(--safe-top);
+            padding-bottom: var(--safe-bottom);
+            text-align: center;
+        }
+
+        .qixi__copy {
+            width: min(100%, 760px);
+            margin-top: -12vh;
+        }
+
+        .qixi__eyebrow {
+            color: var(--blue);
+        }
+
+        .qixi h2 {
+            font-size: clamp(3.2rem, 6.6vw, 6.2rem);
+            line-height: 0.92;
+        }
+
+        .qixi h2 span {
+            display: block;
+            color: rgba(255, 255, 255, 0.48);
+        }
+
+        .qixi__subline {
+            margin: 24px auto 0;
+            color: rgba(255, 255, 255, 0.52);
+            font-size: 0.9rem;
+        }
+
         @media (max-width: 1100px) {
             :root {
                 --page-pad: 42px;
@@ -1046,6 +1112,22 @@
                 margin-top: 32px;
                 font-size: 0.78rem;
             }
+
+            .qixi__copy {
+                margin-top: -13vh;
+            }
+
+            .qixi h2 {
+                font-size: 3rem;
+            }
+
+            .qixi__subline {
+                max-width: 260px;
+                margin-top: 24px;
+                font-size: 0.74rem;
+                line-height: 1.5;
+            }
+
         }
 
         @media (max-width: 390px) {
@@ -1123,7 +1205,21 @@
     </svg>
 
     <main class="experience" id="experience">
-        <div class="stage" id="stage" role="button" tabindex="0" aria-label="Scene 1 of 5. Tap to continue.">
+        <div class="stage" id="stage" role="button" tabindex="0" aria-label="Scene 1 of 6. Tap to continue.">
+        <section class="section qixi" id="qixi" data-scene="qixi" aria-labelledby="qixi-title">
+            <canvas id="qixi-field" aria-hidden="true"></canvas>
+            <div class="section-inner qixi__inner">
+                <div class="qixi__copy">
+                    <p class="eyebrow qixi__eyebrow blur-fade">Where the Stars Meet</p>
+                    <h2 class="display blur-fade" id="qixi-title" style="--delay: 120ms">
+                        Happy
+                        <span>Valentine's Day</span>
+                    </h2>
+                    <p class="qixi__subline blur-fade" style="--delay: 240ms">No matter how far apart we are, I love you.</p>
+                </div>
+            </div>
+        </section>
+
         <section class="section hero" data-scene="hero" aria-labelledby="hero-title">
             <canvas id="time-field" aria-hidden="true"></canvas>
             <div class="section-inner hero__content">
@@ -1270,6 +1366,7 @@
                 </div>
             </div>
         </section>
+
         </div>
     </main>
 
@@ -1367,12 +1464,15 @@
             const scenes = [...document.querySelectorAll("[data-scene]")];
             const originsSection = document.querySelector("[data-scene='origins']");
             const meetingSection = document.querySelector("[data-scene='meeting']");
+            const qixiSection = document.querySelector("[data-scene='qixi']");
+            let qixiStartedAt = 0;
             const sceneRanges = [
-                { enter: [0, 0], exit: [0.13, 0.17] },
-                { enter: [0.16, 0.2], exit: [0.35, 0.39] },
-                { enter: [0.39, 0.43], exit: [0.57, 0.61] },
-                { enter: [0.61, 0.65], exit: [0.79, 0.83] },
-                { enter: [0.83, 0.87], exit: [1, 1] }
+                { enter: [0, 0], exit: [0.12, 0.16] },
+                { enter: [0.14, 0.18], exit: [0.30, 0.34] },
+                { enter: [0.32, 0.36], exit: [0.48, 0.52] },
+                { enter: [0.50, 0.54], exit: [0.66, 0.70] },
+                { enter: [0.68, 0.72], exit: [0.84, 0.88] },
+                { enter: [0.86, 0.90], exit: [1, 1] }
             ];
 
             const smoothStep = (start, end, value) => {
@@ -1414,25 +1514,29 @@
                 const paper = [245, 245, 247];
                 const night = [5, 5, 6];
 
-                if (progress < 0.35) {
-                    stage.style.backgroundColor = mixColor(paper, paper, 1);
-                } else if (progress < 0.43) {
-                    stage.style.backgroundColor = mixColor(paper, night, mapRange(progress, 0.35, 0.43));
-                } else if (progress < 0.57) {
+                if (progress < 0.14) {
                     stage.style.backgroundColor = mixColor(night, night, 1);
-                } else if (progress < 0.65) {
-                    stage.style.backgroundColor = mixColor(night, paper, mapRange(progress, 0.57, 0.65));
-                } else if (progress < 0.79) {
+                } else if (progress < 0.22) {
+                    stage.style.backgroundColor = mixColor(night, paper, mapRange(progress, 0.14, 0.22));
+                } else if (progress < 0.34) {
                     stage.style.backgroundColor = mixColor(paper, paper, 1);
-                } else if (progress < 0.87) {
-                    stage.style.backgroundColor = mixColor(paper, night, mapRange(progress, 0.79, 0.87));
+                } else if (progress < 0.42) {
+                    stage.style.backgroundColor = mixColor(paper, night, mapRange(progress, 0.34, 0.42));
+                } else if (progress < 0.54) {
+                    stage.style.backgroundColor = mixColor(night, night, 1);
+                } else if (progress < 0.62) {
+                    stage.style.backgroundColor = mixColor(night, paper, mapRange(progress, 0.54, 0.62));
+                } else if (progress < 0.80) {
+                    stage.style.backgroundColor = mixColor(paper, paper, 1);
+                } else if (progress < 0.88) {
+                    stage.style.backgroundColor = mixColor(paper, night, mapRange(progress, 0.80, 0.88));
                 } else {
                     stage.style.backgroundColor = mixColor(night, night, 1);
                 }
             };
 
             const updateOrigins = (globalProgress) => {
-                const progress = mapRange(globalProgress, 0.16, 0.35);
+                const progress = mapRange(globalProgress, 0.34, 0.52);
                 const copyProgress = mapRange(progress, 0.04, 0.28);
                 const beamProgress = mapRange(progress, 0.18, 0.78);
                 const meetingOpacity = mapRange(progress, 0.68, 0.9);
@@ -1446,7 +1550,7 @@
             };
 
             const updateMeeting = (globalProgress) => {
-                const progress = mapRange(globalProgress, 0.39, 0.57);
+                const progress = mapRange(globalProgress, 0.52, 0.70);
                 const beamProgress = mapRange(progress, 0.03, 0.48);
                 const titleOpacity = mapRange(progress, 0.34, 0.62);
                 const afterOpacity = mapRange(progress, 0.68, 0.88);
@@ -1464,7 +1568,7 @@
                 });
             };
 
-            const sceneStops = [0, 0.34, 0.56, 0.78, 1];
+            const sceneStops = [0, 0.18, 0.36, 0.54, 0.72, 1];
             let activeSceneIndex = 0;
             let targetProgress = sceneStops[0];
             let renderedProgress = 0;
@@ -1497,6 +1601,8 @@
                         activeIndex = index;
                     }
                 });
+
+                if (qixiSection.dataset.sceneVisible !== "true") qixiStartedAt = 0;
 
                 scenes.forEach((scene, index) => {
                     scene.setAttribute("aria-hidden", index === activeIndex ? "false" : "true");
@@ -1717,6 +1823,53 @@
                     context.fillStyle = glow;
                     context.fillRect(point.x - 18, point.y - 18, 36, 36);
                 });
+            });
+
+            const qixiCanvas = document.querySelector("#qixi-field");
+            const qixiParticles = Array.from({ length: 190 }, (_, index) => {
+                const side = index % 2 === 0 ? "orange" : "blue";
+                const band = ((index * 0.173) % 1) - 0.5;
+                const distance = 0.06 + ((index * 0.137) % 0.47);
+                return {
+                    side,
+                    x: side === "orange" ? distance : 1 - distance,
+                    y: 0.5 + band * 0.42,
+                    size: 0.45 + ((index * 0.31) % 1.35),
+                    phase: index * 1.91,
+                    drift: 0.35 + ((index * 0.07) % 0.8),
+                    bright: index % 9 === 0
+                };
+            });
+
+            createCanvasScene(qixiCanvas, (context, width, height, time) => {
+                context.clearRect(0, 0, width, height);
+                if (!qixiStartedAt) qixiStartedAt = time;
+                const t = reduceMotion ? 0 : time * 0.00042;
+                const reveal = reduceMotion ? 1 : clamp((time - qixiStartedAt) / 1800);
+                const drawStar = (particle) => {
+                    const color = particle.side === "orange" ? "255, 122, 61" : "19, 136, 245";
+                    const sway = Math.sin(t * particle.drift + particle.phase) * 10;
+                    const lift = Math.cos(t * particle.drift * 0.7 + particle.phase) * 5;
+                    const x = particle.x * width + sway;
+                    const y = particle.y * height + lift;
+                    const twinkle = 0.42 + 0.38 * Math.sin(t * 2.5 + particle.phase);
+                    const alpha = reveal * Math.max(0.08, twinkle);
+
+                    if (particle.bright) {
+                        const glow = context.createRadialGradient(x, y, 0, x, y, 18);
+                        glow.addColorStop(0, `rgba(${color}, ${alpha * 0.8})`);
+                        glow.addColorStop(1, `rgba(${color}, 0)`);
+                        context.fillStyle = glow;
+                        context.fillRect(x - 18, y - 18, 36, 36);
+                    }
+
+                    context.beginPath();
+                    context.fillStyle = `rgba(${color}, ${alpha})`;
+                    context.arc(x, y, particle.size * (particle.bright ? 1.35 : 1), 0, Math.PI * 2);
+                    context.fill();
+                };
+
+                qixiParticles.forEach(drawStar);
             });
         })();
     </script>
