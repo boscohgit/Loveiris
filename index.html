@@ -1576,6 +1576,8 @@
             let scrollFrame = 0;
             let hasRendered = false;
             let isTransitioning = false;
+            const tapGuardMs = window.matchMedia("(max-width: 760px)").matches ? 1600 : 0;
+            let lastAdvanceAt = 0;
 
             const renderExperience = (progress) => {
                 const opacities = scenes.map((scene, index) => (
@@ -1656,6 +1658,9 @@
             };
 
             const advanceScene = () => {
+                const now = Date.now();
+                if (now - lastAdvanceAt < tapGuardMs) return;
+                lastAdvanceAt = now;
                 if (isTransitioning) return;
                 if (activeSceneIndex === scenes.length - 1) {
                     isTransitioning = true;
