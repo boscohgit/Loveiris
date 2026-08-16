@@ -1578,8 +1578,9 @@
             let isTransitioning = false;
             let transitionStartProgress = 0;
             let transitionStartedAt = 0;
-            const transitionDurationMs = window.matchMedia("(max-width: 760px)").matches ? 860 : 780;
-            const tapGuardMs = window.matchMedia("(max-width: 760px)").matches ? 1600 : 0;
+            const mobileMode = window.matchMedia("(max-width: 760px)").matches;
+            const transitionDurationMs = mobileMode ? 860 : 780;
+            const tapGuardMs = mobileMode ? 1200 : 0;
             let lastAdvanceAt = 0;
 
             const renderExperience = (progress) => {
@@ -1652,7 +1653,7 @@
                     renderExperience(renderedProgress);
                     return;
                 }
-                if (instant || reduceMotion) {
+                if (instant || reduceMotion || mobileMode) {
                     renderedProgress = targetProgress;
                     renderExperience(renderedProgress);
                     isTransitioning = false;
