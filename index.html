@@ -107,6 +107,7 @@ body{
   letter-spacing:-.04em;font-variant-numeric:tabular-nums;
   color:var(--txt);
   text-shadow:0 0 140px rgba(204,159,62,.18);
+  transition:transform .3s ease;
 }
 .s1-digit{display:inline-block;transition:color .08s linear}
 .s1-comma{display:inline-block;color:rgba(236,232,220,.18)}
@@ -117,6 +118,25 @@ body{
   100%{color:var(--txt); text-shadow:0 0 140px rgba(204,159,62,.18)}
 }
 .s1-digit.locked{animation:lock-flash .55s ease forwards}
+
+/* Mobile heartbeat / breathing pulse on complete */
+@media(max-width:680px){
+  .s1-num.heartbeat{
+    animation:heartbeat-pulse 2.2s ease-in-out infinite;
+  }
+}
+@keyframes heartbeat-pulse{
+  0%,100%{
+    opacity:.4;
+    transform:scale(0.98);
+    text-shadow:0 0 40px rgba(204,159,62,.15);
+  }
+  50%{
+    opacity:1;
+    transform:scale(1.02);
+    text-shadow:0 0 120px rgba(245,212,122,.7), 0 0 40px rgba(204,159,62,.9);
+  }
+}
 
 .s1-unit{
   margin-top:clamp(14px,2.2vw,24px);
@@ -264,8 +284,9 @@ body{
   box-shadow:0 0 10px rgba(200,104,92,.6);
 }
 
-/* mobile: hide direct labels on dense screens, show active milestone bar */
+/* mobile: hide direct labels on dense screens, show active milestone bar, and hide tap hints */
 @media(max-width:680px){
+  .tap-hint{display:none!important}
   .tl-dot-label{display:none}
   .tl-cur{display:flex}
 }
@@ -508,6 +529,7 @@ body{
     s1Timers.forEach(function (t) { clearTimeout(t); clearInterval(t); });
     s1Timers = [];
     s1NumEl.innerHTML = '';
+    if (s1NumEl) s1NumEl.classList.remove('heartbeat');
     if (s1Tap) s1Tap.classList.remove('show');
 
     var days      = Math.floor((Date.now() - LOVE_MIDNIGHT) / DAY_MS);
@@ -557,9 +579,10 @@ body{
       s1Timers.push(t2);
     });
 
-    // Reveal tap hint when number finishes scrambling
+    // Reveal tap hint on desktop and activate heartbeat on mobile
     var tHint = setTimeout(function () {
       if (s1Tap) s1Tap.classList.add('show');
+      if (s1NumEl) s1NumEl.classList.add('heartbeat');
     }, noMo ? 200 : maxLockTime + 400);
     s1Timers.push(tHint);
   }
