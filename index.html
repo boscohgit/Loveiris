@@ -1,689 +1,776 @@
 <!doctype html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-    <meta name="theme-color" content="#080810">
-    <meta name="description" content="Every day since June 19, 2018, counted in real time.">
-    <title>Our Time</title>
-    <style>
-        :root {
-            --bg: #080810;
-            --surface: #0e0e18;
-            --paper: #f4f3f0;
-            --ink: #0a0a12;
-            --gold: #c8a96e;
-            --rose: #e8756a;
-            --blue: #6ab4e8;
-            --muted-dark: rgba(255,255,255,0.38);
-            --muted-light: rgba(10,10,18,0.44);
-            --line-dark: rgba(255,255,255,0.1);
-            --line-light: rgba(10,10,18,0.1);
-            --safe-top: max(28px, env(safe-area-inset-top));
-            --safe-bottom: max(28px, env(safe-area-inset-bottom));
-            --pad: 72px;
-            --serif: Georgia, "Times New Roman", serif;
-        }
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        html { background: var(--bg); -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
-        body {
-            height: 100svh;
-            overflow: hidden;
-            overscroll-behavior: none;
-            background: var(--bg);
-            color: #f4f3f0;
-            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
-            font-synthesis: none;
-        }
-        .progress { position: fixed; top: 0; left: 0; right: 0; height: 1px; z-index: 200; pointer-events: none; background: var(--line-dark); }
-        .progress__fill { height: 100%; background: linear-gradient(90deg, var(--rose), var(--gold), var(--blue)); transform: scaleX(0); transform-origin: left; transition: transform 680ms cubic-bezier(0.22, 1, 0.36, 1); }
-        .stage { position: relative; width: 100%; height: 100svh; overflow: hidden; cursor: pointer; -webkit-tap-highlight-color: transparent; touch-action: manipulation; background: var(--bg); transition: opacity 220ms ease; }
-        .stage.is-resetting { opacity: 0; }
-        .stage:focus-visible { outline: 2px solid var(--gold); outline-offset: -8px; }
-        .scene { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; visibility: hidden; filter: blur(12px); transform: scale(0.982); transform-origin: center; pointer-events: none; will-change: opacity, filter, transform; isolation: isolate; }
-        .scene:first-child { opacity: 1; visibility: visible; filter: blur(0); transform: scale(1); }
-        .scene:nth-child(1) { z-index: 1; }
-        .scene:nth-child(2) { z-index: 2; }
-        .scene:nth-child(3) { z-index: 3; }
-        .scene:nth-child(4) { z-index: 4; }
-        .scene:nth-child(5) { z-index: 5; }
-        .scene__canvas { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 0; }
-        .scene__inner { position: relative; z-index: 2; width: min(100%, 1440px); margin: 0 auto; padding-left: var(--pad); padding-right: var(--pad); height: 100%; display: flex; align-items: center; }
-        .reveal { opacity: 0; transform: translateY(14px); filter: blur(6px); transition: opacity 900ms cubic-bezier(0.22, 1, 0.36, 1), transform 900ms cubic-bezier(0.22, 1, 0.36, 1), filter 900ms cubic-bezier(0.22, 1, 0.36, 1); transition-delay: var(--d, 0ms); }
-        .reveal.in { opacity: 1; transform: none; filter: blur(0); }
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#040402">
+<title>Our Time</title>
+<style>
 
-        /* Hero */
-        .hero { background: var(--bg); }
-        .hero__inner { justify-content: center; text-align: center; flex-direction: column; padding-top: var(--safe-top); padding-bottom: var(--safe-bottom); }
-        .hero__eyebrow { font-size: 0.72rem; font-weight: 500; letter-spacing: 0.22em; text-transform: uppercase; color: var(--gold); margin-bottom: 52px; }
-        .hero__counter { display: flex; align-items: baseline; justify-content: center; gap: 20px; font-variant-numeric: tabular-nums; }
-        .hero__days { font-size: clamp(6rem, 16vw, 13rem); font-weight: 200; line-height: 0.86; letter-spacing: -0.03em; color: #fff; }
-        .hero__unit { font-size: clamp(1.1rem, 2.5vw, 2rem); font-weight: 300; color: var(--muted-dark); letter-spacing: 0.06em; text-transform: uppercase; }
-        .hero__title { margin-top: 36px; font-size: clamp(1.4rem, 3.5vw, 2.8rem); font-weight: 300; font-style: italic; font-family: var(--serif); color: rgba(255,255,255,0.72); letter-spacing: 0.01em; }
-        .hero__cue { position: absolute; bottom: calc(var(--safe-bottom) + 8px); left: 0; right: 0; display: flex; flex-direction: column; align-items: center; gap: 12px; font-size: 0.62rem; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(255,255,255,0.28); }
-        .hero__cue::after { content: ""; width: 1px; height: 32px; background: linear-gradient(to bottom, rgba(255,255,255,0.5), transparent); animation: cue 2s ease-in-out infinite; transform-origin: top; }
-        @keyframes cue { 0%, 100% { opacity: 0.3; transform: scaleY(0.5); } 50% { opacity: 1; transform: scaleY(1); } }
+/* ─── tokens ─── */
+:root {
+  --bg:   #040402;
+  --txt:  #ece8dc;
+  --gold: #cc9f3e;
+  --dim:  rgba(236,232,220,0.32);
+  --faint:rgba(236,232,220,0.12);
+  --pad:  clamp(20px,7vw,80px);
+  --sat:  env(safe-area-inset-top,0px);
+  --sab:  env(safe-area-inset-bottom,0px);
+}
 
-        /* Origins */
-        .origins { background: var(--paper); color: var(--ink); }
-        .origins__inner { flex-direction: column; justify-content: center; padding-top: var(--safe-top); padding-bottom: var(--safe-bottom); gap: 0; }
-        .origins__label { font-size: 0.7rem; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted-light); margin-bottom: 24px; }
-        .origins__title { font-family: var(--serif); font-size: clamp(2.8rem, 7vw, 5.6rem); font-weight: 400; font-style: italic; line-height: 0.95; color: var(--ink); margin-bottom: 64px; }
-        .origins__title em { font-style: normal; color: rgba(10,10,18,0.35); }
-        .origins__grid { display: grid; grid-template-columns: 1fr auto 1fr; align-items: end; gap: 0 48px; position: relative; }
-        .origin-card { opacity: var(--op, 0.12); transform: translateY(var(--ty, 18px)); transition: opacity 140ms linear, transform 140ms linear; }
-        .origin-card:nth-child(3) { text-align: right; }
-        .origin-card__label { font-size: 0.78rem; font-weight: 500; color: var(--muted-light); letter-spacing: 0.06em; margin-bottom: 8px; }
-        .origin-card__value { font-size: clamp(2.6rem, 6.5vw, 5.2rem); font-weight: 700; line-height: 0.9; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
-        .origin-card:first-of-type .origin-card__value { color: var(--rose); }
-        .origin-card:nth-of-type(2) .origin-card__value { color: var(--blue); }
-        .origin-card__sublabel { margin-top: 10px; font-size: 0.85rem; color: var(--muted-light); }
-        .origins__beams { position: absolute; inset: 0; pointer-events: none; overflow: visible; }
-        .beam-track { fill: none; stroke: rgba(10,10,18,0.08); stroke-width: 1.5; }
-        .beam-glow { fill: none; stroke-linecap: round; stroke-width: 3; stroke-dasharray: 1; stroke-dashoffset: calc(1 - var(--p, 0)); vector-effect: non-scaling-stroke; }
-        .beam-glow--rose { stroke: var(--rose); }
-        .beam-glow--blue { stroke: var(--blue); }
-        .meeting-node { display: flex; flex-direction: column; align-items: center; gap: 10px; opacity: var(--node-op, 0); transform: scale(var(--node-sc, 0.7)); }
-        .meeting-node__dot { width: 10px; height: 10px; border-radius: 50%; background: var(--ink); border: 2.5px solid var(--paper); box-shadow: 0 0 0 1px rgba(10,10,18,0.2), 0 0 20px rgba(10,10,18,0.15); }
-        .meeting-node__date { font-size: 0.72rem; font-weight: 700; color: var(--ink); white-space: nowrap; letter-spacing: 0.06em; }
+/* ─── reset ─── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;background:var(--bg)}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",sans-serif;
+  -webkit-font-smoothing:antialiased;
+  color:var(--txt);
+  user-select:none;
+  -webkit-tap-highlight-color:transparent;
+}
 
-        /* Meeting */
-        .meeting { background: var(--bg); }
-        .meeting__inner { justify-content: center; text-align: center; flex-direction: column; padding-top: var(--safe-top); padding-bottom: var(--safe-bottom); }
-        .meeting__label { font-size: 0.7rem; font-weight: 500; letter-spacing: 0.22em; text-transform: uppercase; color: var(--gold); margin-bottom: 40px; opacity: var(--title-op, 0); transform: translateY(calc((1 - var(--title-op, 0)) * 10px)); }
-        .meeting__date { font-size: clamp(5rem, 16vw, 12.5rem); font-weight: 100; line-height: 0.88; letter-spacing: -0.04em; color: #fff; font-variant-numeric: tabular-nums; opacity: var(--title-op, 0); transform: scale(calc(0.92 + var(--title-op, 0) * 0.08)); }
-        .meeting__year { display: block; font-size: 0.38em; font-weight: 300; color: rgba(255,255,255,0.3); letter-spacing: 0.12em; margin-top: 18px; }
-        .meeting__reveal-text { display: flex; flex-wrap: wrap; justify-content: center; gap: 0 0.28em; max-width: 820px; margin: 52px auto 0; font-size: clamp(1.4rem, 3.2vw, 2.2rem); font-weight: 300; font-style: italic; font-family: var(--serif); line-height: 1.3; color: rgba(255,255,255,0.12); }
-        .meeting__reveal-text span { color: rgba(255,255,255,var(--wa, 0.12)); transition: color 100ms linear; }
-        .meeting__beams { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
-        .m-beam-track { fill: none; stroke: rgba(255,255,255,0.06); stroke-width: 1; }
-        .m-beam-glow { fill: none; stroke-linecap: round; stroke-width: 2.5; stroke-dasharray: 1; stroke-dashoffset: calc(1 - var(--p, 0)); vector-effect: non-scaling-stroke; }
-        .m-beam-glow--rose { stroke: var(--rose); }
-        .m-beam-glow--blue { stroke: var(--blue); }
-        .m-beam-after { fill: none; stroke: rgba(255,255,255,0.55); stroke-width: 1.5; stroke-dasharray: 3 10; stroke-linecap: round; opacity: var(--after-op, 0); }
+/* ─── grain overlay ─── */
+.grain{
+  position:fixed;inset:0;z-index:900;
+  width:100%;height:100%;
+  pointer-events:none;opacity:.042;
+  mix-blend-mode:overlay;
+}
 
-        /* Now */
-        .now { background: var(--paper); color: var(--ink); }
-        .now__inner { flex-direction: column; justify-content: center; padding-top: var(--safe-top); padding-bottom: var(--safe-bottom); gap: 0; }
-        .now__header { display: grid; grid-template-columns: 0.85fr 1.15fr; align-items: end; gap: 64px; margin-bottom: 52px; }
-        .now__title { font-family: var(--serif); font-size: clamp(2.4rem, 5.5vw, 4.4rem); font-weight: 400; font-style: italic; line-height: 0.96; color: var(--ink); }
-        .now__title em { font-style: normal; color: rgba(10,10,18,0.35); }
-        .now__statement { font-size: clamp(1rem, 1.8vw, 1.35rem); font-weight: 300; line-height: 1.55; color: var(--muted-light); max-width: 560px; margin-left: auto; margin-bottom: 6px; }
-        .now__divider { width: 100%; height: 1px; background: var(--line-light); margin-bottom: 48px; }
-        .now__measure { display: grid; grid-template-columns: 1.3fr 1fr; border: 1px solid var(--line-light); }
-        .now__days-block { padding: 44px 52px 48px 0; border-right: 1px solid var(--line-light); }
-        .now__days-number { display: block; font-size: clamp(4.5rem, 10vw, 8rem); font-weight: 700; line-height: 0.88; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; color: var(--ink); }
-        .now__days-label { display: block; margin-top: 16px; font-size: 0.8rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted-light); }
-        .now__clock { display: grid; grid-template-columns: repeat(3, 1fr); }
-        .clock-unit { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; padding: 40px 14px; text-align: center; }
-        .clock-unit + .clock-unit { border-left: 1px solid var(--line-light); }
-        .clock-unit__value { font-size: clamp(2rem, 4.5vw, 3.8rem); font-weight: 600; line-height: 1; font-variant-numeric: tabular-nums; color: var(--ink); }
-        .clock-unit__label { font-size: 0.68rem; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted-light); }
-        .now__timeline { margin-top: 40px; }
-        .now__line-wrap { position: relative; height: 1px; background: var(--line-light); margin-bottom: 36px; overflow: visible; }
-        .now__line-fill { position: absolute; top: -1px; left: 0; width: 30%; height: 3px; background: linear-gradient(90deg, var(--rose), var(--blue)); animation: sweep 4s cubic-bezier(0.4, 0, 0.2, 1) infinite; }
-        .now__line-dot { position: absolute; top: -5px; width: 11px; height: 11px; border-radius: 50%; background: var(--blue); box-shadow: 0 0 18px 4px rgba(106,180,232,0.5); animation: sweep-dot 4s cubic-bezier(0.4, 0, 0.2, 1) infinite; }
-        @keyframes sweep { 0% { opacity: 0; transform: translateX(-110%); } 15% { opacity: 1; } 85% { opacity: 1; } 100% { opacity: 0; transform: translateX(340%); } }
-        @keyframes sweep-dot { 0% { opacity: 0; left: 0; } 15% { opacity: 1; } 85% { opacity: 1; } 100% { opacity: 0; left: calc(130vw); } }
-        .now__line-labels { display: flex; justify-content: space-between; position: relative; top: -28px; font-size: 0.65rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted-light); }
-        .now__line-labels span:last-child { color: var(--blue); }
-        .milestones { display: grid; grid-template-columns: repeat(5, 1fr); border: 1px solid var(--line-light); }
-        .ms { padding: 16px 18px 20px; }
-        .ms + .ms { border-left: 1px solid var(--line-light); }
-        .ms::before { content: ""; display: block; width: 6px; height: 6px; border-radius: 50%; background: var(--blue); box-shadow: 0 0 0 3px rgba(106,180,232,0.15); margin-bottom: 12px; }
-        .ms:nth-child(1)::before, .ms:nth-child(3)::before { background: var(--rose); box-shadow: 0 0 0 3px rgba(232,117,106,0.15); }
-        .ms__date { display: block; font-size: 0.72rem; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--ink); letter-spacing: 0.04em; }
-        .ms__label { display: block; margin-top: 5px; font-size: 0.66rem; font-weight: 400; color: var(--muted-light); line-height: 1.35; }
+/* ─── curtain cut ─── */
+.curtain{
+  position:fixed;inset:0;z-index:800;
+  background:var(--bg);
+  opacity:0;pointer-events:none;
+  transition:opacity .13s ease;
+}
+.curtain.on{opacity:1}
 
-        /* Finale */
-        .finale { background: var(--bg); }
-        .finale__inner { justify-content: center; text-align: center; flex-direction: column; padding-top: var(--safe-top); padding-bottom: var(--safe-bottom); }
-        .finale__eyebrow { font-size: 0.7rem; font-weight: 500; letter-spacing: 0.22em; text-transform: uppercase; color: rgba(255,255,255,0.35); margin-bottom: 44px; }
-        .finale__title { font-family: var(--serif); font-size: clamp(3.5rem, 10vw, 8rem); font-weight: 300; font-style: italic; line-height: 0.96; color: #fff; letter-spacing: -0.01em; }
-        .finale__title em { font-style: normal; display: block; color: rgba(255,255,255,0.3); }
-        .finale__date { margin-top: 44px; font-size: 0.82rem; font-weight: 500; letter-spacing: 0.14em; color: var(--gold); }
+/* ─── scenes ─── */
+.scene{
+  position:fixed;inset:0;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  padding:calc(var(--sat)+52px) var(--pad) calc(var(--sab)+52px);
+  opacity:0;pointer-events:none;
+  cursor:pointer;touch-action:manipulation;
+  will-change:opacity;
+}
+.scene.active{opacity:1;pointer-events:auto}
 
-        /* Responsive */
-        @media (max-width: 1100px) { :root { --pad: 48px; } .now__header { gap: 40px; } }
-        @media (max-width: 760px) {
-            :root { --pad: 24px; }
-            .origins__title { font-size: clamp(2.2rem, 8vw, 3.4rem); margin-bottom: 44px; }
-            .origins__grid { grid-template-columns: 1fr; gap: 0; }
-            .origin-card:nth-child(3) { text-align: left; margin-top: 32px; }
-            .origins__beams { display: none; }
-            .meeting-node { display: none; }
-            .now__header { grid-template-columns: 1fr; gap: 16px; }
-            .now__statement { margin-left: 0; margin-top: 10px; }
-            .now__measure { grid-template-columns: 1fr; border: none; }
-            .now__days-block { padding: 18px 0 22px; border-right: none; border-bottom: 1px solid var(--line-light); }
-            .now__clock { border: 1px solid var(--line-light); }
-            .clock-unit { padding: 22px 10px; }
-            .clock-unit__value { font-size: 2.2rem; }
-            .milestones { grid-template-columns: repeat(2, 1fr); }
-            .ms:nth-child(n+3) { border-top: 1px solid var(--line-light); }
-            .ms:nth-child(even) { border-left: 1px solid var(--line-light); }
-            .ms:nth-child(odd):not(:first-child) { border-left: none; }
-            .finale__title { font-size: clamp(3rem, 12vw, 5rem); }
-        }
-        @media (max-width: 390px) {
-            :root { --pad: 20px; }
-            .hero__days { font-size: 5.2rem; }
-            .meeting__date { font-size: 4.5rem; }
-            .now__days-number { font-size: 4rem; }
-            .clock-unit__value { font-size: 1.9rem; }
-        }
-        @media (prefers-reduced-motion: reduce) {
-            *, *::before, *::after { animation-duration: 1ms !important; animation-iteration-count: 1 !important; transition-duration: 1ms !important; }
-        }
-    </style>
+/* ─── tap hint ─── */
+.tap-hint{
+  position:absolute;
+  bottom:calc(var(--sab) + 32px);
+  left:50%;transform:translateX(-50%);
+  font-size:.62rem;font-weight:600;
+  letter-spacing:.26em;text-transform:uppercase;
+  color:var(--dim);white-space:nowrap;
+  display:flex;align-items:center;gap:8px;
+  opacity:0;pointer-events:none;
+  transition:opacity .6s ease;
+}
+.tap-hint.show{
+  opacity:1;
+  animation:breathe 2.4s ease-in-out infinite;
+}
+.tap-hint::before,.tap-hint::after{
+  content:'';width:16px;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(204,159,62,.4));
+}
+.tap-hint::after{
+  background:linear-gradient(90deg,rgba(204,159,62,.4),transparent);
+}
+@keyframes breathe{0%,100%{opacity:.35;transform:translateX(-50%) translateY(0)}50%{opacity:.9;transform:translateX(-50%) translateY(-2px)}}
+
+
+/* ══════════════════════════════════════
+   SCENE 1 — THE NUMBER
+══════════════════════════════════════ */
+.s1-inner{
+  text-align:center;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+}
+
+.s1-kicker{
+  font-size:clamp(.62rem,1.6vw,.78rem);
+  font-weight:600;letter-spacing:.26em;text-transform:uppercase;
+  color:var(--gold);margin-bottom:clamp(32px,6vw,56px);
+}
+
+/* digit container */
+.s1-num{
+  font-size:clamp(5rem,24vw,19rem);
+  font-weight:100;line-height:.84;
+  letter-spacing:-.04em;font-variant-numeric:tabular-nums;
+  color:var(--txt);
+  text-shadow:0 0 140px rgba(204,159,62,.18);
+}
+.s1-digit{display:inline-block;transition:color .08s linear}
+.s1-comma{display:inline-block;color:rgba(236,232,220,.18)}
+
+/* when a digit locks in: flash gold → white */
+@keyframes lock-flash{
+  0%  {color:var(--gold);text-shadow:0 0 50px rgba(204,159,62,.95)}
+  100%{color:var(--txt); text-shadow:0 0 140px rgba(204,159,62,.18)}
+}
+.s1-digit.locked{animation:lock-flash .55s ease forwards}
+
+.s1-unit{
+  margin-top:clamp(14px,2.2vw,24px);
+  font-size:clamp(.62rem,1.6vw,.78rem);
+  font-weight:600;letter-spacing:.36em;text-transform:uppercase;
+  color:var(--dim);
+}
+
+
+/* ══════════════════════════════════════
+   SCENE 2 — THE TIMELINE
+══════════════════════════════════════ */
+.s2-kicker{
+  font-size:clamp(.62rem,1.6vw,.78rem);
+  font-weight:600;letter-spacing:.26em;text-transform:uppercase;
+  color:var(--gold);margin-bottom:clamp(48px,9vw,80px);
+}
+
+/* track area */
+.tl-wrap{
+  position:relative;
+  width:min(92vw,920px);
+  height:32px;
+  display:flex;align-items:center;
+}
+.tl-bg{
+  position:absolute;inset:0;
+  height:2px;top:50%;transform:translateY(-50%);
+  background:var(--faint);border-radius:2px;
+}
+.tl-fill{
+  position:absolute;top:50%;left:0;
+  height:3px;width:0%;
+  transform:translateY(-50%);
+  background:linear-gradient(90deg, rgba(204,159,62,.6), #f5d47a);
+  border-radius:2px;
+  box-shadow:0 0 20px 3px rgba(204,159,62,.75);
+  transition:none;
+  z-index:1;
+}
+/* glowing leading edge */
+.tl-fill::after{
+  content:'';
+  position:absolute;right:-7px;top:50%;
+  width:14px;height:14px;border-radius:50%;
+  background:#fff5db;
+  transform:translateY(-50%);
+  box-shadow:0 0 22px 8px rgba(245,212,122,.9), 0 0 40px 14px rgba(204,159,62,.4);
+  animation:orb 1.4s ease-in-out infinite;
+}
+@keyframes orb{0%,100%{box-shadow:0 0 20px 7px rgba(245,212,122,.95)}50%{box-shadow:0 0 34px 14px rgba(204,159,62,.45)}}
+
+/* milestone dot (zero-size anchor, positioned via left%) */
+.tl-dot{
+  position:absolute;top:50%;
+  width:0;height:0;
+  z-index:2;
+}
+.tl-dot-inner{
+  position:absolute;
+  width:13px;height:13px;border-radius:50%;
+  background:var(--bg);border:2px solid var(--gold);
+  box-shadow:0 0 10px 2px rgba(204,159,62,.4);
+  top:-6.5px;left:-6.5px;
+  scale:0;
+  transition:scale .55s cubic-bezier(.34,1.56,.64,1), border-color .3s, box-shadow .3s;
+}
+.tl-dot-inner.on{scale:1}
+
+/* Highlighted Special Milestones */
+.tl-dot.hl .tl-dot-inner{
+  width:17px;height:17px;
+  top:-8.5px;left:-8.5px;
+  background:#ffe9aa;border:2.5px solid #fff;
+  box-shadow:0 0 24px 8px rgba(245,212,122,.9), 0 0 45px 16px rgba(204,159,62,.45);
+}
+.tl-dot.hl .tl-dot-inner.on{
+  animation:pulse-hl 2s infinite ease-in-out;
+}
+@keyframes pulse-hl{
+  0%,100%{transform:scale(1);box-shadow:0 0 20px 6px rgba(245,212,122,.9)}
+  50%{transform:scale(1.2);box-shadow:0 0 32px 12px rgba(245,212,122,1),0 0 50px 20px rgba(204,159,62,.5)}
+}
+
+/* milestone label — appears below/above each dot */
+.tl-dot-label{
+  position:absolute;
+  top:22px;
+  left:50%;
+  transform:translateX(-50%) translateY(8px);
+  white-space:nowrap;text-align:center;
+  opacity:0;
+  transition:opacity .4s ease .1s, transform .4s cubic-bezier(.16,1,.3,1) .1s;
+}
+.tl-dot-label.on{
+  opacity:1;
+  transform:translateX(-50%) translateY(0);
+}
+/* alternate: odd/above */
+.tl-dot.above .tl-dot-label{
+  top:auto;bottom:22px;
+  transform:translateX(-50%) translateY(-8px);
+}
+.tl-dot.above .tl-dot-label.on{
+  transform:translateX(-50%) translateY(0);
+}
+
+.tl-dot-date{
+  font-size:clamp(.68rem,1.4vw,.82rem);
+  font-weight:700;letter-spacing:.06em;
+  font-variant-numeric:tabular-nums;
+  color:var(--gold);
+}
+.tl-dot-time{
+  font-size:clamp(.58rem,1.1vw,.68rem);
+  font-weight:500;letter-spacing:.04em;
+  color:rgba(236,232,220,.5);
+  margin-left:4px;
+}
+.tl-dot-name{
+  margin-top:4px;
+  font-size:clamp(.6rem,1.25vw,.74rem);
+  font-weight:500;letter-spacing:.06em;
+  color:var(--dim);
+}
+
+/* Highlighted labels */
+.tl-dot.hl .tl-dot-date{
+  color:#fff;
+  text-shadow:0 0 16px rgba(245,212,122,.9);
+  font-size:clamp(.74rem,1.5vw,.88rem);
+}
+.tl-dot.hl .tl-dot-name{
+  color:#f7df99;
+  font-weight:600;
+  text-shadow:0 0 12px rgba(204,159,62,.6);
+}
+.tl-dot.hl .tl-badge{
+  display:inline-block;
+  background:linear-gradient(135deg, #c8685c, #cc9f3e);
+  color:#fff;font-size:.52rem;font-weight:700;
+  letter-spacing:.08em;text-transform:uppercase;
+  padding:2px 6px;border-radius:4px;
+  margin-bottom:3px;
+  box-shadow:0 0 10px rgba(200,104,92,.6);
+}
+
+/* mobile: hide direct labels on dense screens, show active milestone bar */
+@media(max-width:680px){
+  .tl-dot-label{display:none}
+  .tl-cur{display:flex}
+}
+@media(min-width:681px){
+  .tl-cur{display:none}
+}
+
+/* current-label bar (mobile) */
+.tl-cur{
+  margin-top:36px;
+  flex-direction:column;align-items:center;
+  text-align:center;min-height:56px;
+}
+.tl-cur-date{
+  font-size:.9rem;font-weight:700;letter-spacing:.08em;
+  font-variant-numeric:tabular-nums;color:var(--gold);
+  transition:opacity .25s,transform .25s cubic-bezier(.16,1,.3,1);
+}
+.tl-cur-name{
+  font-size:.76rem;font-weight:500;letter-spacing:.06em;
+  color:var(--dim);margin-top:6px;
+  transition:opacity .25s,transform .25s cubic-bezier(.16,1,.3,1);
+}
+.tl-cur-badge{
+  display:none;
+  background:linear-gradient(135deg, #c8685c, #cc9f3e);
+  color:#fff;font-size:.54rem;font-weight:700;
+  letter-spacing:.08em;text-transform:uppercase;
+  padding:2px 8px;border-radius:4px;margin-bottom:6px;
+}
+.tl-cur.hl .tl-cur-date{color:#fff;text-shadow:0 0 16px rgba(245,212,122,.9)}
+.tl-cur.hl .tl-cur-name{color:#f7df99;font-weight:600}
+.tl-cur.hl .tl-cur-badge{display:inline-block}
+.tl-cur-date.fade,.tl-cur-name.fade{opacity:0;transform:translateY(4px)}
+
+
+/* ══════════════════════════════════════
+   SCENE 3 — THE CLOCK
+══════════════════════════════════════ */
+.s3-kicker{
+  font-size:clamp(.58rem,1.5vw,.72rem);
+  font-weight:600;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--gold);
+  margin-bottom:clamp(28px,5vw,52px);
+  text-align:center;
+}
+
+.clk{text-align:center}
+
+.clk-days{
+  display:flex;align-items:baseline;
+  justify-content:center;gap:clamp(10px,2vw,18px);
+  margin-bottom:clamp(14px,3vw,26px);
+}
+.clk-days-num{
+  font-size:clamp(4.5rem,20vw,16rem);
+  font-weight:100;line-height:.86;
+  letter-spacing:-.04em;font-variant-numeric:tabular-nums;
+  color:var(--txt);
+  text-shadow:0 0 100px rgba(204,159,62,.12);
+}
+.clk-days-lbl{
+  font-size:clamp(.6rem,1.8vw,.9rem);
+  font-weight:500;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--dim);align-self:flex-end;margin-bottom:.15em;
+}
+
+.clk-hms{
+  display:flex;align-items:baseline;
+  justify-content:center;
+}
+.cs{text-align:center}
+.cs-val{
+  display:block;
+  font-size:clamp(1.8rem,5.5vw,4.5rem);
+  font-weight:200;font-variant-numeric:tabular-nums;
+  letter-spacing:-.02em;
+  color:rgba(236,232,220,.58);line-height:1;
+}
+.cs-lbl{
+  display:block;margin-top:5px;
+  font-size:clamp(.5rem,.9vw,.6rem);
+  font-weight:700;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--dim);
+}
+.csep{
+  font-size:clamp(1.5rem,4.5vw,3.5rem);
+  font-weight:100;color:rgba(236,232,220,.1);
+  padding:0 clamp(6px,1.2vw,12px);
+  line-height:1;margin-bottom:clamp(14px,2.5vw,22px);
+}
+
+/* tick animation on seconds */
+.cs-val.tick{animation:sec-tick .2s ease}
+@keyframes sec-tick{
+  0%  {color:var(--gold)}
+  100%{color:rgba(236,232,220,.58)}
+}
+
+.clk-sub{
+  margin-top:clamp(20px,4vw,36px);
+  font-size:clamp(.54rem,1.1vw,.64rem);
+  font-weight:600;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--dim);text-align:center;
+}
+
+/* ─── reduced motion ─── */
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{
+    animation-duration:1ms!important;
+    transition-duration:1ms!important;
+    animation-iteration-count:1!important;
+  }
+}
+</style>
 </head>
 <body>
 
-<div class="progress" aria-hidden="true"><div class="progress__fill" id="progress-fill"></div></div>
+<!-- grain -->
+<svg class="grain" aria-hidden="true">
+  <filter id="gf"><feTurbulence type="fractalNoise" baseFrequency=".65" numOctaves="3" stitchTiles="stitch"/>
+  <feColorMatrix type="saturate" values="0"/></filter>
+  <rect width="100%" height="100%" filter="url(#gf)" opacity=".35"/>
+</svg>
 
-<div class="stage" id="stage" role="button" tabindex="0" aria-label="Scene 1 of 5. Tap to continue.">
+<!-- cut curtain -->
+<div class="curtain" id="curtain"></div>
 
-    <!-- Scene 1: Hero -->
-    <section class="scene hero" data-scene="hero" aria-labelledby="hero-title">
-        <canvas class="scene__canvas" id="hero-canvas" aria-hidden="true"></canvas>
-        <div class="scene__inner hero__inner">
-            <p class="hero__eyebrow reveal" style="--d:60ms">Together since <time datetime="2018-06-19">June 19, 2018</time></p>
-            <div class="hero__counter reveal" style="--d:180ms">
-                <span class="hero__days" id="hero-days">0</span>
-                <span class="hero__unit">days</span>
-            </div>
-            <h1 class="hero__title reveal" id="hero-title" style="--d:340ms">And counting.</h1>
-        </div>
-        <div class="hero__cue reveal" style="--d:800ms" aria-hidden="true">Tap to continue</div>
-    </section>
 
-    <!-- Scene 2: Origins -->
-    <section class="scene origins" data-scene="origins" aria-labelledby="origins-title">
-        <div class="scene__inner origins__inner">
-            <p class="origins__label reveal">Two separate beginnings</p>
-            <h2 class="origins__title reveal" id="origins-title" style="--d:80ms">Before us.<br><em>Two lives.</em></h2>
-            <div class="origins__grid">
-                <div class="origin-card" id="origin-me">
-                    <p class="origin-card__label">It takes</p>
-                    <strong class="origin-card__value" data-ticker="10786">10,786</strong>
-                    <p class="origin-card__sublabel">days to finally meet you.</p>
-                </div>
-                <div style="position:relative;width:160px;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding-bottom:10px;">
-                    <svg class="origins__beams" viewBox="0 0 160 220" preserveAspectRatio="none" aria-hidden="true">
-                        <defs>
-                            <filter id="og" x="-40%" y="-40%" width="180%" height="180%">
-                                <feGaussianBlur stdDeviation="4" result="b"/>
-                                <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
-                            </filter>
-                        </defs>
-                        <path class="beam-track" pathLength="1" d="M10 20 C10 120 80 175 80 200"/>
-                        <path class="beam-track" pathLength="1" d="M150 20 C150 120 80 175 80 200"/>
-                        <path class="beam-glow beam-glow--rose" pathLength="1" id="beam-left" d="M10 20 C10 120 80 175 80 200"/>
-                        <path class="beam-glow beam-glow--blue" pathLength="1" id="beam-right" d="M150 20 C150 120 80 175 80 200"/>
-                        <circle cx="80" cy="200" r="5" fill="#f4f3f0" filter="url(#og)" opacity="var(--spark-op,0)"/>
-                    </svg>
-                    <div class="meeting-node" id="meeting-node">
-                        <div class="meeting-node__dot"></div>
-                        <div class="meeting-node__date">June 19, 2018</div>
-                    </div>
-                </div>
-                <div class="origin-card" id="origin-her">
-                    <p class="origin-card__label">It takes</p>
-                    <strong class="origin-card__value" data-ticker="9512">9,512</strong>
-                    <p class="origin-card__sublabel">days to finally meet me.</p>
-                </div>
-            </div>
-        </div>
-    </section>
+<!-- ══ SCENE 1 ══ -->
+<section class="scene active" id="s1" aria-label="Scene 1 of 3">
+  <div class="s1-inner">
+    <p class="s1-kicker">Together since June&nbsp;19,&nbsp;2018</p>
+    <div class="s1-num" id="s1-num" aria-live="polite"></div>
+    <p class="s1-unit">days</p>
+  </div>
+  <div class="tap-hint" id="s1-tap">Tap anywhere to continue</div>
+</section>
 
-    <!-- Scene 3: Meeting -->
-    <section class="scene meeting" data-scene="meeting" aria-labelledby="meeting-date">
-        <canvas class="scene__canvas" id="meeting-canvas" aria-hidden="true"></canvas>
-        <svg class="meeting__beams" viewBox="0 0 1440 900" preserveAspectRatio="none" aria-hidden="true">
-            <defs>
-                <filter id="mg" x="-50%" y="-50%" width="200%" height="200%">
-                    <feGaussianBlur stdDeviation="6" result="b"/>
-                    <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
-                </filter>
-            </defs>
-            <path class="m-beam-track" pathLength="1" d="M-60 180 C280 200 380 450 720 450"/>
-            <path class="m-beam-track" pathLength="1" d="M1500 720 C1160 700 1060 450 720 450"/>
-            <path class="m-beam-glow m-beam-glow--rose" pathLength="1" id="m-beam-l" d="M-60 180 C280 200 380 450 720 450"/>
-            <path class="m-beam-glow m-beam-glow--blue" pathLength="1" id="m-beam-r" d="M1500 720 C1160 700 1060 450 720 450"/>
-            <path class="m-beam-after" pathLength="1" d="M720 450 C960 450 1240 450 1600 450" id="m-beam-after"/>
-        </svg>
-        <div class="scene__inner meeting__inner">
-            <p class="meeting__label" id="meeting-label">The day everything changed</p>
-            <h2 class="meeting__date" id="meeting-date">06.19<span class="meeting__year">2018</span></h2>
-            <p class="meeting__reveal-text" id="meeting-text" data-words="Two separate timelines became one."></p>
-        </div>
-    </section>
 
-    <!-- Scene 4: Now -->
-    <section class="scene now" data-scene="now" aria-labelledby="now-title">
-        <div class="scene__inner now__inner">
-            <div class="now__header">
-                <h2 class="now__title reveal" id="now-title">Every day.<br><em>Since then.</em></h2>
-                <p class="now__statement reveal" style="--d:100ms">Our time, still moving forward.</p>
-            </div>
-            <div class="now__divider"></div>
-            <div class="now__measure reveal" style="--d:160ms" aria-live="off">
-                <div class="now__days-block">
-                    <span class="now__days-number" id="now-days">0</span>
-                    <span class="now__days-label">days together</span>
-                </div>
-                <div class="now__clock">
-                    <div class="clock-unit">
-                        <span class="clock-unit__value" id="now-hours">00</span>
-                        <span class="clock-unit__label">Hours</span>
-                    </div>
-                    <div class="clock-unit">
-                        <span class="clock-unit__value" id="now-minutes">00</span>
-                        <span class="clock-unit__label">Minutes</span>
-                    </div>
-                    <div class="clock-unit">
-                        <span class="clock-unit__value" id="now-seconds">00</span>
-                        <span class="clock-unit__label">Seconds</span>
-                    </div>
-                </div>
-            </div>
-            <div class="now__timeline reveal" style="--d:220ms" aria-hidden="true">
-                <div class="now__line-wrap">
-                    <div class="now__line-fill"></div>
-                    <div class="now__line-dot"></div>
-                </div>
-                <div class="now__line-labels">
-                    <span>2018.06.19</span>
-                    <span>Still counting</span>
-                </div>
-            </div>
-            <div class="milestones reveal" style="--d:300ms" aria-label="Our milestones">
-                <div class="ms">
-                    <time class="ms__date" datetime="2018-06-19">2018.06.19</time>
-                    <span class="ms__label">First meeting</span>
-                </div>
-                <div class="ms">
-                    <time class="ms__date" datetime="2018-09-06">2018.09.06</time>
-                    <span class="ms__label">Started dating</span>
-                </div>
-                <div class="ms">
-                    <time class="ms__date" datetime="2020-12-06">2020.12.06</time>
-                    <span class="ms__label">The proposal</span>
-                </div>
-                <div class="ms">
-                    <time class="ms__date" datetime="2021-07-09">2021.07.09</time>
-                    <span class="ms__label">Marriage registration</span>
-                </div>
-                <div class="ms">
-                    <time class="ms__date" datetime="2022-09-15">2022.09.15</time>
-                    <span class="ms__label">Wedding day</span>
-                </div>
-            </div>
-        </div>
-    </section>
+<!-- ══ SCENE 2 ══ -->
+<section class="scene" id="s2" aria-label="Scene 2 of 3">
+  <p class="s2-kicker">Our journey</p>
+  <div class="tl-wrap" id="tl-wrap">
+    <div class="tl-bg"></div>
+    <div class="tl-fill" id="tl-fill"></div>
+    <!-- dots injected by JS -->
+  </div>
+  <!-- mobile: current label -->
+  <div class="tl-cur" id="tl-cur">
+    <div class="tl-cur-badge" id="tl-cur-badge">Special Moment</div>
+    <div class="tl-cur-date" id="tl-cur-date"></div>
+    <div class="tl-cur-name" id="tl-cur-name"></div>
+  </div>
+  <div class="tap-hint" id="s2-tap">Tap anywhere to continue</div>
+</section>
 
-    <!-- Scene 5: Finale -->
-    <section class="scene finale" data-scene="finale" aria-labelledby="finale-title">
-        <canvas class="scene__canvas" id="finale-canvas" aria-hidden="true"></canvas>
-        <div class="scene__inner finale__inner">
-            <p class="finale__eyebrow reveal"><span id="finale-days">0</span> days later</p>
-            <h2 class="finale__title reveal" id="finale-title" style="--d:100ms">Still you.<em>Always you.</em></h2>
-            <p class="finale__date reveal" id="finale-date" style="--d:220ms"></p>
-        </div>
-    </section>
 
-</div>
+<!-- ══ SCENE 3 ══ -->
+<section class="scene" id="s3" aria-label="Scene 3 of 3">
+  <p class="s3-kicker">Every second, since that moment.</p>
+  <div class="clk">
+    <div class="clk-days">
+      <span class="clk-days-num" id="s3-d">0</span>
+      <span class="clk-days-lbl">days</span>
+    </div>
+    <div class="clk-hms">
+      <div class="cs"><span class="cs-val" id="s3-h">00</span><span class="cs-lbl">hrs</span></div>
+      <span class="csep">:</span>
+      <div class="cs"><span class="cs-val" id="s3-m">00</span><span class="cs-lbl">min</span></div>
+      <span class="csep">:</span>
+      <div class="cs"><span class="cs-val" id="s3-s">00</span><span class="cs-lbl">sec</span></div>
+    </div>
+  </div>
+  <p class="clk-sub">Since June&nbsp;19,&nbsp;2018 · 7:00&nbsp;PM</p>
+  <div class="tap-hint show">Tap to restart</div>
+</section>
+
 
 <script>
-(() => {
-    "use strict";
-    const LOVE_DATE = new Date(2018, 5, 19, 0, 0, 0);
-    const DAY_MS = 86400000;
-    const fmt = new Intl.NumberFormat("en-US");
-    const noMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const clamp = (v, lo = 0, hi = 1) => Math.min(hi, Math.max(lo, v));
-    const map = (v, a, b) => clamp((v - a) / (b - a));
-    const lerp = (a, b, t) => a + (b - a) * t;
-    const smooth = (a, b, t) => { const p = clamp((t - a) / (b - a)); return p * p * (3 - 2 * p); };
+(function () {
+  'use strict';
 
-    const elapsed = () => {
-        const ms = Math.max(0, Date.now() - LOVE_DATE.getTime());
-        const d = Math.floor(ms / DAY_MS);
-        const rem = ms - d * DAY_MS;
-        return { days: d, hours: Math.floor(rem / 3600000), minutes: Math.floor((rem % 3600000) / 60000), seconds: Math.floor((rem % 60000) / 1000) };
-    };
+  /* ────────────────────────────────
+     CONSTANTS
+  ──────────────────────────────── */
+  var LOVE_MIDNIGHT = new Date(2018, 5, 19, 0, 0, 0);   // for S1 day count
+  var LOVE_MOMENT   = new Date(2018, 5, 19, 19, 0, 0);  // 7pm for S3 timer
+  var DAY_MS = 86400000;
+  var fmt    = new Intl.NumberFormat('en-US');
+  var noMo   = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    const animateCount = (el, target, ms = 1500) => {
-        if (!el) return;
-        if (noMotion) { el.textContent = fmt.format(target); return; }
-        const start = performance.now();
-        const tick = (now) => {
-            const p = clamp((now - start) / ms);
-            const e = 1 - Math.pow(1 - p, 4);
-            el.textContent = fmt.format(Math.round(target * e));
-            if (p < 1) requestAnimationFrame(tick);
-        };
-        requestAnimationFrame(tick);
-    };
+  /* ────────────────────────────────
+     SCENE MANAGEMENT
+  ──────────────────────────────── */
+  var scenes     = [s('s1'), s('s2'), s('s3')];
+  var curtain    = s('curtain');
+  var current    = 0;
+  var locked     = false;
+  var s2Done     = false;
 
-    const stage = document.getElementById("stage");
-    const progressFill = document.getElementById("progress-fill");
-    const heroDays = document.getElementById("hero-days");
-    const nowDays = document.getElementById("now-days");
-    const nowH = document.getElementById("now-hours");
-    const nowM = document.getElementById("now-minutes");
-    const nowS = document.getElementById("now-seconds");
-    const finaleDays = document.getElementById("finale-days");
-    const finaleDate = document.getElementById("finale-date");
+  function s(id) { return document.getElementById(id); }
 
-    const updateTimer = () => {
-        const e = elapsed();
-        const ds = fmt.format(e.days);
-        if (!heroDays.dataset.counting) heroDays.textContent = ds;
-        nowDays.textContent = ds;
-        finaleDays.textContent = ds;
-        nowH.textContent = String(e.hours).padStart(2, "0");
-        nowM.textContent = String(e.minutes).padStart(2, "0");
-        nowS.textContent = String(e.seconds).padStart(2, "0");
-    };
+  function goNext() {
+    if (locked) return;
+    if (current === 1 && !s2Done) return; // block during S2 animation
+    locked = true;
+    curtain.classList.add('on');
+    setTimeout(function () {
+      scenes[current].classList.remove('active');
+      current = (current + 1) % 3;
+      scenes[current].classList.add('active');
+      initScene(current);
+      curtain.classList.remove('on');
+      setTimeout(function () { locked = false; }, 380);
+    }, 140);
+  }
 
-    const init = elapsed();
-    heroDays.dataset.counting = "1";
-    animateCount(heroDays, init.days, 1700);
-    setTimeout(() => { delete heroDays.dataset.counting; updateTimer(); }, 1760);
-    nowDays.textContent = fmt.format(init.days);
-    finaleDays.textContent = fmt.format(init.days);
-    finaleDate.textContent = new Intl.DateTimeFormat("en-US", { month: "long", day: "numeric", year: "numeric" }).format(new Date());
-    updateTimer();
-    setInterval(updateTimer, 250);
+  document.addEventListener('click', goNext);
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter' || e.key === ' ' || e.key === 'ArrowRight') {
+      e.preventDefault(); goNext();
+    }
+  });
 
-    document.querySelectorAll("[data-words]").forEach(el => {
-        el.innerHTML = el.dataset.words.split(" ").map(w => `<span>${w}</span>`).join(" ");
+  function initScene(idx) {
+    if (idx === 0) initS1();
+    else if (idx === 1) initS2();
+    else if (idx === 2) initS3();
+  }
+
+  /* ────────────────────────────────
+     SCENE 1: DIGIT SCRAMBLE
+  ──────────────────────────────── */
+  var s1NumEl = s('s1-num');
+  var s1Tap   = s('s1-tap');
+  var s1Timers = [];
+
+  function initS1() {
+    s1Timers.forEach(function (t) { clearTimeout(t); clearInterval(t); });
+    s1Timers = [];
+    s1NumEl.innerHTML = '';
+    if (s1Tap) s1Tap.classList.remove('show');
+
+    var days      = Math.floor((Date.now() - LOVE_MIDNIGHT) / DAY_MS);
+    var formatted = fmt.format(days);  // e.g. "2,986"
+    var digitIdx  = 0;
+    var maxLockTime = 0;
+
+    formatted.split('').forEach(function (ch) {
+      var span = document.createElement('span');
+
+      if (ch === ',') {
+        span.className   = 's1-comma';
+        span.textContent = ',';
+        s1NumEl.appendChild(span);
+        return;
+      }
+
+      var di = digitIdx++;
+      span.className   = 's1-digit';
+      span.textContent = noMo ? ch : '0';
+      s1NumEl.appendChild(span);
+
+      if (noMo) return;
+
+      var SCRAMBLE_START = di * 180;
+      var LOCK_AT        = SCRAMBLE_START + 600;
+      if (LOCK_AT > maxLockTime) maxLockTime = LOCK_AT;
+
+      var iv = null;
+      var t1 = setTimeout(function () {
+        span.style.color = 'rgba(236,232,220,0.18)';
+        iv = setInterval(function () {
+          span.textContent = Math.floor(Math.random() * 10);
+        }, 48);
+        s1Timers.push(iv);
+      }, SCRAMBLE_START);
+      s1Timers.push(t1);
+
+      var t2 = setTimeout(function () {
+        if (iv) clearInterval(iv);
+        span.textContent = ch;
+        span.style.color = '';
+        span.classList.remove('locked');
+        void span.offsetWidth;
+        span.classList.add('locked');
+      }, LOCK_AT);
+      s1Timers.push(t2);
     });
 
-    const scenes = [...document.querySelectorAll("[data-scene]")];
-    const SCENE_COUNT = scenes.length;
-    const originsEl = document.querySelector("[data-scene='origins']");
-    const meetingEl = document.querySelector("[data-scene='meeting']");
-    const STOPS = scenes.map((_, i) => i / (SCENE_COUNT - 1));
-    const RANGES = [
-        { enter: [0, 0],       exit: [0.12, 0.18] },
-        { enter: [0.14, 0.20], exit: [0.30, 0.36] },
-        { enter: [0.32, 0.38], exit: [0.48, 0.54] },
-        { enter: [0.50, 0.56], exit: [0.68, 0.74] },
-        { enter: [0.72, 0.78], exit: [1, 1]       }
-    ];
+    // Reveal tap hint when number finishes scrambling
+    var tHint = setTimeout(function () {
+      if (s1Tap) s1Tap.classList.add('show');
+    }, noMo ? 200 : maxLockTime + 400);
+    s1Timers.push(tHint);
+  }
 
-    const sceneOpacity = (p, range, i) => {
-        const entering = i === 0 ? 1 : smooth(range.enter[0], range.enter[1], p);
-        const leaving = i === SCENE_COUNT - 1 ? 1 : 1 - smooth(range.exit[0], range.exit[1], p);
-        return clamp(entering * leaving);
-    };
+  /* ────────────────────────────────
+     SCENE 2: TIMELINE
+  ──────────────────────────────── */
+  var tlWrap    = s('tl-wrap');
+  var tlFill    = s('tl-fill');
+  var tlCur     = s('tl-cur');
+  var tlCBadge  = s('tl-cur-badge');
+  var tlCDate   = s('tl-cur-date');
+  var tlCName   = s('tl-cur-name');
+  var s2Tap     = s('s2-tap');
 
-    const revealed = new Set();
-    const revealScene = (scene) => {
-        if (revealed.has(scene)) return;
-        revealed.add(scene);
-        scene.querySelectorAll(".reveal").forEach(el => el.classList.add("in"));
-        scene.querySelectorAll("[data-ticker]").forEach(el => animateCount(el, +el.dataset.ticker, 1300));
-    };
+  var MILESTONES = [
+    { pos: 0.00, date: '2018.06.19', time: '',      name: 'First meeting',            above: false, hl: false },
+    { pos: 0.08, date: '2018.09.06', time: '11:40', name: 'First dating · 11:40 AM', above: true,  hl: true, badge: 'First Dating' },
+    { pos: 0.16, date: '2018.09.06', time: '13:00', name: 'She said yes · 1:00 PM',  above: false, hl: true, badge: 'Together' },
+    { pos: 0.38, date: '2020.12.06', time: '',      name: 'The proposal',             above: true,  hl: false },
+    { pos: 0.48, date: '2021.07.09', time: '',      name: 'Marriage registration',    above: false, hl: false },
+    { pos: 0.62, date: '2022.09.15', time: '',      name: 'Wedding day',              above: true,  hl: false },
+    { pos: 0.98, date: 'Today',      time: '',      name: 'Still counting',           above: false, hl: false }
+  ];
 
-    const updateOrigins = (gp) => {
-        const p = map(gp, 0.20, 0.50);
-        const copy = map(p, 0.05, 0.30);
-        const beam = map(p, 0.20, 0.80);
-        const node = map(p, 0.65, 0.90);
-        const meCard = document.getElementById("origin-me");
-        const herCard = document.getElementById("origin-her");
-        const mNode = document.getElementById("meeting-node");
-        const bL = document.getElementById("beam-left");
-        const bR = document.getElementById("beam-right");
-        const origSVG = originsEl ? originsEl.querySelector(".origins__beams") : null;
-        const op = (0.12 + copy * 0.88).toFixed(3);
-        const ty = ((1 - copy) * 18).toFixed(1) + "px";
-        if (meCard) { meCard.style.setProperty("--op", op); meCard.style.setProperty("--ty", ty); }
-        if (herCard) { herCard.style.setProperty("--op", op); herCard.style.setProperty("--ty", ty); }
-        if (bL) bL.style.setProperty("--p", beam.toFixed(3));
-        if (bR) bR.style.setProperty("--p", beam.toFixed(3));
-        if (origSVG) origSVG.style.setProperty("--spark-op", node.toFixed(3));
-        if (mNode) { mNode.style.setProperty("--node-op", node.toFixed(3)); mNode.style.setProperty("--node-sc", (0.7 + node * 0.3).toFixed(3)); }
-    };
+  var tlProgress  = 0;
+  var tlNextIdx   = 0;
+  var tlPausing   = false;
+  var tlPauseEnd  = 0;
+  var tlLastT     = 0;
+  var tlRaf       = 0;
+  var TL_SPEED    = 0.20;  // progress per second
+  var TL_PAUSE_MS = 1350;
 
-    const updateMeeting = (gp) => {
-        const p = map(gp, 0.38, 0.70);
-        const beam = map(p, 0.02, 0.48);
-        const titleP = map(p, 0, 0.12);
-        const afterP = map(p, 0.10, 0.22);
-        const bL = document.getElementById("m-beam-l");
-        const bR = document.getElementById("m-beam-r");
-        const bA = document.getElementById("m-beam-after");
-        const lbl = document.getElementById("meeting-label");
-        const dt = document.getElementById("meeting-date");
-        if (bL) bL.style.setProperty("--p", beam.toFixed(3));
-        if (bR) bR.style.setProperty("--p", beam.toFixed(3));
-        if (bA) bA.style.setProperty("--after-op", afterP.toFixed(3));
-        if (lbl) lbl.style.setProperty("--title-op", titleP.toFixed(3));
-        if (dt) dt.style.setProperty("--title-op", titleP.toFixed(3));
-        if (meetingEl) {
-            const words = meetingEl.querySelectorAll(".meeting__reveal-text span");
-            words.forEach((w, i) => {
-                const s = 0.08 + (i / Math.max(1, words.length)) * 0.14;
-                const a = map(p, s, s + 0.14);
-                w.style.setProperty("--wa", (0.12 + a * 0.88).toFixed(3));
-            });
-        }
-    };
+  function buildDots() {
+    tlWrap.querySelectorAll('.tl-dot').forEach(function (d) { d.remove(); });
 
-    const updateBg = (p) => {
-        const paper = [244, 243, 240];
-        const night = [8, 8, 16];
-        const mix = (from, to, t) => {
-            const a = smooth(0, 1, t);
-            return `rgb(${from.map((c, i) => Math.round(lerp(c, to[i], a))).join(",")})`;
-        };
-        let col;
-        if      (p < 0.14) col = mix(night, night, 1);
-        else if (p < 0.22) col = mix(night, paper, map(p, 0.14, 0.22));
-        else if (p < 0.36) col = mix(paper, paper, 1);
-        else if (p < 0.44) col = mix(paper, night, map(p, 0.36, 0.44));
-        else if (p < 0.56) col = mix(night, night, 1);
-        else if (p < 0.64) col = mix(night, paper, map(p, 0.56, 0.64));
-        else if (p < 0.76) col = mix(paper, paper, 1);
-        else if (p < 0.84) col = mix(paper, night, map(p, 0.76, 0.84));
-        else               col = mix(night, night, 1);
-        stage.style.backgroundColor = col;
-    };
+    MILESTONES.forEach(function (ms, i) {
+      var anchor = document.createElement('div');
+      anchor.className = 'tl-dot' + (ms.above ? ' above' : '') + (ms.hl ? ' hl' : '');
+      anchor.id = 'tld-' + i;
+      anchor.style.left = (ms.pos * 100).toFixed(1) + '%';
 
-    const renderAt = (p) => {
-        let activeIdx = 0, best = -1;
-        scenes.forEach((s, i) => {
-            const op = sceneOpacity(p, RANGES[i], i);
-            const vis = op > 0.003;
-            const sc = 0.982 + op * 0.018;
-            const bl = noMotion ? 0 : (1 - op) * 12;
-            s.style.opacity = op.toFixed(4);
-            s.style.filter = `blur(${bl.toFixed(1)}px)`;
-            s.style.transform = `scale(${sc.toFixed(4)})`;
-            s.style.visibility = vis ? "visible" : "hidden";
-            if (op > 0.18) revealScene(s);
-            if (op > best) { best = op; activeIdx = i; }
-        });
-        scenes.forEach((s, i) => s.setAttribute("aria-hidden", i === activeIdx ? "false" : "true"));
-        updateOrigins(p);
-        updateMeeting(p);
-        updateBg(p);
-        progressFill.style.transform = `scaleX(${((activeIdx + 1) / SCENE_COUNT).toFixed(3)})`;
-        stage.setAttribute("aria-label", `Scene ${activeIdx + 1} of ${SCENE_COUNT}. Tap to continue.`);
-    };
+      var dot = document.createElement('div');
+      dot.className = 'tl-dot-inner';
+      dot.id = 'tli-' + i;
 
-    let activeIdx = 0, targetP = 0, renderedP = 0, transStart = 0, transStartedAt = 0;
-    let raf = 0, transitioning = false, firstRender = false, lastTap = 0;
-    const isMobile = window.matchMedia("(max-width: 760px)").matches;
-    const DUR = isMobile ? 860 : 760;
+      var lbl = document.createElement('div');
+      lbl.className = 'tl-dot-label';
+      lbl.id = 'tll-' + i;
 
-    const animate = () => {
-        const el2 = performance.now() - transStartedAt;
-        const p = noMotion ? 1 : clamp(el2 / DUR);
-        const e = 1 - Math.pow(1 - p, 3);
-        renderedP = transStart + (targetP - transStart) * e;
-        renderAt(renderedP);
-        if (p < 1) { raf = requestAnimationFrame(animate); }
-        else { renderedP = targetP; renderAt(renderedP); raf = 0; transitioning = false; }
-    };
+      if (ms.badge) {
+        var bEl = document.createElement('div');
+        bEl.className = 'tl-badge';
+        bEl.textContent = ms.badge;
+        lbl.appendChild(bEl);
+      }
 
-    const goTo = (idx, { instant = false } = {}) => {
-        activeIdx = ((idx % SCENE_COUNT) + SCENE_COUNT) % SCENE_COUNT;
-        targetP = STOPS[activeIdx];
-        if (!firstRender) { firstRender = true; renderedP = targetP; renderAt(renderedP); revealScene(scenes[0]); return; }
-        if (instant || noMotion || isMobile) { renderedP = targetP; renderAt(renderedP); transitioning = false; return; }
-        transitioning = true; transStart = renderedP; transStartedAt = performance.now();
-        if (!raf) raf = requestAnimationFrame(animate);
-    };
+      var dEl = document.createElement('div');
+      dEl.className = 'tl-dot-date';
+      dEl.textContent = ms.date;
+      if (ms.time) {
+        var tSpan = document.createElement('span');
+        tSpan.className = 'tl-dot-time';
+        tSpan.textContent = ms.time;
+        dEl.appendChild(tSpan);
+      }
 
-    const advance = () => {
-        const now2 = Date.now();
-        if (isMobile && now2 - lastTap < 1100) return;
-        lastTap = now2;
-        if (transitioning) return;
-        if (activeIdx === SCENE_COUNT - 1) {
-            transitioning = true;
-            stage.classList.add("is-resetting");
-            setTimeout(() => { goTo(0, { instant: true }); stage.classList.remove("is-resetting"); }, noMotion ? 0 : 200);
-            return;
-        }
-        goTo(activeIdx + 1);
-    };
+      var nEl = document.createElement('div');
+      nEl.className = 'tl-dot-name';
+      nEl.textContent = ms.name;
 
-    goTo(0, { instant: true });
-    stage.addEventListener("click", advance);
-    stage.addEventListener("keydown", ev => {
-        if (["Enter", " ", "ArrowRight", "ArrowDown"].includes(ev.key)) { ev.preventDefault(); advance(); }
-        else if (["ArrowLeft", "ArrowUp"].includes(ev.key)) { ev.preventDefault(); if (!transitioning) goTo(activeIdx - 1); }
+      lbl.appendChild(dEl);
+      lbl.appendChild(nEl);
+      anchor.appendChild(dot);
+      anchor.appendChild(lbl);
+      tlWrap.appendChild(anchor);
     });
+  }
 
-    /* Canvas helper */
-    const makeCanvas = (canvas, draw) => {
-        const ctx = canvas.getContext("2d");
-        const owner = canvas.closest("[data-scene]");
-        let W = 1, H = 1, dpr = 1, raf2 = 0, vis = true;
-        const resize = () => {
-            const r = canvas.getBoundingClientRect();
-            W = Math.max(1, r.width); H = Math.max(1, r.height);
-            dpr = Math.min(window.devicePixelRatio || 1, 1.75);
-            canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr);
-            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-        };
-        const loop = (t) => {
-            if (vis && (!owner || owner.style.visibility !== "hidden")) draw(ctx, W, H, t);
-            raf2 = requestAnimationFrame(loop);
-        };
-        new IntersectionObserver(([e]) => { vis = e.isIntersecting; }).observe(canvas);
-        resize();
-        window.addEventListener("resize", resize);
-        raf2 = requestAnimationFrame(loop);
-    };
+  function showMilestone(idx) {
+    var dot = s('tli-' + idx);
+    var lbl = s('tll-' + idx);
+    if (dot) dot.classList.add('on');
+    if (lbl) setTimeout(function () { lbl.classList.add('on'); }, 140);
 
-    /* Hero canvas */
-    let px = 0, py = 0;
-    window.addEventListener("pointermove", ev => {
-        px = ev.clientX / Math.max(1, window.innerWidth) - 0.5;
-        py = ev.clientY / Math.max(1, window.innerHeight) - 0.5;
-    }, { passive: true });
-
-    makeCanvas(document.getElementById("hero-canvas"), (ctx, W, H, t) => {
-        ctx.clearRect(0, 0, W, H);
-        const T = noMotion ? 0 : t * 0.00006;
-        const cx = W * 0.5 + px * 28, cy = H * 0.49 + py * 18;
-        const ss = Math.min(W, H);
-        const rings = W < 760 ? 5 : 7;
-        for (let r = 0; r < rings; r++) {
-            const radius = ss * (0.16 + r * 0.088);
-            const ys = 0.58 + r * 0.022;
-            const pts = 52 + r * 9;
-            for (let i = 0; i < pts; i++) {
-                const a = (i / pts) * Math.PI * 2 + T * (r % 2 ? -1 : 1) * (0.6 + r * 0.1);
-                const pulse = 0.28 + 0.32 * Math.sin(a * 3 + T * 7 + r * 1.4);
-                const x = cx + Math.cos(a) * radius, y = cy + Math.sin(a) * radius * ys;
-                const sz = i % 11 === 0 ? 1.5 : (i % 5 === 0 ? 1.0 : 0.65);
-                ctx.beginPath();
-                ctx.fillStyle = `rgba(255,255,255,${Math.max(0.02, pulse * 0.14)})`;
-                ctx.arc(x, y, sz, 0, Math.PI * 2);
-                ctx.fill();
-            }
+    var ms = MILESTONES[idx];
+    if (tlCur) {
+      tlCDate.classList.add('fade');
+      tlCName.classList.add('fade');
+      setTimeout(function () {
+        if (ms.hl) {
+          tlCur.classList.add('hl');
+          if (tlCBadge) tlCBadge.textContent = ms.badge || 'Special Moment';
+        } else {
+          tlCur.classList.remove('hl');
         }
-        const orbit = ss * (W < 760 ? 0.35 : 0.44);
-        const drawGlow = (angle, rgb) => {
-            const x = cx + Math.cos(angle) * orbit, y = cy + Math.sin(angle) * orbit * 0.62;
-            const g = ctx.createRadialGradient(x, y, 0, x, y, 28);
-            g.addColorStop(0, `rgba(${rgb},0.9)`); g.addColorStop(0.25, `rgba(${rgb},0.6)`); g.addColorStop(1, `rgba(${rgb},0)`);
-            ctx.fillStyle = g; ctx.fillRect(x - 28, y - 28, 56, 56);
-        };
-        drawGlow(T * 4, "232,117,106");
-        drawGlow(Math.PI + T * 4, "106,180,232");
-    });
+        tlCDate.textContent = ms.date + (ms.time ? '  ' + ms.time : '');
+        tlCName.textContent = ms.name;
+        tlCDate.classList.remove('fade');
+        tlCName.classList.remove('fade');
+      }, 200);
+    }
+  }
 
-    /* Meeting canvas */
-    makeCanvas(document.getElementById("meeting-canvas"), (ctx, W, H, t) => {
-        ctx.clearRect(0, 0, W, H);
-        const T = noMotion ? 0 : t * 0.00022;
-        const bg = ctx.createRadialGradient(W*0.5, H*0.5, 0, W*0.5, H*0.5, Math.max(W,H)*0.7);
-        bg.addColorStop(0, "rgba(20,14,32,0.96)"); bg.addColorStop(1, "rgba(8,8,16,0.99)");
-        ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
-        const bands = [
-            { y: 0.28, color: "232,117,106", amp: 0.06, spd: 0.7 },
-            { y: 0.55, color: "106,180,232", amp: 0.05, spd: 1.1 },
-            { y: 0.72, color: "200,169,110", amp: 0.04, spd: 0.9 }
-        ];
-        bands.forEach(b => {
-            const yc = H * (b.y + Math.sin(T * b.spd) * b.amp);
-            const grad = ctx.createLinearGradient(0, yc - 80, 0, yc + 80);
-            grad.addColorStop(0, `rgba(${b.color},0)`); grad.addColorStop(0.5, `rgba(${b.color},0.06)`); grad.addColorStop(1, `rgba(${b.color},0)`);
-            ctx.fillStyle = grad; ctx.fillRect(0, yc - 80, W, 160);
-        });
-        for (let i = 0; i < 120; i++) {
-            const sx = ((i * 137.508) % 1) * W, sy = ((i * 97.3) % 1) * H;
-            const a = 0.06 + 0.14 * Math.abs(Math.sin(T * 2.5 + i));
-            ctx.beginPath(); ctx.fillStyle = `rgba(255,255,255,${a})`;
-            ctx.arc(sx, sy, i % 7 === 0 ? 1.2 : 0.7, 0, Math.PI * 2); ctx.fill();
-        }
-    });
+  function tlTick(now) {
+    var dt = Math.min((now - tlLastT) / 1000, 0.1);
+    tlLastT = now;
 
-    /* Finale canvas */
-    makeCanvas(document.getElementById("finale-canvas"), (ctx, W, H, t) => {
-        ctx.clearRect(0, 0, W, H);
-        const T = noMotion ? 0 : t * 0.00038;
-        const cx = W * 0.5, cy = H * 0.5;
-        const sx = Math.min(W * 0.44, 560), sy = Math.min(H * 0.26, 220);
-        const bg = ctx.createRadialGradient(cx, cy, 0, cx, cy, Math.max(W,H)*0.65);
-        bg.addColorStop(0, "rgba(16,10,28,0.98)"); bg.addColorStop(1, "rgba(8,8,16,0.99)");
-        ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
-        for (let i = 0; i < 160; i++) {
-            const x = ((i * 131.7) % 1) * W, y = ((i * 89.4) % 1) * H;
-            const a = 0.04 + 0.16 * Math.abs(Math.sin(T * 1.8 + i * 0.7));
-            ctx.beginPath(); ctx.fillStyle = `rgba(255,255,255,${a})`;
-            ctx.arc(x, y, i % 9 === 0 ? 1.3 : 0.65, 0, Math.PI * 2); ctx.fill();
+    if (tlPausing) {
+      if (now >= tlPauseEnd) {
+        tlPausing  = false;
+        tlNextIdx++;
+      }
+    } else if (tlNextIdx < MILESTONES.length) {
+      var target = MILESTONES[tlNextIdx].pos;
+      tlProgress  = Math.min(target, tlProgress + TL_SPEED * dt);
+      tlFill.style.width = (tlProgress * 100).toFixed(2) + '%';
+
+      if (tlProgress >= target) {
+        showMilestone(tlNextIdx);
+        if (tlNextIdx === MILESTONES.length - 1) {
+          s2Done = true;
+          tlFill.style.setProperty('box-shadow', '0 0 10px rgba(204,159,62,.4)');
+          setTimeout(function () {
+            if (s2Tap) s2Tap.classList.add('show');
+          }, 500);
+          return;
         }
-        const pt = (a) => {
-            const d = 1 + Math.sin(a) * Math.sin(a);
-            return { x: cx + sx * Math.cos(a) / d, y: cy + sy * Math.sin(a) * Math.cos(a) / d };
-        };
-        ctx.beginPath();
-        for (let i = 0; i <= 300; i++) { const a = (i/300)*Math.PI*2; const p = pt(a); i===0?ctx.moveTo(p.x,p.y):ctx.lineTo(p.x,p.y); }
-        ctx.strokeStyle = "rgba(255,255,255,0.06)"; ctx.lineWidth = 1.2; ctx.stroke();
-        const draw = (startAngle, rgb) => {
-            const len = 0.52;
-            ctx.beginPath();
-            for (let i = 0; i <= 120; i++) { const a = startAngle + (i/120)*len; const p = pt(a); i===0?ctx.moveTo(p.x,p.y):ctx.lineTo(p.x,p.y); }
-            ctx.strokeStyle = `rgba(${rgb},0.85)`; ctx.lineWidth = 3; ctx.lineCap = "round"; ctx.stroke();
-            const head = pt(startAngle + len);
-            const g = ctx.createRadialGradient(head.x, head.y, 0, head.x, head.y, 20);
-            g.addColorStop(0, `rgba(${rgb},0.95)`); g.addColorStop(1, `rgba(${rgb},0)`);
-            ctx.fillStyle = g; ctx.fillRect(head.x-20, head.y-20, 40, 40);
-        };
-        draw(T % (Math.PI*2), "232,117,106");
-        draw(T % (Math.PI*2) + Math.PI, "106,180,232");
-    });
-})();
+        tlPausing  = true;
+        // give highlighted moments a slightly longer pause for emphasis
+        var pauseDuration = MILESTONES[tlNextIdx].hl ? TL_PAUSE_MS * 1.3 : TL_PAUSE_MS;
+        tlPauseEnd = now + pauseDuration;
+      }
+    }
+
+    tlRaf = requestAnimationFrame(tlTick);
+  }
+
+  function initS2() {
+    cancelAnimationFrame(tlRaf);
+    s2Done      = false;
+    tlProgress  = 0;
+    tlNextIdx   = 0;
+    tlPausing   = false;
+    tlFill.style.width = '0%';
+    if (s2Tap) s2Tap.classList.remove('show');
+    if (tlCur) {
+      tlCur.classList.remove('hl');
+      tlCDate.textContent = '';
+      tlCName.textContent = '';
+    }
+    buildDots();
+
+    setTimeout(function () {
+      showMilestone(0);
+      tlProgress = MILESTONES[0].pos;
+      tlNextIdx  = 1;
+      tlPausing  = true;
+      tlPauseEnd = performance.now() + TL_PAUSE_MS;
+      tlLastT    = performance.now();
+      tlRaf      = requestAnimationFrame(tlTick);
+    }, 380);
+  }
+
+  /* ────────────────────────────────
+     SCENE 3: TIMER
+  ──────────────────────────────── */
+  var s3D    = s('s3-d');
+  var s3H    = s('s3-h');
+  var s3M    = s('s3-m');
+  var s3Secs = s('s3-s');
+  var s3Iv   = null;
+  var prevSec = -1;
+
+  function updateClock() {
+    var el  = Math.max(0, Date.now() - LOVE_MOMENT);
+    var d   = Math.floor(el / DAY_MS);
+    var rem = el - d * DAY_MS;
+    var h   = Math.floor(rem / 3600000);
+    var m   = Math.floor((rem % 3600000) / 60000);
+    var sec = Math.floor((rem % 60000) / 1000);
+
+    s3D.textContent = fmt.format(d);
+    s3H.textContent = pad2(h);
+    s3M.textContent = pad2(m);
+    s3Secs.textContent = pad2(sec);
+
+    if (sec !== prevSec && !noMo) {
+      prevSec = sec;
+      s3Secs.classList.remove('tick');
+      void s3Secs.offsetWidth;
+      s3Secs.classList.add('tick');
+    }
+  }
+
+  function pad2(n) { return String(n).padStart(2, '0'); }
+
+  function initS3() {
+    clearInterval(s3Iv);
+    prevSec = -1;
+    updateClock();
+    s3Iv = setInterval(updateClock, 250);
+  }
+
+  /* ────────────────────────────────
+     BOOT
+  ──────────────────────────────── */
+  initS1();
+
+}());
 </script>
 </body>
 </html>
