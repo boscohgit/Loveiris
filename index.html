@@ -756,6 +756,58 @@
             color: var(--blue);
         }
 
+        .milestones {
+            display: grid;
+            margin-top: 34px;
+            grid-template-columns: repeat(5, 1fr);
+            border-top: 1px solid var(--line);
+            border-bottom: 1px solid var(--line);
+        }
+
+        .milestone {
+            position: relative;
+            min-width: 0;
+            padding: 18px 18px 20px;
+        }
+
+        .milestone + .milestone {
+            border-left: 1px solid var(--line);
+        }
+
+        .milestone::before {
+            display: block;
+            width: 7px;
+            height: 7px;
+            margin-bottom: 14px;
+            border-radius: 50%;
+            background: var(--blue);
+            box-shadow: 0 0 0 4px rgba(19, 136, 245, 0.1);
+            content: "";
+        }
+
+        .milestone:first-child::before,
+        .milestone:nth-child(3)::before {
+            background: var(--orange);
+            box-shadow: 0 0 0 4px rgba(255, 122, 61, 0.1);
+        }
+
+        .milestone time {
+            display: block;
+            color: var(--ink);
+            font-size: 0.78rem;
+            font-weight: 750;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .milestone__label {
+            display: block;
+            margin-top: 7px;
+            color: var(--muted);
+            font-size: 0.72rem;
+            font-weight: 650;
+            line-height: 1.3;
+        }
+
         .finale {
             height: 100%;
             min-height: 100%;
@@ -1098,6 +1150,40 @@
                 font-size: 0.68rem;
             }
 
+            .milestones {
+                margin-top: 24px;
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .milestone {
+                padding: 13px 12px 14px;
+            }
+
+            .milestone + .milestone {
+                border-left: 0;
+            }
+
+            .milestone:nth-child(even) {
+                border-left: 1px solid var(--line);
+            }
+
+            .milestone:nth-child(n + 3) {
+                border-top: 1px solid var(--line);
+            }
+
+            .milestone::before {
+                margin-bottom: 10px;
+            }
+
+            .milestone time {
+                font-size: 0.7rem;
+            }
+
+            .milestone__label {
+                margin-top: 5px;
+                font-size: 0.65rem;
+            }
+
             .finale h2 {
                 font-size: 4.15rem;
                 line-height: 0.9;
@@ -1351,6 +1437,29 @@
                         <span>Still counting</span>
                     </div>
                 </div>
+
+                <div class="milestones blur-fade" style="--delay: 320ms" aria-label="Our milestones">
+                    <div class="milestone">
+                        <time datetime="2018-06-19">2018.06.19</time>
+                        <span class="milestone__label">First meeting</span>
+                    </div>
+                    <div class="milestone">
+                        <time datetime="2018-09-06">2018.09.06</time>
+                        <span class="milestone__label">Started dating</span>
+                    </div>
+                    <div class="milestone">
+                        <time datetime="2020-12-06">2020.12.06</time>
+                        <span class="milestone__label">The proposal</span>
+                    </div>
+                    <div class="milestone">
+                        <time datetime="2021-07-09">2021.07.09</time>
+                        <span class="milestone__label">Marriage registration</span>
+                    </div>
+                    <div class="milestone">
+                        <time datetime="2022-09-15">2022.09.15</time>
+                        <span class="milestone__label">Wedding day</span>
+                    </div>
+                </div>
             </div>
         </section>
 
@@ -1376,7 +1485,7 @@
             "use strict";
 
             const DAY_MS = 24 * 60 * 60 * 1000;
-            const loveDate = new Date(2018, 5, 18, 19, 0, 0);
+            const loveDate = new Date(2018, 5, 19, 0, 0, 0);
             const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
             const formatter = new Intl.NumberFormat("en-US");
 
