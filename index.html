@@ -119,22 +119,20 @@ body{
 }
 .s1-digit.locked{animation:lock-flash .55s ease forwards}
 
-/* Mobile heartbeat / breathing pulse on complete */
+/* Mobile breathing shimmer on complete (pure opacity, no scale) */
 @media(max-width:680px){
   .s1-num.heartbeat{
-    animation:heartbeat-pulse 2.2s ease-in-out infinite;
+    animation:breathe-shimmer 2.4s ease-in-out infinite;
   }
 }
-@keyframes heartbeat-pulse{
+@keyframes breathe-shimmer{
   0%,100%{
-    opacity:.4;
-    transform:scale(0.98);
-    text-shadow:0 0 40px rgba(204,159,62,.15);
+    opacity:.35;
+    text-shadow:0 0 50px rgba(204,159,62,.1);
   }
   50%{
     opacity:1;
-    transform:scale(1.02);
-    text-shadow:0 0 120px rgba(245,212,122,.7), 0 0 40px rgba(204,159,62,.9);
+    text-shadow:0 0 140px rgba(245,212,122,.7), 0 0 50px rgba(204,159,62,.85);
   }
 }
 
