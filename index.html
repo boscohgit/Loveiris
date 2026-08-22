@@ -3,1998 +3,687 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-    <meta name="theme-color" content="#f5f5f7">
+    <meta name="theme-color" content="#080810">
     <meta name="description" content="Every day since June 19, 2018, counted in real time.">
-    <title>Our Time | A New Story</title>
+    <title>Our Time</title>
     <style>
         :root {
-            color-scheme: light dark;
-            --paper: #f5f5f7;
-            --paper-bright: #ffffff;
-            --ink: #101014;
-            --muted: #6e6e73;
-            --line: rgba(16, 16, 20, 0.14);
-            --night: #050506;
-            --night-soft: #161618;
-            --blue: #1388f5;
-            --orange: #ff7a3d;
-            --safe-top: max(24px, env(safe-area-inset-top));
-            --safe-bottom: max(24px, env(safe-area-inset-bottom));
-            --page-pad: 72px;
+            --bg: #080810;
+            --surface: #0e0e18;
+            --paper: #f4f3f0;
+            --ink: #0a0a12;
+            --gold: #c8a96e;
+            --rose: #e8756a;
+            --blue: #6ab4e8;
+            --muted-dark: rgba(255,255,255,0.38);
+            --muted-light: rgba(10,10,18,0.44);
+            --line-dark: rgba(255,255,255,0.1);
+            --line-light: rgba(10,10,18,0.1);
+            --safe-top: max(28px, env(safe-area-inset-top));
+            --safe-bottom: max(28px, env(safe-area-inset-bottom));
+            --pad: 72px;
+            --serif: Georgia, "Times New Roman", serif;
         }
-
-        * {
-            box-sizing: border-box;
-        }
-
-        html {
-            background: var(--paper);
-            scroll-behavior: smooth;
-        }
-
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html { background: var(--bg); -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
         body {
-            margin: 0;
             height: 100svh;
-            overflow-x: hidden;
-            overflow-y: hidden;
-            overscroll-behavior-y: none;
-            background: var(--paper);
-            color: var(--ink);
-            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text",
-                "Helvetica Neue", Arial, sans-serif;
+            overflow: hidden;
+            overscroll-behavior: none;
+            background: var(--bg);
+            color: #f4f3f0;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
             font-synthesis: none;
-            letter-spacing: 0;
-            text-rendering: optimizeLegibility;
-            -webkit-font-smoothing: antialiased;
         }
-
-        body,
-        button,
-        input {
-            letter-spacing: 0;
-        }
-
-        ::selection {
-            background: rgba(19, 136, 245, 0.2);
-        }
-
-        .scroll-progress {
-            position: fixed;
-            inset: 0 0 auto;
-            z-index: 100;
-            height: 3px;
-            transform: translateZ(0);
-            pointer-events: none;
-        }
-
-        .scroll-progress span {
-            display: block;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, var(--orange), #f8f8fa 50%, var(--blue));
-            transform: scaleX(0);
-            transform-origin: left center;
-            will-change: transform;
-        }
-
-        .noise {
-            position: fixed;
-            inset: 0;
-            z-index: 90;
-            width: 100%;
-            height: 100%;
-            opacity: 0.035;
-            pointer-events: none;
-            mix-blend-mode: multiply;
-        }
-
-        .experience {
-            position: relative;
-            height: 100svh;
-            background: var(--night);
-        }
-
-        .stage {
-            position: relative;
-            width: 100%;
-            height: 100svh;
-            overflow: hidden;
-            background: var(--night);
-            cursor: pointer;
-            transition: opacity 180ms ease;
-            -webkit-tap-highlight-color: transparent;
-            touch-action: manipulation;
-        }
-
-        .stage:focus-visible {
-            outline: 2px solid var(--blue);
-            outline-offset: -6px;
-        }
-
-        .stage.is-resetting {
-            opacity: 0;
-        }
-
-        .stage > .section {
-            --scene-opacity: 0;
-            --scene-scale: 0.985;
-            --scene-blur: 10px;
-            --scene-visibility: hidden;
-            position: absolute;
-            inset: 0;
-            width: 100%;
-            height: 100%;
-            min-height: 100%;
-            background: transparent;
-            opacity: var(--scene-opacity);
-            visibility: var(--scene-visibility);
-            filter: blur(var(--scene-blur));
-            transform: scale(var(--scene-scale));
-            transform-origin: center;
-            pointer-events: none;
-            will-change: opacity, filter, transform;
-        }
-
-        .stage .meeting-story .story__sticky {
-            background: transparent;
-        }
-
-        .stage > .section:first-child {
-            --scene-opacity: 1;
-            --scene-scale: 1;
-            --scene-blur: 0px;
-            --scene-visibility: visible;
-        }
-
-        .stage > .section:nth-child(1) {
-            z-index: 1;
-        }
-
-        .stage > .section:nth-child(2) {
-            z-index: 2;
-        }
-
-        .stage > .section:nth-child(3) {
-            z-index: 3;
-        }
-
-        .stage > .section:nth-child(4) {
-            z-index: 4;
-        }
-
-        .stage > .section:nth-child(5) {
-            z-index: 5;
-        }
-
-        .stage > .section:nth-child(6) {
-            z-index: 6;
-        }
-
-        .section {
-            position: relative;
-            isolation: isolate;
-        }
-
-        .section-inner {
-            width: min(100%, 1440px);
-            margin: 0 auto;
-            padding-right: var(--page-pad);
-            padding-left: var(--page-pad);
-        }
-
-        .eyebrow {
-            margin: 0 0 22px;
-            color: var(--blue);
-            font-size: 1rem;
-            font-weight: 700;
-            line-height: 1.35;
-        }
-
-        .display {
-            margin: 0;
-            font-weight: 700;
-            line-height: 0.92;
-        }
-
-        .blur-fade {
-            opacity: 0;
-            filter: blur(8px);
-            transform: translateY(12px);
-            transition:
-                opacity 900ms cubic-bezier(0.22, 1, 0.36, 1),
-                filter 900ms cubic-bezier(0.22, 1, 0.36, 1),
-                transform 900ms cubic-bezier(0.22, 1, 0.36, 1);
-            transition-delay: var(--delay, 0ms);
-        }
-
-        .blur-fade.is-visible {
-            opacity: 1;
-            filter: blur(0);
-            transform: translateY(0);
-        }
-
-        .hero {
-            height: 100%;
-            min-height: 100%;
-            overflow: hidden;
-            background: var(--paper);
-        }
-
-        #time-field {
-            position: absolute;
-            inset: 0;
-            z-index: -1;
-            width: 100%;
-            height: 100%;
-        }
-
-        .hero::after {
-            position: absolute;
-            inset: 0;
-            z-index: -1;
-            background: rgba(245, 245, 247, 0.36);
-            content: "";
-            pointer-events: none;
-        }
-
-        .hero__content {
-            display: flex;
-            min-height: 100%;
-            align-items: center;
-            justify-content: center;
-            padding-top: var(--safe-top);
-            padding-bottom: var(--safe-bottom);
-            text-align: center;
-        }
-
-        .hero__copy {
-            width: min(100%, 1100px);
-        }
-
-        .hero__kicker {
-            margin: 0 0 36px;
-            color: var(--muted);
-            font-size: 1.06rem;
-            font-weight: 600;
-            line-height: 1.45;
-        }
-
-        .hero__measure {
-            display: flex;
-            align-items: baseline;
-            justify-content: center;
-            gap: 18px;
-            color: var(--ink);
-            font-variant-numeric: tabular-nums;
-        }
-
-        .hero__number {
-            min-width: 6ch;
-            font-size: 10rem;
-            font-weight: 750;
-            line-height: 0.84;
-            text-align: right;
-        }
-
-        .hero__unit {
-            color: var(--muted);
-            font-size: 2rem;
-            font-weight: 650;
-        }
-
-        .hero h1 {
-            margin: 30px 0 0;
-            color: var(--ink);
-            font-size: 3.75rem;
-            line-height: 1;
-        }
-
-        .hero__scroll-cue {
-            position: absolute;
-            right: 0;
-            bottom: calc(var(--safe-bottom) + 10px);
-            left: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 10px;
-            color: var(--muted);
-            font-size: 0.72rem;
-            font-weight: 700;
-            line-height: 1;
-            text-transform: uppercase;
-        }
-
-        .hero__scroll-cue::after {
-            width: 1px;
-            height: 34px;
-            background: var(--ink);
-            content: "";
-            animation: cue 1800ms ease-in-out infinite;
-            transform-origin: top;
-        }
-
-        @keyframes cue {
-            0%,
-            100% {
-                opacity: 0.25;
-                transform: scaleY(0.55);
-            }
-            50% {
-                opacity: 0.9;
-                transform: scaleY(1);
-            }
-        }
-
-        .story {
-            height: 100%;
-            background: var(--paper-bright);
-        }
-
-        .story__sticky {
-            position: relative;
-            display: flex;
-            height: 100%;
-            min-height: 100%;
-            align-items: center;
-            overflow: hidden;
-            padding-top: var(--safe-top);
-            padding-bottom: var(--safe-bottom);
-        }
-
-        .origins__heading {
-            width: min(100%, 780px);
-        }
-
-        .origins__heading h2 {
-            font-size: 5.5rem;
-        }
-
-        .origins__heading h2 span {
-            color: #85858b;
-        }
-
-        .origins__visual {
-            position: relative;
-            display: grid;
-            min-height: 390px;
-            margin-top: 48px;
-            grid-template-columns: 1fr 1fr;
-            gap: 90px;
-            padding-top: 18px;
-        }
-
-        .origin-copy {
-            position: relative;
-            z-index: 2;
-            max-width: 470px;
-            opacity: var(--origins-opacity, 0.18);
-            transform: translateY(var(--origins-shift, 22px));
-            transition: opacity 100ms linear, transform 100ms linear;
-        }
-
-        .origin-copy:nth-of-type(2) {
-            justify-self: end;
-            text-align: right;
-        }
-
-        .origin-copy p {
-            margin: 0;
-            color: var(--muted);
-            font-size: 1.2rem;
-            font-weight: 600;
-            line-height: 1.25;
-        }
-
-        .origin-copy strong {
-            display: block;
-            margin: 8px 0 10px;
-            color: var(--ink);
-            font-size: 4.6rem;
-            font-weight: 730;
-            line-height: 0.95;
-            white-space: nowrap;
-            font-variant-numeric: tabular-nums;
-        }
-
-        .origin-copy:first-of-type strong {
-            color: var(--orange);
-        }
-
-        .origin-copy:nth-of-type(2) strong {
-            color: var(--blue);
-        }
-
-        .origin-beams {
-            position: absolute;
-            right: 0;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 250px;
-            overflow: visible;
-            pointer-events: none;
-        }
-
-        .beam-base {
-            fill: none;
-            stroke: rgba(16, 16, 20, 0.12);
-            stroke-width: 2;
-        }
-
-        .beam-fill {
-            fill: none;
-            stroke-linecap: round;
-            stroke-width: 4;
-            stroke-dasharray: 1;
-            stroke-dashoffset: calc(1 - var(--beam-progress, 0));
-            vector-effect: non-scaling-stroke;
-        }
-
-        .beam-fill--orange {
-            stroke: var(--orange);
-        }
-
-        .beam-fill--blue {
-            stroke: var(--blue);
-        }
-
-        .beam-spark {
-            opacity: var(--spark-opacity, 0);
-        }
-
-        .meeting-node {
-            position: absolute;
-            bottom: 14px;
-            left: 50%;
-            z-index: 3;
-            display: flex;
-            align-items: center;
-            flex-direction: column;
-            gap: 10px;
-            opacity: var(--meeting-opacity, 0);
-            transform: translateX(-50%) scale(var(--meeting-scale, 0.72));
-        }
-
-        .meeting-node::before {
-            width: 12px;
-            height: 12px;
-            border: 3px solid var(--paper-bright);
-            border-radius: 50%;
-            background: var(--ink);
-            box-shadow: 0 0 0 1px rgba(16, 16, 20, 0.18), 0 0 28px rgba(16, 16, 20, 0.18);
-            content: "";
-        }
-
-        .meeting-node time {
-            color: var(--ink);
-            font-size: 0.8rem;
-            font-weight: 750;
-            white-space: nowrap;
-            font-variant-numeric: tabular-nums;
-        }
-
-        .meeting-story {
-            height: 100%;
-            background: var(--night);
-            color: #f5f5f7;
-        }
-
-        .meeting-story .story__sticky {
-            background: var(--night);
-        }
-
-        .meeting-beams {
-            position: absolute;
-            inset: 0;
-            z-index: -1;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-        }
-
-        .meeting-beams .beam-base {
-            stroke: rgba(255, 255, 255, 0.1);
-            stroke-width: 1.5;
-        }
-
-        .meeting-beams .beam-fill {
-            stroke-width: 3;
-            filter: url("#beam-glow");
-        }
-
-        .meeting-beams__after {
-            opacity: var(--after-opacity, 0);
-            stroke: rgba(255, 255, 255, 0.9);
-            stroke-dasharray: 4 12;
-            stroke-linecap: round;
-            stroke-width: 2;
-        }
-
-        .meeting__content {
-            position: relative;
-            z-index: 2;
-            width: min(100%, 1200px);
-            text-align: center;
-        }
-
-        .meeting__eyebrow {
-            margin-bottom: 26px;
-            color: rgba(255, 255, 255, 0.5);
-            opacity: var(--meeting-title-opacity, 0);
-            transform: translateY(var(--meeting-title-shift, 12px));
-        }
-
-        .meeting__date {
-            margin: 0;
-            color: #f5f5f7;
-            font-size: 9rem;
-            font-weight: 730;
-            line-height: 0.84;
-            opacity: var(--meeting-title-opacity, 0);
-            transform: scale(var(--meeting-title-scale, 0.9));
-            font-variant-numeric: tabular-nums;
-        }
-
-        .meeting__date span {
-            display: block;
-            margin-top: 20px;
-            color: rgba(255, 255, 255, 0.38);
-            font-size: 0.5em;
-        }
-
-        .text-reveal {
-            display: flex;
-            max-width: 900px;
-            margin: 58px auto 0;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 0 0.25em;
-            color: rgba(255, 255, 255, 0.16);
-            font-size: 2.2rem;
-            font-weight: 650;
-            line-height: 1.18;
-        }
-
-        .text-reveal span {
-            color: rgba(255, 255, 255, var(--word-alpha, 0.16));
-            transition: color 80ms linear;
-        }
-
-        .now {
-            height: 100%;
-            min-height: 100%;
-            display: flex;
-            align-items: center;
-            overflow: hidden;
-            background: var(--paper);
-            padding-top: calc(var(--safe-top) + 34px);
-            padding-bottom: calc(var(--safe-bottom) + 34px);
-        }
-
-        .now__header {
-            display: grid;
-            align-items: end;
-            grid-template-columns: 0.8fr 1.2fr;
-            gap: 80px;
-        }
-
-        .now__header h2 {
-            font-size: 5rem;
-        }
-
-        .now__header h2 span {
-            display: block;
-            color: #85858b;
-        }
-
-        .now__statement {
-            max-width: 620px;
-            margin: 0 0 6px auto;
-            color: var(--muted);
-            font-size: 1.5rem;
-            font-weight: 560;
-            line-height: 1.4;
-        }
-
-        .now__measure {
-            display: grid;
-            margin-top: 56px;
-            grid-template-columns: 1.25fr 1fr;
-            border-top: 1px solid var(--line);
-            border-bottom: 1px solid var(--line);
-        }
-
-        .now__days {
-            min-width: 0;
-            padding: 46px 56px 52px 0;
-            border-right: 1px solid var(--line);
-        }
-
-        .now__number {
-            display: block;
-            color: var(--ink);
-            font-size: 8rem;
-            font-weight: 740;
-            line-height: 0.9;
-            font-variant-numeric: tabular-nums;
-        }
-
-        .now__days-label {
-            display: block;
-            margin-top: 18px;
-            color: var(--blue);
-            font-size: 1.25rem;
-            font-weight: 700;
-        }
-
-        .clock {
-            display: grid;
-            min-width: 0;
-            grid-template-columns: repeat(3, 1fr);
-        }
-
-        .clock__unit {
-            display: flex;
-            min-width: 0;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-            gap: 14px;
-            padding: 42px 18px;
-            text-align: center;
-        }
-
-        .clock__unit + .clock__unit {
-            border-left: 1px solid var(--line);
-        }
-
-        .clock__value {
-            min-width: 2ch;
-            color: var(--ink);
-            font-size: 3.8rem;
-            font-weight: 710;
-            line-height: 1;
-            font-variant-numeric: tabular-nums;
-        }
-
-        .clock__label {
-            color: var(--muted);
-            font-size: 0.8rem;
-            font-weight: 720;
-            text-transform: uppercase;
-        }
-
-        .continuum {
-            position: relative;
-            height: 76px;
-            margin-top: 44px;
-        }
-
-        .continuum__line {
-            position: absolute;
-            top: 24px;
-            left: 0;
-            width: calc(100vw + 30%);
-            height: 1px;
-            overflow: visible;
-            background: var(--line);
-        }
-
-        .continuum__line::before {
-            position: absolute;
-            top: -1px;
-            left: 0;
-            width: 34%;
-            height: 3px;
-            background: linear-gradient(90deg, var(--orange), var(--blue));
-            content: "";
-            animation: continuum 3800ms cubic-bezier(0.4, 0, 0.2, 1) infinite;
-        }
-
-        .continuum__line::after {
-            position: absolute;
-            top: -5px;
-            left: 0;
-            width: 11px;
-            height: 11px;
-            border-radius: 50%;
-            background: var(--blue);
-            box-shadow: 0 0 22px rgba(19, 136, 245, 0.65);
-            content: "";
-            animation: continuum-dot 3800ms cubic-bezier(0.4, 0, 0.2, 1) infinite;
-        }
-
-        @keyframes continuum {
-            0% {
-                opacity: 0;
-                transform: translateX(-105%);
-            }
-            18% {
-                opacity: 1;
-            }
-            80% {
-                opacity: 1;
-            }
-            100% {
-                opacity: 0;
-                transform: translateX(330%);
-            }
-        }
-
-        @keyframes continuum-dot {
-            0% {
-                opacity: 0;
-                transform: translateX(0);
-            }
-            18% {
-                opacity: 1;
-            }
-            80% {
-                opacity: 1;
-            }
-            100% {
-                opacity: 0;
-                transform: translateX(calc(130vw + 240px));
-            }
-        }
-
-        .continuum__labels {
-            position: absolute;
-            top: 44px;
-            right: 0;
-            left: 0;
-            display: flex;
-            justify-content: space-between;
-            color: var(--muted);
-            font-size: 0.76rem;
-            font-weight: 700;
-            font-variant-numeric: tabular-nums;
-        }
-
-        .continuum__labels span:last-child {
-            color: var(--blue);
-        }
-
-        .milestones {
-            display: grid;
-            margin-top: 34px;
-            grid-template-columns: repeat(5, 1fr);
-            border-top: 1px solid var(--line);
-            border-bottom: 1px solid var(--line);
-        }
-
-        .milestone {
-            position: relative;
-            min-width: 0;
-            padding: 18px 18px 20px;
-        }
-
-        .milestone + .milestone {
-            border-left: 1px solid var(--line);
-        }
-
-        .milestone::before {
-            display: block;
-            width: 7px;
-            height: 7px;
-            margin-bottom: 14px;
-            border-radius: 50%;
-            background: var(--blue);
-            box-shadow: 0 0 0 4px rgba(19, 136, 245, 0.1);
-            content: "";
-        }
-
-        .milestone:first-child::before,
-        .milestone:nth-child(3)::before {
-            background: var(--orange);
-            box-shadow: 0 0 0 4px rgba(255, 122, 61, 0.1);
-        }
-
-        .milestone time {
-            display: block;
-            color: var(--ink);
-            font-size: 0.78rem;
-            font-weight: 750;
-            font-variant-numeric: tabular-nums;
-        }
-
-        .milestone__label {
-            display: block;
-            margin-top: 7px;
-            color: var(--muted);
-            font-size: 0.72rem;
-            font-weight: 650;
-            line-height: 1.3;
-        }
-
-        .finale {
-            height: 100%;
-            min-height: 100%;
-            overflow: hidden;
-            background: var(--night);
-            color: #f5f5f7;
-        }
-
-        #infinity-field {
-            position: absolute;
-            inset: 0;
-            z-index: -1;
-            width: 100%;
-            height: 100%;
-        }
-
-        .finale__inner {
-            display: flex;
-            min-height: 100%;
-            align-items: center;
-            justify-content: center;
-            padding-top: var(--safe-top);
-            padding-bottom: var(--safe-bottom);
-            text-align: center;
-        }
-
-        .finale__copy {
-            width: min(100%, 1000px);
-        }
-
-        .finale__kicker {
-            margin: 0 0 38px;
-            color: rgba(255, 255, 255, 0.52);
-            font-size: 1rem;
-            font-weight: 650;
-        }
-
-        .finale h2 {
-            font-size: 7.8rem;
-        }
-
-        .finale h2 span {
-            display: block;
-            color: rgba(255, 255, 255, 0.48);
-        }
-
-        .finale__date {
-            margin: 42px 0 0;
-            color: var(--blue);
-            font-size: 0.9rem;
-            font-weight: 720;
-        }
-
-        .qixi {
-            height: 100%;
-            min-height: 100%;
-            overflow: hidden;
-            background: var(--night);
-            color: #f5f5f7;
-        }
-
-        #qixi-field {
-            position: absolute;
-            inset: 0;
-            z-index: 0;
-            width: 100%;
-            height: 100%;
-        }
-
-        .qixi::before {
-            position: absolute;
-            inset: 0;
-            z-index: 1;
-            background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.035), transparent 42%);
-            content: "";
-            pointer-events: none;
-        }
-
-        .qixi__inner {
-            position: relative;
-            z-index: 2;
-            display: flex;
-            min-height: 100%;
-            align-items: center;
-            justify-content: center;
-            padding-top: var(--safe-top);
-            padding-bottom: var(--safe-bottom);
-            text-align: center;
-        }
-
-        .qixi__copy {
-            width: min(100%, 760px);
-            margin-top: -12vh;
-        }
-
-        .qixi__eyebrow {
-            color: var(--blue);
-        }
-
-        .qixi h2 {
-            font-size: clamp(3.2rem, 6.6vw, 6.2rem);
-            line-height: 0.92;
-        }
-
-        .qixi h2 span {
-            display: block;
-            color: rgba(255, 255, 255, 0.48);
-        }
-
-        .qixi__subline {
-            margin: 24px auto 0;
-            color: rgba(255, 255, 255, 0.52);
-            font-size: 0.9rem;
-        }
-
-        @media (max-width: 1100px) {
-            :root {
-                --page-pad: 42px;
-            }
-
-            .hero__number {
-                font-size: 8rem;
-            }
-
-            .origins__heading h2 {
-                font-size: 4.6rem;
-            }
-
-            .origin-copy strong {
-                font-size: 3.8rem;
-            }
-
-            .meeting__date {
-                font-size: 7.4rem;
-            }
-
-            .now__header {
-                grid-template-columns: 1fr 1fr;
-                gap: 42px;
-            }
-
-            .now__number {
-                font-size: 6.3rem;
-            }
-
-            .clock__value {
-                font-size: 3rem;
-            }
-
-            .finale h2 {
-                font-size: 6.2rem;
-            }
-        }
-
+        .progress { position: fixed; top: 0; left: 0; right: 0; height: 1px; z-index: 200; pointer-events: none; background: var(--line-dark); }
+        .progress__fill { height: 100%; background: linear-gradient(90deg, var(--rose), var(--gold), var(--blue)); transform: scaleX(0); transform-origin: left; transition: transform 680ms cubic-bezier(0.22, 1, 0.36, 1); }
+        .stage { position: relative; width: 100%; height: 100svh; overflow: hidden; cursor: pointer; -webkit-tap-highlight-color: transparent; touch-action: manipulation; background: var(--bg); transition: opacity 220ms ease; }
+        .stage.is-resetting { opacity: 0; }
+        .stage:focus-visible { outline: 2px solid var(--gold); outline-offset: -8px; }
+        .scene { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; visibility: hidden; filter: blur(12px); transform: scale(0.982); transform-origin: center; pointer-events: none; will-change: opacity, filter, transform; isolation: isolate; }
+        .scene:first-child { opacity: 1; visibility: visible; filter: blur(0); transform: scale(1); }
+        .scene:nth-child(1) { z-index: 1; }
+        .scene:nth-child(2) { z-index: 2; }
+        .scene:nth-child(3) { z-index: 3; }
+        .scene:nth-child(4) { z-index: 4; }
+        .scene:nth-child(5) { z-index: 5; }
+        .scene__canvas { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 0; }
+        .scene__inner { position: relative; z-index: 2; width: min(100%, 1440px); margin: 0 auto; padding-left: var(--pad); padding-right: var(--pad); height: 100%; display: flex; align-items: center; }
+        .reveal { opacity: 0; transform: translateY(14px); filter: blur(6px); transition: opacity 900ms cubic-bezier(0.22, 1, 0.36, 1), transform 900ms cubic-bezier(0.22, 1, 0.36, 1), filter 900ms cubic-bezier(0.22, 1, 0.36, 1); transition-delay: var(--d, 0ms); }
+        .reveal.in { opacity: 1; transform: none; filter: blur(0); }
+
+        /* Hero */
+        .hero { background: var(--bg); }
+        .hero__inner { justify-content: center; text-align: center; flex-direction: column; padding-top: var(--safe-top); padding-bottom: var(--safe-bottom); }
+        .hero__eyebrow { font-size: 0.72rem; font-weight: 500; letter-spacing: 0.22em; text-transform: uppercase; color: var(--gold); margin-bottom: 52px; }
+        .hero__counter { display: flex; align-items: baseline; justify-content: center; gap: 20px; font-variant-numeric: tabular-nums; }
+        .hero__days { font-size: clamp(6rem, 16vw, 13rem); font-weight: 200; line-height: 0.86; letter-spacing: -0.03em; color: #fff; }
+        .hero__unit { font-size: clamp(1.1rem, 2.5vw, 2rem); font-weight: 300; color: var(--muted-dark); letter-spacing: 0.06em; text-transform: uppercase; }
+        .hero__title { margin-top: 36px; font-size: clamp(1.4rem, 3.5vw, 2.8rem); font-weight: 300; font-style: italic; font-family: var(--serif); color: rgba(255,255,255,0.72); letter-spacing: 0.01em; }
+        .hero__cue { position: absolute; bottom: calc(var(--safe-bottom) + 8px); left: 0; right: 0; display: flex; flex-direction: column; align-items: center; gap: 12px; font-size: 0.62rem; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(255,255,255,0.28); }
+        .hero__cue::after { content: ""; width: 1px; height: 32px; background: linear-gradient(to bottom, rgba(255,255,255,0.5), transparent); animation: cue 2s ease-in-out infinite; transform-origin: top; }
+        @keyframes cue { 0%, 100% { opacity: 0.3; transform: scaleY(0.5); } 50% { opacity: 1; transform: scaleY(1); } }
+
+        /* Origins */
+        .origins { background: var(--paper); color: var(--ink); }
+        .origins__inner { flex-direction: column; justify-content: center; padding-top: var(--safe-top); padding-bottom: var(--safe-bottom); gap: 0; }
+        .origins__label { font-size: 0.7rem; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted-light); margin-bottom: 24px; }
+        .origins__title { font-family: var(--serif); font-size: clamp(2.8rem, 7vw, 5.6rem); font-weight: 400; font-style: italic; line-height: 0.95; color: var(--ink); margin-bottom: 64px; }
+        .origins__title em { font-style: normal; color: rgba(10,10,18,0.35); }
+        .origins__grid { display: grid; grid-template-columns: 1fr auto 1fr; align-items: end; gap: 0 48px; position: relative; }
+        .origin-card { opacity: var(--op, 0.12); transform: translateY(var(--ty, 18px)); transition: opacity 140ms linear, transform 140ms linear; }
+        .origin-card:nth-child(3) { text-align: right; }
+        .origin-card__label { font-size: 0.78rem; font-weight: 500; color: var(--muted-light); letter-spacing: 0.06em; margin-bottom: 8px; }
+        .origin-card__value { font-size: clamp(2.6rem, 6.5vw, 5.2rem); font-weight: 700; line-height: 0.9; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
+        .origin-card:first-of-type .origin-card__value { color: var(--rose); }
+        .origin-card:nth-of-type(2) .origin-card__value { color: var(--blue); }
+        .origin-card__sublabel { margin-top: 10px; font-size: 0.85rem; color: var(--muted-light); }
+        .origins__beams { position: absolute; inset: 0; pointer-events: none; overflow: visible; }
+        .beam-track { fill: none; stroke: rgba(10,10,18,0.08); stroke-width: 1.5; }
+        .beam-glow { fill: none; stroke-linecap: round; stroke-width: 3; stroke-dasharray: 1; stroke-dashoffset: calc(1 - var(--p, 0)); vector-effect: non-scaling-stroke; }
+        .beam-glow--rose { stroke: var(--rose); }
+        .beam-glow--blue { stroke: var(--blue); }
+        .meeting-node { display: flex; flex-direction: column; align-items: center; gap: 10px; opacity: var(--node-op, 0); transform: scale(var(--node-sc, 0.7)); }
+        .meeting-node__dot { width: 10px; height: 10px; border-radius: 50%; background: var(--ink); border: 2.5px solid var(--paper); box-shadow: 0 0 0 1px rgba(10,10,18,0.2), 0 0 20px rgba(10,10,18,0.15); }
+        .meeting-node__date { font-size: 0.72rem; font-weight: 700; color: var(--ink); white-space: nowrap; letter-spacing: 0.06em; }
+
+        /* Meeting */
+        .meeting { background: var(--bg); }
+        .meeting__inner { justify-content: center; text-align: center; flex-direction: column; padding-top: var(--safe-top); padding-bottom: var(--safe-bottom); }
+        .meeting__label { font-size: 0.7rem; font-weight: 500; letter-spacing: 0.22em; text-transform: uppercase; color: var(--gold); margin-bottom: 40px; opacity: var(--title-op, 0); transform: translateY(calc((1 - var(--title-op, 0)) * 10px)); }
+        .meeting__date { font-size: clamp(5rem, 16vw, 12.5rem); font-weight: 100; line-height: 0.88; letter-spacing: -0.04em; color: #fff; font-variant-numeric: tabular-nums; opacity: var(--title-op, 0); transform: scale(calc(0.92 + var(--title-op, 0) * 0.08)); }
+        .meeting__year { display: block; font-size: 0.38em; font-weight: 300; color: rgba(255,255,255,0.3); letter-spacing: 0.12em; margin-top: 18px; }
+        .meeting__reveal-text { display: flex; flex-wrap: wrap; justify-content: center; gap: 0 0.28em; max-width: 820px; margin: 52px auto 0; font-size: clamp(1.4rem, 3.2vw, 2.2rem); font-weight: 300; font-style: italic; font-family: var(--serif); line-height: 1.3; color: rgba(255,255,255,0.12); }
+        .meeting__reveal-text span { color: rgba(255,255,255,var(--wa, 0.12)); transition: color 100ms linear; }
+        .meeting__beams { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
+        .m-beam-track { fill: none; stroke: rgba(255,255,255,0.06); stroke-width: 1; }
+        .m-beam-glow { fill: none; stroke-linecap: round; stroke-width: 2.5; stroke-dasharray: 1; stroke-dashoffset: calc(1 - var(--p, 0)); vector-effect: non-scaling-stroke; }
+        .m-beam-glow--rose { stroke: var(--rose); }
+        .m-beam-glow--blue { stroke: var(--blue); }
+        .m-beam-after { fill: none; stroke: rgba(255,255,255,0.55); stroke-width: 1.5; stroke-dasharray: 3 10; stroke-linecap: round; opacity: var(--after-op, 0); }
+
+        /* Now */
+        .now { background: var(--paper); color: var(--ink); }
+        .now__inner { flex-direction: column; justify-content: center; padding-top: var(--safe-top); padding-bottom: var(--safe-bottom); gap: 0; }
+        .now__header { display: grid; grid-template-columns: 0.85fr 1.15fr; align-items: end; gap: 64px; margin-bottom: 52px; }
+        .now__title { font-family: var(--serif); font-size: clamp(2.4rem, 5.5vw, 4.4rem); font-weight: 400; font-style: italic; line-height: 0.96; color: var(--ink); }
+        .now__title em { font-style: normal; color: rgba(10,10,18,0.35); }
+        .now__statement { font-size: clamp(1rem, 1.8vw, 1.35rem); font-weight: 300; line-height: 1.55; color: var(--muted-light); max-width: 560px; margin-left: auto; margin-bottom: 6px; }
+        .now__divider { width: 100%; height: 1px; background: var(--line-light); margin-bottom: 48px; }
+        .now__measure { display: grid; grid-template-columns: 1.3fr 1fr; border: 1px solid var(--line-light); }
+        .now__days-block { padding: 44px 52px 48px 0; border-right: 1px solid var(--line-light); }
+        .now__days-number { display: block; font-size: clamp(4.5rem, 10vw, 8rem); font-weight: 700; line-height: 0.88; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; color: var(--ink); }
+        .now__days-label { display: block; margin-top: 16px; font-size: 0.8rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted-light); }
+        .now__clock { display: grid; grid-template-columns: repeat(3, 1fr); }
+        .clock-unit { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; padding: 40px 14px; text-align: center; }
+        .clock-unit + .clock-unit { border-left: 1px solid var(--line-light); }
+        .clock-unit__value { font-size: clamp(2rem, 4.5vw, 3.8rem); font-weight: 600; line-height: 1; font-variant-numeric: tabular-nums; color: var(--ink); }
+        .clock-unit__label { font-size: 0.68rem; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted-light); }
+        .now__timeline { margin-top: 40px; }
+        .now__line-wrap { position: relative; height: 1px; background: var(--line-light); margin-bottom: 36px; overflow: visible; }
+        .now__line-fill { position: absolute; top: -1px; left: 0; width: 30%; height: 3px; background: linear-gradient(90deg, var(--rose), var(--blue)); animation: sweep 4s cubic-bezier(0.4, 0, 0.2, 1) infinite; }
+        .now__line-dot { position: absolute; top: -5px; width: 11px; height: 11px; border-radius: 50%; background: var(--blue); box-shadow: 0 0 18px 4px rgba(106,180,232,0.5); animation: sweep-dot 4s cubic-bezier(0.4, 0, 0.2, 1) infinite; }
+        @keyframes sweep { 0% { opacity: 0; transform: translateX(-110%); } 15% { opacity: 1; } 85% { opacity: 1; } 100% { opacity: 0; transform: translateX(340%); } }
+        @keyframes sweep-dot { 0% { opacity: 0; left: 0; } 15% { opacity: 1; } 85% { opacity: 1; } 100% { opacity: 0; left: calc(130vw); } }
+        .now__line-labels { display: flex; justify-content: space-between; position: relative; top: -28px; font-size: 0.65rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted-light); }
+        .now__line-labels span:last-child { color: var(--blue); }
+        .milestones { display: grid; grid-template-columns: repeat(5, 1fr); border: 1px solid var(--line-light); }
+        .ms { padding: 16px 18px 20px; }
+        .ms + .ms { border-left: 1px solid var(--line-light); }
+        .ms::before { content: ""; display: block; width: 6px; height: 6px; border-radius: 50%; background: var(--blue); box-shadow: 0 0 0 3px rgba(106,180,232,0.15); margin-bottom: 12px; }
+        .ms:nth-child(1)::before, .ms:nth-child(3)::before { background: var(--rose); box-shadow: 0 0 0 3px rgba(232,117,106,0.15); }
+        .ms__date { display: block; font-size: 0.72rem; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--ink); letter-spacing: 0.04em; }
+        .ms__label { display: block; margin-top: 5px; font-size: 0.66rem; font-weight: 400; color: var(--muted-light); line-height: 1.35; }
+
+        /* Finale */
+        .finale { background: var(--bg); }
+        .finale__inner { justify-content: center; text-align: center; flex-direction: column; padding-top: var(--safe-top); padding-bottom: var(--safe-bottom); }
+        .finale__eyebrow { font-size: 0.7rem; font-weight: 500; letter-spacing: 0.22em; text-transform: uppercase; color: rgba(255,255,255,0.35); margin-bottom: 44px; }
+        .finale__title { font-family: var(--serif); font-size: clamp(3.5rem, 10vw, 8rem); font-weight: 300; font-style: italic; line-height: 0.96; color: #fff; letter-spacing: -0.01em; }
+        .finale__title em { font-style: normal; display: block; color: rgba(255,255,255,0.3); }
+        .finale__date { margin-top: 44px; font-size: 0.82rem; font-weight: 500; letter-spacing: 0.14em; color: var(--gold); }
+
+        /* Responsive */
+        @media (max-width: 1100px) { :root { --pad: 48px; } .now__header { gap: 40px; } }
         @media (max-width: 760px) {
-            :root {
-                --page-pad: 24px;
-            }
-
-            .scroll-progress {
-                height: 2px;
-            }
-
-            .noise {
-                opacity: 0.026;
-            }
-
-            .hero__content {
-                align-items: center;
-            }
-
-            .hero__kicker {
-                margin-bottom: 28px;
-                font-size: 0.9rem;
-            }
-
-            .hero__measure {
-                display: block;
-            }
-
-            .hero__number {
-                display: block;
-                min-width: 0;
-                font-size: 6.4rem;
-                line-height: 0.88;
-                text-align: center;
-            }
-
-            .hero__unit {
-                display: block;
-                margin-top: 18px;
-                font-size: 1.2rem;
-            }
-
-            .hero h1 {
-                margin-top: 24px;
-                font-size: 2.7rem;
-            }
-
-            .hero__scroll-cue {
-                bottom: var(--safe-bottom);
-                font-size: 0.64rem;
-            }
-
-            .story__sticky {
-                align-items: center;
-            }
-
-            .eyebrow {
-                margin-bottom: 14px;
-                font-size: 0.88rem;
-            }
-
-            .origins__heading h2 {
-                font-size: 3.35rem;
-                line-height: 0.94;
-            }
-
-            .origins__visual {
-                display: block;
-                min-height: 350px;
-                margin-top: 28px;
-                padding-top: 0;
-            }
-
-            .origin-copy {
-                width: 84%;
-                max-width: none;
-            }
-
-            .origin-copy p {
-                font-size: 0.88rem;
-                line-height: 1.28;
-            }
-
-            .origin-copy strong {
-                margin: 8px 0;
-                font-size: 2.72rem;
-                line-height: 0.92;
-                white-space: nowrap;
-            }
-
-            .origin-copy:nth-of-type(2) {
-                width: 78%;
-                margin-top: 28px;
-                margin-left: auto;
-            }
-
-            .origin-beams {
-                bottom: 0;
-                height: 140px;
-            }
-
-            .meeting-node {
-                bottom: -2px;
-            }
-
-            .meeting__eyebrow {
-                margin-bottom: 20px;
-            }
-
-            .meeting__date {
-                font-size: 4.5rem;
-                line-height: 0.86;
-            }
-
-            .meeting__date span {
-                margin-top: 14px;
-            }
-
-            .text-reveal {
-                max-width: 330px;
-                margin-top: 42px;
-                gap: 0 0.22em;
-                font-size: 1.68rem;
-                line-height: 1.18;
-            }
-
-            .now {
-                min-height: 100%;
-                padding-top: calc(var(--safe-top) + 18px);
-                padding-bottom: calc(var(--safe-bottom) + 18px);
-            }
-
-            .now__header {
-                display: block;
-            }
-
-            .now__header h2 {
-                font-size: 2.8rem;
-                line-height: 0.94;
-            }
-
-            .now__statement {
-                max-width: 420px;
-                margin: 16px 0 0;
-                font-size: 0.96rem;
-            }
-
-            .now__measure {
-                display: block;
-                margin-top: 24px;
-            }
-
-            .now__days {
-                padding: 20px 0 22px;
-                border-right: 0;
-                border-bottom: 1px solid var(--line);
-                text-align: left;
-            }
-
-            .now__number {
-                font-size: 4.4rem;
-            }
-
-            .now__days-label {
-                margin-top: 14px;
-                font-size: 1.05rem;
-            }
-
-            .clock__unit {
-                gap: 9px;
-                padding: 17px 8px 19px;
-            }
-
-            .clock__value {
-                font-size: 2.1rem;
-            }
-
-            .clock__label {
-                font-size: 0.64rem;
-            }
-
-            .continuum {
-                height: 64px;
-                margin-top: 22px;
-            }
-
-            .continuum__labels {
-                font-size: 0.68rem;
-            }
-
-            .milestones {
-                margin-top: 24px;
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            .milestone {
-                padding: 13px 12px 14px;
-            }
-
-            .milestone + .milestone {
-                border-left: 0;
-            }
-
-            .milestone:nth-child(even) {
-                border-left: 1px solid var(--line);
-            }
-
-            .milestone:nth-child(n + 3) {
-                border-top: 1px solid var(--line);
-            }
-
-            .milestone::before {
-                margin-bottom: 10px;
-            }
-
-            .milestone time {
-                font-size: 0.7rem;
-            }
-
-            .milestone__label {
-                margin-top: 5px;
-                font-size: 0.65rem;
-            }
-
-            .finale h2 {
-                font-size: 4.15rem;
-                line-height: 0.9;
-            }
-
-            .finale__kicker {
-                margin-bottom: 28px;
-                font-size: 0.88rem;
-            }
-
-            .finale__date {
-                margin-top: 32px;
-                font-size: 0.78rem;
-            }
-
-            .qixi__copy {
-                margin-top: -13vh;
-            }
-
-            .qixi h2 {
-                font-size: 3rem;
-                line-height: 1.02;
-            }
-
-            .qixi__subline {
-                max-width: 260px;
-                margin-top: 24px;
-                font-size: 0.74rem;
-                line-height: 1.5;
-            }
-
+            :root { --pad: 24px; }
+            .origins__title { font-size: clamp(2.2rem, 8vw, 3.4rem); margin-bottom: 44px; }
+            .origins__grid { grid-template-columns: 1fr; gap: 0; }
+            .origin-card:nth-child(3) { text-align: left; margin-top: 32px; }
+            .origins__beams { display: none; }
+            .meeting-node { display: none; }
+            .now__header { grid-template-columns: 1fr; gap: 16px; }
+            .now__statement { margin-left: 0; margin-top: 10px; }
+            .now__measure { grid-template-columns: 1fr; border: none; }
+            .now__days-block { padding: 18px 0 22px; border-right: none; border-bottom: 1px solid var(--line-light); }
+            .now__clock { border: 1px solid var(--line-light); }
+            .clock-unit { padding: 22px 10px; }
+            .clock-unit__value { font-size: 2.2rem; }
+            .milestones { grid-template-columns: repeat(2, 1fr); }
+            .ms:nth-child(n+3) { border-top: 1px solid var(--line-light); }
+            .ms:nth-child(even) { border-left: 1px solid var(--line-light); }
+            .ms:nth-child(odd):not(:first-child) { border-left: none; }
+            .finale__title { font-size: clamp(3rem, 12vw, 5rem); }
         }
-
         @media (max-width: 390px) {
-            :root {
-                --page-pad: 20px;
-            }
-
-            .hero__number {
-                font-size: 5.5rem;
-            }
-
-            .hero h1 {
-                font-size: 2.35rem;
-            }
-
-            .origins__heading h2 {
-                font-size: 3rem;
-            }
-
-            .origin-copy strong {
-                font-size: 2.38rem;
-            }
-
-            .meeting__date {
-                font-size: 3.9rem;
-            }
-
-            .now__header h2 {
-                font-size: 2.55rem;
-            }
-
-            .now__number {
-                font-size: 4rem;
-            }
-
-            .clock__value {
-                font-size: 2.1rem;
-            }
-
-            .finale h2 {
-                font-size: 3.7rem;
-            }
+            :root { --pad: 20px; }
+            .hero__days { font-size: 5.2rem; }
+            .meeting__date { font-size: 4.5rem; }
+            .now__days-number { font-size: 4rem; }
+            .clock-unit__value { font-size: 1.9rem; }
         }
-
         @media (prefers-reduced-motion: reduce) {
-            html {
-                scroll-behavior: auto;
-            }
-
-            *,
-            *::before,
-            *::after {
-                animation-duration: 1ms !important;
-                animation-iteration-count: 1 !important;
-                scroll-behavior: auto !important;
-                transition-duration: 1ms !important;
-            }
+            *, *::before, *::after { animation-duration: 1ms !important; animation-iteration-count: 1 !important; transition-duration: 1ms !important; }
         }
     </style>
 </head>
 <body>
-    <div class="scroll-progress" aria-hidden="true"><span id="scroll-progress-bar"></span></div>
 
-    <svg class="noise" aria-hidden="true">
-        <filter id="noise-filter">
-            <feTurbulence type="fractalNoise" baseFrequency="0.62" numOctaves="4" stitchTiles="stitch"></feTurbulence>
-            <feColorMatrix type="saturate" values="0"></feColorMatrix>
-            <feComponentTransfer>
-                <feFuncR type="linear" slope="0.18"></feFuncR>
-                <feFuncG type="linear" slope="0.18"></feFuncG>
-                <feFuncB type="linear" slope="0.18"></feFuncB>
-            </feComponentTransfer>
-        </filter>
-        <rect width="100%" height="100%" filter="url(#noise-filter)" opacity="0.36"></rect>
-    </svg>
+<div class="progress" aria-hidden="true"><div class="progress__fill" id="progress-fill"></div></div>
 
-    <main class="experience" id="experience">
-        <div class="stage" id="stage" role="button" tabindex="0" aria-label="Scene 1 of 6. Tap to continue.">
-        <section class="section qixi" id="qixi" data-scene="qixi" aria-labelledby="qixi-title">
-            <canvas id="qixi-field" aria-hidden="true"></canvas>
-            <div class="section-inner qixi__inner">
-                <div class="qixi__copy">
-                    <p class="eyebrow qixi__eyebrow blur-fade">Where the Stars Meet</p>
-                    <h2 class="display blur-fade" id="qixi-title" style="--delay: 120ms">
-                        Happy
-                        <span>Valentine's Day</span>
-                    </h2>
-                    <p class="qixi__subline blur-fade" style="--delay: 240ms">No matter how far apart we are, I love you.</p>
-                </div>
+<div class="stage" id="stage" role="button" tabindex="0" aria-label="Scene 1 of 5. Tap to continue.">
+
+    <!-- Scene 1: Hero -->
+    <section class="scene hero" data-scene="hero" aria-labelledby="hero-title">
+        <canvas class="scene__canvas" id="hero-canvas" aria-hidden="true"></canvas>
+        <div class="scene__inner hero__inner">
+            <p class="hero__eyebrow reveal" style="--d:60ms">Together since <time datetime="2018-06-19">June 19, 2018</time></p>
+            <div class="hero__counter reveal" style="--d:180ms">
+                <span class="hero__days" id="hero-days">0</span>
+                <span class="hero__unit">days</span>
             </div>
-        </section>
-
-        <section class="section hero" data-scene="hero" aria-labelledby="hero-title">
-            <canvas id="time-field" aria-hidden="true"></canvas>
-            <div class="section-inner hero__content">
-                <div class="hero__copy">
-                    <p class="hero__kicker blur-fade is-visible" style="--delay: 80ms">
-                        Together since <time datetime="2018-06-19">June 19, 2018</time>
-                    </p>
-                    <div class="hero__measure blur-fade is-visible" style="--delay: 180ms">
-                        <span class="hero__number number-ticker" id="hero-days">0</span>
-                        <span class="hero__unit">days</span>
-                    </div>
-                    <h1 class="display blur-fade is-visible" id="hero-title" style="--delay: 320ms">And counting.</h1>
-                </div>
-            </div>
-            <div class="hero__scroll-cue blur-fade is-visible" style="--delay: 780ms" aria-hidden="true">Tap to continue</div>
-        </section>
-
-        <section class="section story origins" id="before" data-scene="origins" data-story="origins" aria-labelledby="origins-title">
-            <div class="story__sticky">
-                <div class="section-inner">
-                    <div class="origins__heading blur-fade">
-                        <p class="eyebrow">Two separate beginnings</p>
-                        <h2 class="display" id="origins-title">Before us.<br><span>Two minds.</span></h2>
-                    </div>
-
-                    <div class="origins__visual">
-                        <div class="origin-copy">
-                            <p>It takes</p>
-                            <strong class="number-ticker" data-value="10786">10,786 days</strong>
-                            <p>to finally meet you.</p>
-                        </div>
-
-                        <div class="origin-copy">
-                            <p>It takes</p>
-                            <strong class="number-ticker" data-value="9512">9,512 days</strong>
-                            <p>to finally meet me.</p>
-                        </div>
-
-                        <svg class="origin-beams" viewBox="0 0 1200 260" preserveAspectRatio="none" aria-hidden="true">
-                            <defs>
-                                <filter id="origin-glow" x="-30%" y="-30%" width="160%" height="160%">
-                                    <feGaussianBlur stdDeviation="5" result="blur"></feGaussianBlur>
-                                    <feMerge>
-                                        <feMergeNode in="blur"></feMergeNode>
-                                        <feMergeNode in="SourceGraphic"></feMergeNode>
-                                    </feMerge>
-                                </filter>
-                            </defs>
-                            <path class="beam-base" pathLength="1" d="M24 30 C250 28 382 232 600 232"></path>
-                            <path class="beam-base" pathLength="1" d="M1176 30 C950 28 818 232 600 232"></path>
-                            <path class="beam-fill beam-fill--orange" pathLength="1" d="M24 30 C250 28 382 232 600 232"></path>
-                            <path class="beam-fill beam-fill--blue" pathLength="1" d="M1176 30 C950 28 818 232 600 232"></path>
-                            <circle class="beam-spark" cx="600" cy="232" r="6" fill="#ffffff" filter="url(#origin-glow)"></circle>
-                        </svg>
-
-                        <div class="meeting-node">
-                            <time datetime="2018-06-19">June 19, 2018</time>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section class="section story meeting-story" id="meeting" data-scene="meeting" data-story="meeting" aria-labelledby="meeting-date">
-            <div class="story__sticky">
-                <svg class="meeting-beams" viewBox="0 0 1440 900" preserveAspectRatio="none" aria-hidden="true">
-                    <defs>
-                        <filter id="beam-glow" x="-50%" y="-50%" width="200%" height="200%">
-                            <feGaussianBlur stdDeviation="7" result="coloredBlur"></feGaussianBlur>
-                            <feMerge>
-                                <feMergeNode in="coloredBlur"></feMergeNode>
-                                <feMergeNode in="SourceGraphic"></feMergeNode>
-                            </feMerge>
-                        </filter>
-                    </defs>
-                    <path class="beam-base" pathLength="1" d="M-80 160 C300 170 390 450 720 450"></path>
-                    <path class="beam-base" pathLength="1" d="M1520 740 C1140 730 1050 450 720 450"></path>
-                    <path class="beam-fill beam-fill--orange" pathLength="1" d="M-80 160 C300 170 390 450 720 450"></path>
-                    <path class="beam-fill beam-fill--blue" pathLength="1" d="M1520 740 C1140 730 1050 450 720 450"></path>
-                    <path class="meeting-beams__after" pathLength="1" d="M720 450 C950 450 1220 450 1580 450"></path>
-                </svg>
-
-                <div class="section-inner meeting__content">
-                    <p class="eyebrow meeting__eyebrow">The day everything changed</p>
-                    <h2 class="meeting__date" id="meeting-date">
-                        06.19
-                        <span>2018</span>
-                    </h2>
-                    <p class="text-reveal" data-text-reveal="Two separate timelines became one."></p>
-                </div>
-            </div>
-        </section>
-
-        <section class="section now" id="now" data-scene="now" aria-labelledby="now-title">
-            <div class="section-inner">
-                <div class="now__header">
-                    <h2 class="display blur-fade" id="now-title">Every day.<span>Since then.</span></h2>
-                    <p class="now__statement blur-fade" style="--delay: 120ms">
-                        Our time, still moving forward.
-                    </p>
-                </div>
-
-                <div class="now__measure blur-fade" style="--delay: 160ms" aria-live="off">
-                    <div class="now__days">
-                        <span class="now__number number-ticker" id="now-days">0</span>
-                        <span class="now__days-label">days together</span>
-                    </div>
-                    <div class="clock">
-                        <div class="clock__unit">
-                            <span class="clock__value" id="now-hours">00</span>
-                            <span class="clock__label">Hours</span>
-                        </div>
-                        <div class="clock__unit">
-                            <span class="clock__value" id="now-minutes">00</span>
-                            <span class="clock__label">Minutes</span>
-                        </div>
-                        <div class="clock__unit">
-                            <span class="clock__value" id="now-seconds">00</span>
-                            <span class="clock__label">Seconds</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="continuum blur-fade" style="--delay: 240ms" aria-hidden="true">
-                    <div class="continuum__line"></div>
-                    <div class="continuum__labels">
-                        <span>2018.06.19</span>
-                        <span>Still counting</span>
-                    </div>
-                </div>
-
-                <div class="milestones blur-fade" style="--delay: 320ms" aria-label="Our milestones">
-                    <div class="milestone">
-                        <time datetime="2018-06-19">2018.06.19</time>
-                        <span class="milestone__label">First meeting</span>
-                    </div>
-                    <div class="milestone">
-                        <time datetime="2018-09-06">2018.09.06</time>
-                        <span class="milestone__label">Started dating</span>
-                    </div>
-                    <div class="milestone">
-                        <time datetime="2020-12-06">2020.12.06</time>
-                        <span class="milestone__label">The proposal</span>
-                    </div>
-                    <div class="milestone">
-                        <time datetime="2021-07-09">2021.07.09</time>
-                        <span class="milestone__label">Marriage registration</span>
-                    </div>
-                    <div class="milestone">
-                        <time datetime="2022-09-15">2022.09.15</time>
-                        <span class="milestone__label">Wedding day</span>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section class="section finale" id="always" data-scene="finale" aria-labelledby="final-title">
-            <canvas id="infinity-field" aria-hidden="true"></canvas>
-            <div class="section-inner finale__inner">
-                <div class="finale__copy">
-                    <p class="finale__kicker blur-fade"><span id="final-days">0</span> days later</p>
-                    <h2 class="display blur-fade" id="final-title" style="--delay: 100ms">
-                        Still you.
-                        <span>Always you.</span>
-                    </h2>
-                    <p class="finale__date blur-fade" id="today-label" style="--delay: 220ms"></p>
-                </div>
-            </div>
-        </section>
-
+            <h1 class="hero__title reveal" id="hero-title" style="--d:340ms">And counting.</h1>
         </div>
-    </main>
+        <div class="hero__cue reveal" style="--d:800ms" aria-hidden="true">Tap to continue</div>
+    </section>
 
-    <script>
-        (() => {
-            "use strict";
+    <!-- Scene 2: Origins -->
+    <section class="scene origins" data-scene="origins" aria-labelledby="origins-title">
+        <div class="scene__inner origins__inner">
+            <p class="origins__label reveal">Two separate beginnings</p>
+            <h2 class="origins__title reveal" id="origins-title" style="--d:80ms">Before us.<br><em>Two lives.</em></h2>
+            <div class="origins__grid">
+                <div class="origin-card" id="origin-me">
+                    <p class="origin-card__label">It takes</p>
+                    <strong class="origin-card__value" data-ticker="10786">10,786</strong>
+                    <p class="origin-card__sublabel">days to finally meet you.</p>
+                </div>
+                <div style="position:relative;width:160px;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding-bottom:10px;">
+                    <svg class="origins__beams" viewBox="0 0 160 220" preserveAspectRatio="none" aria-hidden="true">
+                        <defs>
+                            <filter id="og" x="-40%" y="-40%" width="180%" height="180%">
+                                <feGaussianBlur stdDeviation="4" result="b"/>
+                                <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+                            </filter>
+                        </defs>
+                        <path class="beam-track" pathLength="1" d="M10 20 C10 120 80 175 80 200"/>
+                        <path class="beam-track" pathLength="1" d="M150 20 C150 120 80 175 80 200"/>
+                        <path class="beam-glow beam-glow--rose" pathLength="1" id="beam-left" d="M10 20 C10 120 80 175 80 200"/>
+                        <path class="beam-glow beam-glow--blue" pathLength="1" id="beam-right" d="M150 20 C150 120 80 175 80 200"/>
+                        <circle cx="80" cy="200" r="5" fill="#f4f3f0" filter="url(#og)" opacity="var(--spark-op,0)"/>
+                    </svg>
+                    <div class="meeting-node" id="meeting-node">
+                        <div class="meeting-node__dot"></div>
+                        <div class="meeting-node__date">June 19, 2018</div>
+                    </div>
+                </div>
+                <div class="origin-card" id="origin-her">
+                    <p class="origin-card__label">It takes</p>
+                    <strong class="origin-card__value" data-ticker="9512">9,512</strong>
+                    <p class="origin-card__sublabel">days to finally meet me.</p>
+                </div>
+            </div>
+        </div>
+    </section>
 
-            const DAY_MS = 24 * 60 * 60 * 1000;
-            const loveDate = new Date(2018, 5, 19, 0, 0, 0);
-            const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-            const formatter = new Intl.NumberFormat("en-US");
+    <!-- Scene 3: Meeting -->
+    <section class="scene meeting" data-scene="meeting" aria-labelledby="meeting-date">
+        <canvas class="scene__canvas" id="meeting-canvas" aria-hidden="true"></canvas>
+        <svg class="meeting__beams" viewBox="0 0 1440 900" preserveAspectRatio="none" aria-hidden="true">
+            <defs>
+                <filter id="mg" x="-50%" y="-50%" width="200%" height="200%">
+                    <feGaussianBlur stdDeviation="6" result="b"/>
+                    <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+                </filter>
+            </defs>
+            <path class="m-beam-track" pathLength="1" d="M-60 180 C280 200 380 450 720 450"/>
+            <path class="m-beam-track" pathLength="1" d="M1500 720 C1160 700 1060 450 720 450"/>
+            <path class="m-beam-glow m-beam-glow--rose" pathLength="1" id="m-beam-l" d="M-60 180 C280 200 380 450 720 450"/>
+            <path class="m-beam-glow m-beam-glow--blue" pathLength="1" id="m-beam-r" d="M1500 720 C1160 700 1060 450 720 450"/>
+            <path class="m-beam-after" pathLength="1" d="M720 450 C960 450 1240 450 1600 450" id="m-beam-after"/>
+        </svg>
+        <div class="scene__inner meeting__inner">
+            <p class="meeting__label" id="meeting-label">The day everything changed</p>
+            <h2 class="meeting__date" id="meeting-date">06.19<span class="meeting__year">2018</span></h2>
+            <p class="meeting__reveal-text" id="meeting-text" data-words="Two separate timelines became one."></p>
+        </div>
+    </section>
 
-            const clamp = (value, min = 0, max = 1) => Math.min(max, Math.max(min, value));
-            const mapRange = (value, start, end) => clamp((value - start) / (end - start));
+    <!-- Scene 4: Now -->
+    <section class="scene now" data-scene="now" aria-labelledby="now-title">
+        <div class="scene__inner now__inner">
+            <div class="now__header">
+                <h2 class="now__title reveal" id="now-title">Every day.<br><em>Since then.</em></h2>
+                <p class="now__statement reveal" style="--d:100ms">Our time, still moving forward.</p>
+            </div>
+            <div class="now__divider"></div>
+            <div class="now__measure reveal" style="--d:160ms" aria-live="off">
+                <div class="now__days-block">
+                    <span class="now__days-number" id="now-days">0</span>
+                    <span class="now__days-label">days together</span>
+                </div>
+                <div class="now__clock">
+                    <div class="clock-unit">
+                        <span class="clock-unit__value" id="now-hours">00</span>
+                        <span class="clock-unit__label">Hours</span>
+                    </div>
+                    <div class="clock-unit">
+                        <span class="clock-unit__value" id="now-minutes">00</span>
+                        <span class="clock-unit__label">Minutes</span>
+                    </div>
+                    <div class="clock-unit">
+                        <span class="clock-unit__value" id="now-seconds">00</span>
+                        <span class="clock-unit__label">Seconds</span>
+                    </div>
+                </div>
+            </div>
+            <div class="now__timeline reveal" style="--d:220ms" aria-hidden="true">
+                <div class="now__line-wrap">
+                    <div class="now__line-fill"></div>
+                    <div class="now__line-dot"></div>
+                </div>
+                <div class="now__line-labels">
+                    <span>2018.06.19</span>
+                    <span>Still counting</span>
+                </div>
+            </div>
+            <div class="milestones reveal" style="--d:300ms" aria-label="Our milestones">
+                <div class="ms">
+                    <time class="ms__date" datetime="2018-06-19">2018.06.19</time>
+                    <span class="ms__label">First meeting</span>
+                </div>
+                <div class="ms">
+                    <time class="ms__date" datetime="2018-09-06">2018.09.06</time>
+                    <span class="ms__label">Started dating</span>
+                </div>
+                <div class="ms">
+                    <time class="ms__date" datetime="2020-12-06">2020.12.06</time>
+                    <span class="ms__label">The proposal</span>
+                </div>
+                <div class="ms">
+                    <time class="ms__date" datetime="2021-07-09">2021.07.09</time>
+                    <span class="ms__label">Marriage registration</span>
+                </div>
+                <div class="ms">
+                    <time class="ms__date" datetime="2022-09-15">2022.09.15</time>
+                    <span class="ms__label">Wedding day</span>
+                </div>
+            </div>
+        </div>
+    </section>
 
-            const heroDays = document.querySelector("#hero-days");
-            const nowDays = document.querySelector("#now-days");
-            const finalDays = document.querySelector("#final-days");
-            const nowHours = document.querySelector("#now-hours");
-            const nowMinutes = document.querySelector("#now-minutes");
-            const nowSeconds = document.querySelector("#now-seconds");
-            const todayLabel = document.querySelector("#today-label");
-            const progressBar = document.querySelector("#scroll-progress-bar");
-            const stage = document.querySelector("#stage");
+    <!-- Scene 5: Finale -->
+    <section class="scene finale" data-scene="finale" aria-labelledby="finale-title">
+        <canvas class="scene__canvas" id="finale-canvas" aria-hidden="true"></canvas>
+        <div class="scene__inner finale__inner">
+            <p class="finale__eyebrow reveal"><span id="finale-days">0</span> days later</p>
+            <h2 class="finale__title reveal" id="finale-title" style="--d:100ms">Still you.<em>Always you.</em></h2>
+            <p class="finale__date reveal" id="finale-date" style="--d:220ms"></p>
+        </div>
+    </section>
 
-            const getElapsed = () => {
-                const elapsed = Math.max(0, Date.now() - loveDate.getTime());
-                const days = Math.floor(elapsed / DAY_MS);
-                const dayRemainder = elapsed - days * DAY_MS;
-                const hours = Math.floor(dayRemainder / (60 * 60 * 1000));
-                const minutes = Math.floor((dayRemainder % (60 * 60 * 1000)) / (60 * 1000));
-                const seconds = Math.floor((dayRemainder % (60 * 1000)) / 1000);
-                return { days, hours, minutes, seconds };
-            };
+</div>
 
-            const animateNumber = (element, target, duration = 1500, suffix = "") => {
-                if (!element) return;
-                if (reduceMotion) {
-                    element.textContent = `${formatter.format(target)}${suffix}`;
-                    return;
-                }
+<script>
+(() => {
+    "use strict";
+    const LOVE_DATE = new Date(2018, 5, 19, 0, 0, 0);
+    const DAY_MS = 86400000;
+    const fmt = new Intl.NumberFormat("en-US");
+    const noMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const clamp = (v, lo = 0, hi = 1) => Math.min(hi, Math.max(lo, v));
+    const map = (v, a, b) => clamp((v - a) / (b - a));
+    const lerp = (a, b, t) => a + (b - a) * t;
+    const smooth = (a, b, t) => { const p = clamp((t - a) / (b - a)); return p * p * (3 - 2 * p); };
 
-                const start = performance.now();
-                const tick = (now) => {
-                    const progress = clamp((now - start) / duration);
-                    const eased = 1 - Math.pow(1 - progress, 4);
-                    const value = Math.round(target * eased);
-                    element.textContent = `${formatter.format(value)}${suffix}`;
-                    if (progress < 1) requestAnimationFrame(tick);
-                };
-                requestAnimationFrame(tick);
-            };
+    const elapsed = () => {
+        const ms = Math.max(0, Date.now() - LOVE_DATE.getTime());
+        const d = Math.floor(ms / DAY_MS);
+        const rem = ms - d * DAY_MS;
+        return { days: d, hours: Math.floor(rem / 3600000), minutes: Math.floor((rem % 3600000) / 60000), seconds: Math.floor((rem % 60000) / 1000) };
+    };
 
-            const initialElapsed = getElapsed();
-            heroDays.dataset.animating = "true";
-            animateNumber(heroDays, initialElapsed.days, 1700);
-            heroDays.dataset.tickerReady = "true";
-            window.setTimeout(() => {
-                delete heroDays.dataset.animating;
-                updateTimer();
-            }, 1750);
-            nowDays.textContent = formatter.format(initialElapsed.days);
-            finalDays.textContent = formatter.format(initialElapsed.days);
+    const animateCount = (el, target, ms = 1500) => {
+        if (!el) return;
+        if (noMotion) { el.textContent = fmt.format(target); return; }
+        const start = performance.now();
+        const tick = (now) => {
+            const p = clamp((now - start) / ms);
+            const e = 1 - Math.pow(1 - p, 4);
+            el.textContent = fmt.format(Math.round(target * e));
+            if (p < 1) requestAnimationFrame(tick);
+        };
+        requestAnimationFrame(tick);
+    };
 
-            todayLabel.textContent = new Intl.DateTimeFormat("en-US", {
-                month: "long",
-                day: "numeric",
-                year: "numeric"
-            }).format(new Date());
+    const stage = document.getElementById("stage");
+    const progressFill = document.getElementById("progress-fill");
+    const heroDays = document.getElementById("hero-days");
+    const nowDays = document.getElementById("now-days");
+    const nowH = document.getElementById("now-hours");
+    const nowM = document.getElementById("now-minutes");
+    const nowS = document.getElementById("now-seconds");
+    const finaleDays = document.getElementById("finale-days");
+    const finaleDate = document.getElementById("finale-date");
 
-            const updateTimer = () => {
-                const elapsed = getElapsed();
-                const daysText = formatter.format(elapsed.days);
-                if (!heroDays.dataset.animating) heroDays.textContent = daysText;
-                nowDays.textContent = daysText;
-                finalDays.textContent = daysText;
-                nowHours.textContent = String(elapsed.hours).padStart(2, "0");
-                nowMinutes.textContent = String(elapsed.minutes).padStart(2, "0");
-                nowSeconds.textContent = String(elapsed.seconds).padStart(2, "0");
-            };
+    const updateTimer = () => {
+        const e = elapsed();
+        const ds = fmt.format(e.days);
+        if (!heroDays.dataset.counting) heroDays.textContent = ds;
+        nowDays.textContent = ds;
+        finaleDays.textContent = ds;
+        nowH.textContent = String(e.hours).padStart(2, "0");
+        nowM.textContent = String(e.minutes).padStart(2, "0");
+        nowS.textContent = String(e.seconds).padStart(2, "0");
+    };
 
-            updateTimer();
-            window.setInterval(updateTimer, 250);
+    const init = elapsed();
+    heroDays.dataset.counting = "1";
+    animateCount(heroDays, init.days, 1700);
+    setTimeout(() => { delete heroDays.dataset.counting; updateTimer(); }, 1760);
+    nowDays.textContent = fmt.format(init.days);
+    finaleDays.textContent = fmt.format(init.days);
+    finaleDate.textContent = new Intl.DateTimeFormat("en-US", { month: "long", day: "numeric", year: "numeric" }).format(new Date());
+    updateTimer();
+    setInterval(updateTimer, 250);
 
-            document.querySelectorAll("[data-text-reveal]").forEach((element) => {
-                const words = element.dataset.textReveal.split(" ");
-                element.replaceChildren(...words.map((word) => {
-                    const span = document.createElement("span");
-                    span.textContent = word;
-                    return span;
-                }));
+    document.querySelectorAll("[data-words]").forEach(el => {
+        el.innerHTML = el.dataset.words.split(" ").map(w => `<span>${w}</span>`).join(" ");
+    });
+
+    const scenes = [...document.querySelectorAll("[data-scene]")];
+    const SCENE_COUNT = scenes.length;
+    const originsEl = document.querySelector("[data-scene='origins']");
+    const meetingEl = document.querySelector("[data-scene='meeting']");
+    const STOPS = scenes.map((_, i) => i / (SCENE_COUNT - 1));
+    const RANGES = [
+        { enter: [0, 0],       exit: [0.12, 0.18] },
+        { enter: [0.14, 0.20], exit: [0.30, 0.36] },
+        { enter: [0.32, 0.38], exit: [0.48, 0.54] },
+        { enter: [0.50, 0.56], exit: [0.68, 0.74] },
+        { enter: [0.72, 0.78], exit: [1, 1]       }
+    ];
+
+    const sceneOpacity = (p, range, i) => {
+        const entering = i === 0 ? 1 : smooth(range.enter[0], range.enter[1], p);
+        const leaving = i === SCENE_COUNT - 1 ? 1 : 1 - smooth(range.exit[0], range.exit[1], p);
+        return clamp(entering * leaving);
+    };
+
+    const revealed = new Set();
+    const revealScene = (scene) => {
+        if (revealed.has(scene)) return;
+        revealed.add(scene);
+        scene.querySelectorAll(".reveal").forEach(el => el.classList.add("in"));
+        scene.querySelectorAll("[data-ticker]").forEach(el => animateCount(el, +el.dataset.ticker, 1300));
+    };
+
+    const updateOrigins = (gp) => {
+        const p = map(gp, 0.20, 0.50);
+        const copy = map(p, 0.05, 0.30);
+        const beam = map(p, 0.20, 0.80);
+        const node = map(p, 0.65, 0.90);
+        const meCard = document.getElementById("origin-me");
+        const herCard = document.getElementById("origin-her");
+        const mNode = document.getElementById("meeting-node");
+        const bL = document.getElementById("beam-left");
+        const bR = document.getElementById("beam-right");
+        const origSVG = originsEl ? originsEl.querySelector(".origins__beams") : null;
+        const op = (0.12 + copy * 0.88).toFixed(3);
+        const ty = ((1 - copy) * 18).toFixed(1) + "px";
+        if (meCard) { meCard.style.setProperty("--op", op); meCard.style.setProperty("--ty", ty); }
+        if (herCard) { herCard.style.setProperty("--op", op); herCard.style.setProperty("--ty", ty); }
+        if (bL) bL.style.setProperty("--p", beam.toFixed(3));
+        if (bR) bR.style.setProperty("--p", beam.toFixed(3));
+        if (origSVG) origSVG.style.setProperty("--spark-op", node.toFixed(3));
+        if (mNode) { mNode.style.setProperty("--node-op", node.toFixed(3)); mNode.style.setProperty("--node-sc", (0.7 + node * 0.3).toFixed(3)); }
+    };
+
+    const updateMeeting = (gp) => {
+        const p = map(gp, 0.38, 0.70);
+        const beam = map(p, 0.02, 0.48);
+        const titleP = map(p, 0, 0.12);
+        const afterP = map(p, 0.10, 0.22);
+        const bL = document.getElementById("m-beam-l");
+        const bR = document.getElementById("m-beam-r");
+        const bA = document.getElementById("m-beam-after");
+        const lbl = document.getElementById("meeting-label");
+        const dt = document.getElementById("meeting-date");
+        if (bL) bL.style.setProperty("--p", beam.toFixed(3));
+        if (bR) bR.style.setProperty("--p", beam.toFixed(3));
+        if (bA) bA.style.setProperty("--after-op", afterP.toFixed(3));
+        if (lbl) lbl.style.setProperty("--title-op", titleP.toFixed(3));
+        if (dt) dt.style.setProperty("--title-op", titleP.toFixed(3));
+        if (meetingEl) {
+            const words = meetingEl.querySelectorAll(".meeting__reveal-text span");
+            words.forEach((w, i) => {
+                const s = 0.08 + (i / Math.max(1, words.length)) * 0.14;
+                const a = map(p, s, s + 0.14);
+                w.style.setProperty("--wa", (0.12 + a * 0.88).toFixed(3));
             });
+        }
+    };
 
-            const experience = document.querySelector("#experience");
-            const scenes = [...document.querySelectorAll("[data-scene]")];
-            const originsSection = document.querySelector("[data-scene='origins']");
-            const meetingSection = document.querySelector("[data-scene='meeting']");
-            const qixiSection = document.querySelector("[data-scene='qixi']");
-            let qixiStartedAt = 0;
-            const sceneRanges = [
-                { enter: [0, 0], exit: [0.12, 0.16] },
-                { enter: [0.14, 0.18], exit: [0.30, 0.34] },
-                { enter: [0.32, 0.36], exit: [0.48, 0.52] },
-                { enter: [0.50, 0.54], exit: [0.66, 0.70] },
-                { enter: [0.68, 0.72], exit: [0.84, 0.88] },
-                { enter: [0.86, 0.90], exit: [1, 1] }
-            ];
+    const updateBg = (p) => {
+        const paper = [244, 243, 240];
+        const night = [8, 8, 16];
+        const mix = (from, to, t) => {
+            const a = smooth(0, 1, t);
+            return `rgb(${from.map((c, i) => Math.round(lerp(c, to[i], a))).join(",")})`;
+        };
+        let col;
+        if      (p < 0.14) col = mix(night, night, 1);
+        else if (p < 0.22) col = mix(night, paper, map(p, 0.14, 0.22));
+        else if (p < 0.36) col = mix(paper, paper, 1);
+        else if (p < 0.44) col = mix(paper, night, map(p, 0.36, 0.44));
+        else if (p < 0.56) col = mix(night, night, 1);
+        else if (p < 0.64) col = mix(night, paper, map(p, 0.56, 0.64));
+        else if (p < 0.76) col = mix(paper, paper, 1);
+        else if (p < 0.84) col = mix(paper, night, map(p, 0.76, 0.84));
+        else               col = mix(night, night, 1);
+        stage.style.backgroundColor = col;
+    };
 
-            const smoothStep = (start, end, value) => {
-                if (start === end) return value >= end ? 1 : 0;
-                const progress = clamp((value - start) / (end - start));
-                return progress * progress * (3 - 2 * progress);
-            };
+    const renderAt = (p) => {
+        let activeIdx = 0, best = -1;
+        scenes.forEach((s, i) => {
+            const op = sceneOpacity(p, RANGES[i], i);
+            const vis = op > 0.003;
+            const sc = 0.982 + op * 0.018;
+            const bl = noMotion ? 0 : (1 - op) * 12;
+            s.style.opacity = op.toFixed(4);
+            s.style.filter = `blur(${bl.toFixed(1)}px)`;
+            s.style.transform = `scale(${sc.toFixed(4)})`;
+            s.style.visibility = vis ? "visible" : "hidden";
+            if (op > 0.18) revealScene(s);
+            if (op > best) { best = op; activeIdx = i; }
+        });
+        scenes.forEach((s, i) => s.setAttribute("aria-hidden", i === activeIdx ? "false" : "true"));
+        updateOrigins(p);
+        updateMeeting(p);
+        updateBg(p);
+        progressFill.style.transform = `scaleX(${((activeIdx + 1) / SCENE_COUNT).toFixed(3)})`;
+        stage.setAttribute("aria-label", `Scene ${activeIdx + 1} of ${SCENE_COUNT}. Tap to continue.`);
+    };
 
-            const revealScene = (scene) => {
-                if (scene.dataset.revealed) return;
-                scene.dataset.revealed = "true";
-                scene.querySelectorAll(".blur-fade").forEach((element) => {
-                    element.classList.add("is-visible");
-                });
-                scene.querySelectorAll(".number-ticker[data-value]").forEach((ticker) => {
-                    if (ticker.dataset.tickerReady) return;
-                    ticker.dataset.tickerReady = "true";
-                    animateNumber(ticker, Number(ticker.dataset.value), 1300, " days");
-                });
-            };
+    let activeIdx = 0, targetP = 0, renderedP = 0, transStart = 0, transStartedAt = 0;
+    let raf = 0, transitioning = false, firstRender = false, lastTap = 0;
+    const isMobile = window.matchMedia("(max-width: 760px)").matches;
+    const DUR = isMobile ? 860 : 760;
 
-            const sceneOpacity = (progress, range, index) => {
-                const entering = index === 0 ? 1 : smoothStep(range.enter[0], range.enter[1], progress);
-                const leaving = index === scenes.length - 1
-                    ? 1
-                    : 1 - smoothStep(range.exit[0], range.exit[1], progress);
-                return clamp(entering * leaving);
-            };
+    const animate = () => {
+        const el2 = performance.now() - transStartedAt;
+        const p = noMotion ? 1 : clamp(el2 / DUR);
+        const e = 1 - Math.pow(1 - p, 3);
+        renderedP = transStart + (targetP - transStart) * e;
+        renderAt(renderedP);
+        if (p < 1) { raf = requestAnimationFrame(animate); }
+        else { renderedP = targetP; renderAt(renderedP); raf = 0; transitioning = false; }
+    };
 
-            const mixColor = (from, to, progress) => {
-                const amount = smoothStep(0, 1, progress);
-                const channels = from.map((channel, index) => (
-                    Math.round(channel + (to[index] - channel) * amount)
-                ));
-                return `rgb(${channels.join(", ")})`;
-            };
+    const goTo = (idx, { instant = false } = {}) => {
+        activeIdx = ((idx % SCENE_COUNT) + SCENE_COUNT) % SCENE_COUNT;
+        targetP = STOPS[activeIdx];
+        if (!firstRender) { firstRender = true; renderedP = targetP; renderAt(renderedP); revealScene(scenes[0]); return; }
+        if (instant || noMotion || isMobile) { renderedP = targetP; renderAt(renderedP); transitioning = false; return; }
+        transitioning = true; transStart = renderedP; transStartedAt = performance.now();
+        if (!raf) raf = requestAnimationFrame(animate);
+    };
 
-            const updateStageColor = (progress) => {
-                const paper = [245, 245, 247];
-                const night = [5, 5, 6];
+    const advance = () => {
+        const now2 = Date.now();
+        if (isMobile && now2 - lastTap < 1100) return;
+        lastTap = now2;
+        if (transitioning) return;
+        if (activeIdx === SCENE_COUNT - 1) {
+            transitioning = true;
+            stage.classList.add("is-resetting");
+            setTimeout(() => { goTo(0, { instant: true }); stage.classList.remove("is-resetting"); }, noMotion ? 0 : 200);
+            return;
+        }
+        goTo(activeIdx + 1);
+    };
 
-                if (progress < 0.14) {
-                    stage.style.backgroundColor = mixColor(night, night, 1);
-                } else if (progress < 0.22) {
-                    stage.style.backgroundColor = mixColor(night, paper, mapRange(progress, 0.14, 0.22));
-                } else if (progress < 0.34) {
-                    stage.style.backgroundColor = mixColor(paper, paper, 1);
-                } else if (progress < 0.42) {
-                    stage.style.backgroundColor = mixColor(paper, night, mapRange(progress, 0.34, 0.42));
-                } else if (progress < 0.54) {
-                    stage.style.backgroundColor = mixColor(night, night, 1);
-                } else if (progress < 0.62) {
-                    stage.style.backgroundColor = mixColor(night, paper, mapRange(progress, 0.54, 0.62));
-                } else if (progress < 0.80) {
-                    stage.style.backgroundColor = mixColor(paper, paper, 1);
-                } else if (progress < 0.88) {
-                    stage.style.backgroundColor = mixColor(paper, night, mapRange(progress, 0.80, 0.88));
-                } else {
-                    stage.style.backgroundColor = mixColor(night, night, 1);
-                }
-            };
+    goTo(0, { instant: true });
+    stage.addEventListener("click", advance);
+    stage.addEventListener("keydown", ev => {
+        if (["Enter", " ", "ArrowRight", "ArrowDown"].includes(ev.key)) { ev.preventDefault(); advance(); }
+        else if (["ArrowLeft", "ArrowUp"].includes(ev.key)) { ev.preventDefault(); if (!transitioning) goTo(activeIdx - 1); }
+    });
 
-            const updateOrigins = (globalProgress) => {
-                const progress = mapRange(globalProgress, 0.34, 0.52);
-                const copyProgress = mapRange(progress, 0.04, 0.28);
-                const beamProgress = mapRange(progress, 0.18, 0.78);
-                const meetingOpacity = mapRange(progress, 0.68, 0.9);
-                originsSection.style.setProperty("--origins-copy", copyProgress.toFixed(3));
-                originsSection.style.setProperty("--origins-opacity", (0.18 + copyProgress * 0.82).toFixed(3));
-                originsSection.style.setProperty("--origins-shift", `${((1 - copyProgress) * 22).toFixed(2)}px`);
-                originsSection.style.setProperty("--beam-progress", beamProgress.toFixed(3));
-                originsSection.style.setProperty("--meeting-opacity", meetingOpacity.toFixed(3));
-                originsSection.style.setProperty("--meeting-scale", (0.72 + meetingOpacity * 0.28).toFixed(3));
-                originsSection.style.setProperty("--spark-opacity", meetingOpacity.toFixed(3));
-            };
+    /* Canvas helper */
+    const makeCanvas = (canvas, draw) => {
+        const ctx = canvas.getContext("2d");
+        const owner = canvas.closest("[data-scene]");
+        let W = 1, H = 1, dpr = 1, raf2 = 0, vis = true;
+        const resize = () => {
+            const r = canvas.getBoundingClientRect();
+            W = Math.max(1, r.width); H = Math.max(1, r.height);
+            dpr = Math.min(window.devicePixelRatio || 1, 1.75);
+            canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr);
+            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        };
+        const loop = (t) => {
+            if (vis && (!owner || owner.style.visibility !== "hidden")) draw(ctx, W, H, t);
+            raf2 = requestAnimationFrame(loop);
+        };
+        new IntersectionObserver(([e]) => { vis = e.isIntersecting; }).observe(canvas);
+        resize();
+        window.addEventListener("resize", resize);
+        raf2 = requestAnimationFrame(loop);
+    };
 
-            const updateMeeting = (globalProgress) => {
-                const progress = mapRange(globalProgress, 0.52, 0.70);
-                const beamProgress = mapRange(progress, 0.03, 0.48);
-                const titleOpacity = mapRange(progress, 0, 0.10);
-                const afterOpacity = mapRange(progress, 0.08, 0.18);
-                meetingSection.style.setProperty("--beam-progress", beamProgress.toFixed(3));
-                meetingSection.style.setProperty("--meeting-title-opacity", titleOpacity.toFixed(3));
-                meetingSection.style.setProperty("--meeting-title-shift", `${((1 - titleOpacity) * 12).toFixed(2)}px`);
-                meetingSection.style.setProperty("--meeting-title-scale", (0.9 + titleOpacity * 0.1).toFixed(3));
-                meetingSection.style.setProperty("--after-opacity", afterOpacity.toFixed(3));
+    /* Hero canvas */
+    let px = 0, py = 0;
+    window.addEventListener("pointermove", ev => {
+        px = ev.clientX / Math.max(1, window.innerWidth) - 0.5;
+        py = ev.clientY / Math.max(1, window.innerHeight) - 0.5;
+    }, { passive: true });
 
-                const words = meetingSection.querySelectorAll(".text-reveal span");
-                words.forEach((word, index) => {
-                    const start = 0.06 + (index / Math.max(1, words.length)) * 0.12;
-                    const opacity = mapRange(progress, start, start + 0.12);
-                    word.style.setProperty("--word-alpha", (0.16 + opacity * 0.84).toFixed(3));
-                });
-            };
+    makeCanvas(document.getElementById("hero-canvas"), (ctx, W, H, t) => {
+        ctx.clearRect(0, 0, W, H);
+        const T = noMotion ? 0 : t * 0.00006;
+        const cx = W * 0.5 + px * 28, cy = H * 0.49 + py * 18;
+        const ss = Math.min(W, H);
+        const rings = W < 760 ? 5 : 7;
+        for (let r = 0; r < rings; r++) {
+            const radius = ss * (0.16 + r * 0.088);
+            const ys = 0.58 + r * 0.022;
+            const pts = 52 + r * 9;
+            for (let i = 0; i < pts; i++) {
+                const a = (i / pts) * Math.PI * 2 + T * (r % 2 ? -1 : 1) * (0.6 + r * 0.1);
+                const pulse = 0.28 + 0.32 * Math.sin(a * 3 + T * 7 + r * 1.4);
+                const x = cx + Math.cos(a) * radius, y = cy + Math.sin(a) * radius * ys;
+                const sz = i % 11 === 0 ? 1.5 : (i % 5 === 0 ? 1.0 : 0.65);
+                ctx.beginPath();
+                ctx.fillStyle = `rgba(255,255,255,${Math.max(0.02, pulse * 0.14)})`;
+                ctx.arc(x, y, sz, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+        const orbit = ss * (W < 760 ? 0.35 : 0.44);
+        const drawGlow = (angle, rgb) => {
+            const x = cx + Math.cos(angle) * orbit, y = cy + Math.sin(angle) * orbit * 0.62;
+            const g = ctx.createRadialGradient(x, y, 0, x, y, 28);
+            g.addColorStop(0, `rgba(${rgb},0.9)`); g.addColorStop(0.25, `rgba(${rgb},0.6)`); g.addColorStop(1, `rgba(${rgb},0)`);
+            ctx.fillStyle = g; ctx.fillRect(x - 28, y - 28, 56, 56);
+        };
+        drawGlow(T * 4, "232,117,106");
+        drawGlow(Math.PI + T * 4, "106,180,232");
+    });
 
-            const sceneStops = [0, 0.18, 0.36, 0.54, 0.72, 1];
-            let activeSceneIndex = 0;
-            let targetProgress = sceneStops[0];
-            let renderedProgress = 0;
-            let scrollFrame = 0;
-            let hasRendered = false;
-            let isTransitioning = false;
-            let transitionStartProgress = 0;
-            let transitionStartedAt = 0;
-            const mobileMode = window.matchMedia("(max-width: 760px)").matches;
-            const transitionDurationMs = mobileMode ? 860 : 780;
-            const tapGuardMs = mobileMode ? 1200 : 0;
-            let lastAdvanceAt = 0;
+    /* Meeting canvas */
+    makeCanvas(document.getElementById("meeting-canvas"), (ctx, W, H, t) => {
+        ctx.clearRect(0, 0, W, H);
+        const T = noMotion ? 0 : t * 0.00022;
+        const bg = ctx.createRadialGradient(W*0.5, H*0.5, 0, W*0.5, H*0.5, Math.max(W,H)*0.7);
+        bg.addColorStop(0, "rgba(20,14,32,0.96)"); bg.addColorStop(1, "rgba(8,8,16,0.99)");
+        ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
+        const bands = [
+            { y: 0.28, color: "232,117,106", amp: 0.06, spd: 0.7 },
+            { y: 0.55, color: "106,180,232", amp: 0.05, spd: 1.1 },
+            { y: 0.72, color: "200,169,110", amp: 0.04, spd: 0.9 }
+        ];
+        bands.forEach(b => {
+            const yc = H * (b.y + Math.sin(T * b.spd) * b.amp);
+            const grad = ctx.createLinearGradient(0, yc - 80, 0, yc + 80);
+            grad.addColorStop(0, `rgba(${b.color},0)`); grad.addColorStop(0.5, `rgba(${b.color},0.06)`); grad.addColorStop(1, `rgba(${b.color},0)`);
+            ctx.fillStyle = grad; ctx.fillRect(0, yc - 80, W, 160);
+        });
+        for (let i = 0; i < 120; i++) {
+            const sx = ((i * 137.508) % 1) * W, sy = ((i * 97.3) % 1) * H;
+            const a = 0.06 + 0.14 * Math.abs(Math.sin(T * 2.5 + i));
+            ctx.beginPath(); ctx.fillStyle = `rgba(255,255,255,${a})`;
+            ctx.arc(sx, sy, i % 7 === 0 ? 1.2 : 0.7, 0, Math.PI * 2); ctx.fill();
+        }
+    });
 
-            const renderExperience = (progress) => {
-                const opacities = scenes.map((scene, index) => (
-                    sceneOpacity(progress, sceneRanges[index], index)
-                ));
-                let activeIndex = 0;
-                let highestOpacity = -1;
-
-                scenes.forEach((scene, index) => {
-                    const opacity = opacities[index];
-                    const visible = opacity > 0.002;
-                    const scale = 0.985 + opacity * 0.015;
-                    const blur = reduceMotion ? 0 : (1 - opacity) * 10;
-
-                    scene.style.setProperty("--scene-opacity", opacity.toFixed(4));
-                    scene.style.setProperty("--scene-scale", scale.toFixed(4));
-                    scene.style.setProperty("--scene-blur", `${blur.toFixed(2)}px`);
-                    scene.style.setProperty("--scene-visibility", visible ? "visible" : "hidden");
-                    scene.dataset.sceneVisible = visible ? "true" : "false";
-
-                    if (opacity > 0.16) revealScene(scene);
-                    if (opacity > highestOpacity) {
-                        highestOpacity = opacity;
-                        activeIndex = index;
-                    }
-                });
-
-                if (qixiSection.dataset.sceneVisible !== "true") qixiStartedAt = 0;
-
-                scenes.forEach((scene, index) => {
-                    scene.setAttribute("aria-hidden", index === activeIndex ? "false" : "true");
-                });
-
-                updateOrigins(progress);
-                updateMeeting(progress);
-                updateStageColor(progress);
-            };
-
-            const animateScene = () => {
-                const elapsed = performance.now() - transitionStartedAt;
-                const transitionProgress = reduceMotion
-                    ? 1
-                    : clamp(elapsed / transitionDurationMs);
-                const eased = 1 - Math.pow(1 - transitionProgress, 3);
-                renderedProgress = transitionStartProgress + (targetProgress - transitionStartProgress) * eased;
-                renderExperience(renderedProgress);
-
-                if (transitionProgress < 1) {
-                    scrollFrame = requestAnimationFrame(animateScene);
-                } else {
-                    renderedProgress = targetProgress;
-                    renderExperience(renderedProgress);
-                    scrollFrame = 0;
-                    isTransitioning = false;
-                }
-            };
-
-            const showScene = (index, { instant = false } = {}) => {
-                activeSceneIndex = (index + scenes.length) % scenes.length;
-                targetProgress = sceneStops[activeSceneIndex];
-                progressBar.style.transform = `scaleX(${(activeSceneIndex + 1) / scenes.length})`;
-                stage.setAttribute(
-                    "aria-label",
-                    `Scene ${activeSceneIndex + 1} of ${scenes.length}. Tap to continue.`
-                );
-                if (!hasRendered) {
-                    hasRendered = true;
-                    renderedProgress = targetProgress;
-                    renderExperience(renderedProgress);
-                    return;
-                }
-                if (instant || reduceMotion || mobileMode) {
-                    renderedProgress = targetProgress;
-                    renderExperience(renderedProgress);
-                    isTransitioning = false;
-                    return;
-                }
-                isTransitioning = true;
-                transitionStartProgress = renderedProgress;
-                transitionStartedAt = performance.now();
-                if (!scrollFrame) scrollFrame = requestAnimationFrame(animateScene);
-            };
-
-            const advanceScene = () => {
-                const now = Date.now();
-                if (now - lastAdvanceAt < tapGuardMs) return;
-                lastAdvanceAt = now;
-                if (isTransitioning) return;
-                if (activeSceneIndex === scenes.length - 1) {
-                    isTransitioning = true;
-                    stage.classList.add("is-resetting");
-                    window.setTimeout(() => {
-                        showScene(0, { instant: true });
-                        stage.classList.remove("is-resetting");
-                    }, reduceMotion ? 0 : 180);
-                    return;
-                }
-                showScene(activeSceneIndex + 1);
-            };
-
-            revealScene(scenes[0]);
-            stage.addEventListener("click", advanceScene);
-            stage.addEventListener("keydown", (event) => {
-                if (["Enter", " ", "ArrowRight", "ArrowDown"].includes(event.key)) {
-                    event.preventDefault();
-                    advanceScene();
-                } else if (["ArrowLeft", "ArrowUp"].includes(event.key)) {
-                    event.preventDefault();
-                    if (!isTransitioning) showScene(activeSceneIndex - 1);
-                }
-            });
-            showScene(0, { instant: true });
-
-            const createCanvasScene = (canvas, draw) => {
-                const context = canvas.getContext("2d");
-                const ownerScene = canvas.closest("[data-scene]");
-                let width = 0;
-                let height = 0;
-                let dpr = 1;
-                let animationFrame = 0;
-                let visible = true;
-
-                const resize = () => {
-                    const rect = canvas.getBoundingClientRect();
-                    width = Math.max(1, rect.width);
-                    height = Math.max(1, rect.height);
-                    dpr = Math.min(window.devicePixelRatio || 1, 1.75);
-                    canvas.width = Math.round(width * dpr);
-                    canvas.height = Math.round(height * dpr);
-                    context.setTransform(dpr, 0, 0, dpr, 0, 0);
-                };
-
-                const render = (time) => {
-                    const sceneIsVisible = !ownerScene || ownerScene.dataset.sceneVisible === "true";
-                    if (visible && sceneIsVisible) draw(context, width, height, time);
-                    animationFrame = requestAnimationFrame(render);
-                };
-
-                const observer = new IntersectionObserver(([entry]) => {
-                    visible = entry.isIntersecting;
-                });
-
-                resize();
-                observer.observe(canvas);
-                window.addEventListener("resize", resize);
-                animationFrame = requestAnimationFrame(render);
-
-                return () => {
-                    observer.disconnect();
-                    window.removeEventListener("resize", resize);
-                    cancelAnimationFrame(animationFrame);
-                };
-            };
-
-            const heroCanvas = document.querySelector("#time-field");
-            let pointerX = 0;
-            let pointerY = 0;
-
-            window.addEventListener("pointermove", (event) => {
-                pointerX = event.clientX / Math.max(1, window.innerWidth) - 0.5;
-                pointerY = event.clientY / Math.max(1, window.innerHeight) - 0.5;
-            }, { passive: true });
-
-            createCanvasScene(heroCanvas, (context, width, height, time) => {
-                context.clearRect(0, 0, width, height);
-                const t = reduceMotion ? 0 : time * 0.00008;
-                const centerX = width * 0.5 + pointerX * 22;
-                const centerY = height * 0.49 + pointerY * 14;
-                const shortSide = Math.min(width, height);
-                const ringCount = width < 760 ? 5 : 7;
-
-                for (let ring = 0; ring < ringCount; ring += 1) {
-                    const radius = shortSide * (0.2 + ring * 0.085);
-                    const yScale = 0.6 + ring * 0.025;
-                    const points = 46 + ring * 8;
-
-                    for (let index = 0; index < points; index += 1) {
-                        const angle = (index / points) * Math.PI * 2 + t * (ring % 2 ? -1 : 1);
-                        const x = centerX + Math.cos(angle) * radius;
-                        const y = centerY + Math.sin(angle) * radius * yScale;
-                        const pulse = 0.32 + 0.28 * Math.sin(angle * 3 + t * 8 + ring);
-                        context.beginPath();
-                        context.fillStyle = `rgba(16, 16, 20, ${Math.max(0.03, pulse * 0.12)})`;
-                        context.arc(x, y, index % 8 === 0 ? 1.35 : 0.75, 0, Math.PI * 2);
-                        context.fill();
-                    }
-                }
-
-                const orbitRadius = shortSide * (width < 760 ? 0.37 : 0.46);
-                const drawOrbitPoint = (angle, color) => {
-                    const x = centerX + Math.cos(angle) * orbitRadius;
-                    const y = centerY + Math.sin(angle) * orbitRadius * 0.64;
-                    const glow = context.createRadialGradient(x, y, 0, x, y, 22);
-                    glow.addColorStop(0, color);
-                    glow.addColorStop(0.22, color);
-                    glow.addColorStop(1, "rgba(255,255,255,0)");
-                    context.fillStyle = glow;
-                    context.fillRect(x - 22, y - 22, 44, 44);
-                };
-
-                drawOrbitPoint(t * 4.2, "rgba(255, 122, 61, 0.8)");
-                drawOrbitPoint(Math.PI + t * 4.2, "rgba(19, 136, 245, 0.8)");
-            });
-
-            const infinityCanvas = document.querySelector("#infinity-field");
-            createCanvasScene(infinityCanvas, (context, width, height, time) => {
-                context.clearRect(0, 0, width, height);
-                const t = reduceMotion ? 0 : time * 0.00042;
-                const centerX = width * 0.5;
-                const centerY = height * 0.5;
-                const scaleX = Math.min(width * 0.44, 620);
-                const scaleY = Math.min(height * 0.28, 250);
-
-                const pointAt = (angle) => {
-                    const denominator = 1 + Math.sin(angle) * Math.sin(angle);
-                    return {
-                        x: centerX + scaleX * Math.cos(angle) / denominator,
-                        y: centerY + scaleY * Math.sin(angle) * Math.cos(angle) / denominator
-                    };
-                };
-
-                const drawPath = (color, start, end, widthValue, alpha) => {
-                    context.beginPath();
-                    for (let i = 0; i <= 240; i += 1) {
-                        const angle = start + (end - start) * (i / 240);
-                        const point = pointAt(angle);
-                        if (i === 0) context.moveTo(point.x, point.y);
-                        else context.lineTo(point.x, point.y);
-                    }
-                    context.strokeStyle = color;
-                    context.globalAlpha = alpha;
-                    context.lineWidth = widthValue;
-                    context.lineCap = "round";
-                    context.stroke();
-                    context.globalAlpha = 1;
-                };
-
-                drawPath("#ff7a3d", 0, Math.PI * 2, 1.4, 0.22);
-                drawPath("#1388f5", Math.PI, Math.PI * 3, 1.4, 0.22);
-
-                const pulseLength = 0.48;
-                const pulseStart = t % (Math.PI * 2);
-                drawPath("#ff9c70", pulseStart, pulseStart + pulseLength, 3.2, 0.88);
-                drawPath("#5bb0ff", pulseStart + Math.PI, pulseStart + Math.PI + pulseLength, 3.2, 0.88);
-
-                const firstPoint = pointAt(pulseStart + pulseLength);
-                const secondPoint = pointAt(pulseStart + Math.PI + pulseLength);
-                [firstPoint, secondPoint].forEach((point, index) => {
-                    const color = index === 0 ? "255, 122, 61" : "19, 136, 245";
-                    const glow = context.createRadialGradient(point.x, point.y, 0, point.x, point.y, 18);
-                    glow.addColorStop(0, `rgba(${color}, 0.9)`);
-                    glow.addColorStop(1, `rgba(${color}, 0)`);
-                    context.fillStyle = glow;
-                    context.fillRect(point.x - 18, point.y - 18, 36, 36);
-                });
-            });
-
-            const qixiCanvas = document.querySelector("#qixi-field");
-            const qixiParticles = Array.from({ length: 190 }, (_, index) => {
-                const side = index % 2 === 0 ? "orange" : "blue";
-                const band = ((index * 0.173) % 1) - 0.5;
-                const distance = 0.06 + ((index * 0.137) % 0.47);
-                return {
-                    side,
-                    x: side === "orange" ? distance : 1 - distance,
-                    y: 0.5 + band * 0.42,
-                    size: 0.45 + ((index * 0.31) % 1.35),
-                    phase: index * 1.91,
-                    drift: 0.35 + ((index * 0.07) % 0.8),
-                    bright: index % 9 === 0
-                };
-            });
-
-            createCanvasScene(qixiCanvas, (context, width, height, time) => {
-                context.clearRect(0, 0, width, height);
-                if (!qixiStartedAt) qixiStartedAt = time;
-                const t = reduceMotion ? 0 : time * 0.00042;
-                const reveal = reduceMotion ? 1 : clamp((time - qixiStartedAt) / 1800);
-                const drawStar = (particle) => {
-                    const color = particle.side === "orange" ? "255, 122, 61" : "19, 136, 245";
-                    const sway = Math.sin(t * particle.drift + particle.phase) * 10;
-                    const lift = Math.cos(t * particle.drift * 0.7 + particle.phase) * 5;
-                    const x = particle.x * width + sway;
-                    const y = particle.y * height + lift;
-                    const twinkle = 0.42 + 0.38 * Math.sin(t * 2.5 + particle.phase);
-                    const alpha = reveal * Math.max(0.08, twinkle);
-
-                    if (particle.bright) {
-                        const glow = context.createRadialGradient(x, y, 0, x, y, 18);
-                        glow.addColorStop(0, `rgba(${color}, ${alpha * 0.8})`);
-                        glow.addColorStop(1, `rgba(${color}, 0)`);
-                        context.fillStyle = glow;
-                        context.fillRect(x - 18, y - 18, 36, 36);
-                    }
-
-                    context.beginPath();
-                    context.fillStyle = `rgba(${color}, ${alpha})`;
-                    context.arc(x, y, particle.size * (particle.bright ? 1.35 : 1), 0, Math.PI * 2);
-                    context.fill();
-                };
-
-                qixiParticles.forEach(drawStar);
-            });
-        })();
-    </script>
+    /* Finale canvas */
+    makeCanvas(document.getElementById("finale-canvas"), (ctx, W, H, t) => {
+        ctx.clearRect(0, 0, W, H);
+        const T = noMotion ? 0 : t * 0.00038;
+        const cx = W * 0.5, cy = H * 0.5;
+        const sx = Math.min(W * 0.44, 560), sy = Math.min(H * 0.26, 220);
+        const bg = ctx.createRadialGradient(cx, cy, 0, cx, cy, Math.max(W,H)*0.65);
+        bg.addColorStop(0, "rgba(16,10,28,0.98)"); bg.addColorStop(1, "rgba(8,8,16,0.99)");
+        ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
+        for (let i = 0; i < 160; i++) {
+            const x = ((i * 131.7) % 1) * W, y = ((i * 89.4) % 1) * H;
+            const a = 0.04 + 0.16 * Math.abs(Math.sin(T * 1.8 + i * 0.7));
+            ctx.beginPath(); ctx.fillStyle = `rgba(255,255,255,${a})`;
+            ctx.arc(x, y, i % 9 === 0 ? 1.3 : 0.65, 0, Math.PI * 2); ctx.fill();
+        }
+        const pt = (a) => {
+            const d = 1 + Math.sin(a) * Math.sin(a);
+            return { x: cx + sx * Math.cos(a) / d, y: cy + sy * Math.sin(a) * Math.cos(a) / d };
+        };
+        ctx.beginPath();
+        for (let i = 0; i <= 300; i++) { const a = (i/300)*Math.PI*2; const p = pt(a); i===0?ctx.moveTo(p.x,p.y):ctx.lineTo(p.x,p.y); }
+        ctx.strokeStyle = "rgba(255,255,255,0.06)"; ctx.lineWidth = 1.2; ctx.stroke();
+        const draw = (startAngle, rgb) => {
+            const len = 0.52;
+            ctx.beginPath();
+            for (let i = 0; i <= 120; i++) { const a = startAngle + (i/120)*len; const p = pt(a); i===0?ctx.moveTo(p.x,p.y):ctx.lineTo(p.x,p.y); }
+            ctx.strokeStyle = `rgba(${rgb},0.85)`; ctx.lineWidth = 3; ctx.lineCap = "round"; ctx.stroke();
+            const head = pt(startAngle + len);
+            const g = ctx.createRadialGradient(head.x, head.y, 0, head.x, head.y, 20);
+            g.addColorStop(0, `rgba(${rgb},0.95)`); g.addColorStop(1, `rgba(${rgb},0)`);
+            ctx.fillStyle = g; ctx.fillRect(head.x-20, head.y-20, 40, 40);
+        };
+        draw(T % (Math.PI*2), "232,117,106");
+        draw(T % (Math.PI*2) + Math.PI, "106,180,232");
+    });
+})();
+</script>
 </body>
 </html>
