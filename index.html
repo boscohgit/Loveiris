@@ -738,7 +738,7 @@ body{
     setTimeout(function () {
       showMilestone(0);
       tlProgress = MILESTONES[0].pos;
-      tlNextIdx  = 1;
+      tlNextIdx  = 0;  // pause ends with tlNextIdx++ → 1, so next target is confession (idx 1)
       tlPausing  = true;
       tlPauseEnd = performance.now() + TL_PAUSE_MS;
       tlLastT    = performance.now();
