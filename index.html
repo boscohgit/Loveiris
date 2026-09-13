@@ -3,149 +3,56 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#ffffff">
-<meta name="description" content="Our story, counted in days and remembered in moments.">
-<title>Happy Anniversary | Our Time</title>
+<meta name="theme-color" content="#e87561">
+<title>Our Time — Happy Anniversary</title>
 <style>
-:root {
-  --white: #fff; --black: #111; --accent: #e66b55; --soft-accent: #fff0ec;
-  --line: #e8e8e8; --muted: #777; --pad: clamp(22px, 7vw, 96px);
-  --safe-top: env(safe-area-inset-top, 0px); --safe-bottom: env(safe-area-inset-bottom, 0px);
-}
-* { box-sizing: border-box; margin: 0; padding: 0; }
-html, body { width: 100%; height: 100%; overflow: hidden; background: var(--white); }
-body { color: var(--black); background: var(--white); font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif; -webkit-font-smoothing: antialiased; user-select: none; }
-.stage { position: relative; width: 100%; height: 100svh; overflow: hidden; cursor: pointer; }
-.scene { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: calc(var(--safe-top) + 42px) var(--pad) calc(var(--safe-bottom) + 42px); background: var(--white); opacity: 0; visibility: hidden; pointer-events: none; transition: opacity 420ms ease, transform 420ms ease; transform: translateY(10px); }
-.scene.active { opacity: 1; visibility: visible; pointer-events: auto; transform: translateY(0); }
-.scene__number { position: absolute; top: calc(var(--safe-top) + 28px); left: var(--pad); color: var(--accent); font-size: .7rem; font-weight: 700; letter-spacing: .18em; }
-.tap-hint { position: absolute; bottom: calc(var(--safe-bottom) + 28px); color: var(--muted); font-size: .68rem; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; }
-.tap-hint::after { display: inline-block; width: 28px; height: 1px; margin-left: 10px; vertical-align: middle; background: var(--accent); content: ""; }
-.welcome { text-align: center; }
-.welcome__mark { width: 44px; height: 44px; margin-bottom: 34px; border: 2px solid var(--accent); border-radius: 50%; color: var(--accent); font-size: 1.3rem; line-height: 40px; }
-.welcome h1 { max-width: 900px; font-size: clamp(4rem, 12vw, 10.5rem); font-weight: 800; letter-spacing: -.07em; line-height: .88; }
-.welcome h1 span { display: block; color: var(--accent); }
-.welcome__date { margin-top: 30px; color: var(--muted); font-size: .78rem; font-weight: 700; letter-spacing: .2em; text-transform: uppercase; }
-.counter { align-items: stretch; }
-.counter__heading { width: min(100%, 1120px); margin-bottom: 54px; }
-.counter__eyebrow, .memories__eyebrow { color: var(--accent); font-size: .72rem; font-weight: 700; letter-spacing: .2em; text-transform: uppercase; }
-.counter h2, .memories h2 { margin-top: 16px; font-size: clamp(2.8rem, 7vw, 6.8rem); font-weight: 800; letter-spacing: -.065em; line-height: .9; }
-.counter h2 span, .memories h2 span { color: var(--accent); }
-.counter__panel { display: grid; width: min(100%, 1120px); grid-template-columns: 1.15fr 1fr; border-top: 2px solid var(--black); border-bottom: 1px solid var(--line); }
-.counter__days { padding: 34px 42px 38px 0; border-right: 1px solid var(--line); }
-.counter__days-number { display: block; font-size: clamp(4.3rem, 11vw, 9rem); font-weight: 800; letter-spacing: -.07em; line-height: .82; font-variant-numeric: tabular-nums; }
-.counter__days-label { display: block; margin-top: 20px; color: var(--accent); font-size: .76rem; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; }
-.clock { display: grid; grid-template-columns: repeat(3, 1fr); }
-.clock__unit { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; }
-.clock__unit + .clock__unit { border-left: 1px solid var(--line); }
-.clock__value { font-size: clamp(2rem, 4.5vw, 4rem); font-weight: 700; font-variant-numeric: tabular-nums; }
-.clock__label { color: var(--muted); font-size: .62rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; }
-.counter__since { width: min(100%, 1120px); margin-top: 24px; color: var(--muted); font-size: .75rem; font-weight: 600; letter-spacing: .08em; }
-.memories { align-items: stretch; overflow: hidden; }
-.memories__heading { width: min(100%, 1120px); margin-bottom: 34px; }
-.memories h2 { margin-top: 14px; }
-.timeline { display: grid; width: min(100%, 1120px); grid-template-columns: repeat(7, 1fr); border-top: 2px solid var(--black); border-bottom: 1px solid var(--line); }
-.moment { min-width: 0; min-height: 142px; padding: 20px 16px 18px; }
-.moment + .moment { border-left: 1px solid var(--line); }
-.moment__dot { width: 9px; height: 9px; margin-bottom: 25px; border-radius: 50%; background: var(--black); }
-.moment__date { display: block; font-size: .7rem; font-weight: 800; letter-spacing: .06em; font-variant-numeric: tabular-nums; }
-.moment__title { display: block; margin-top: 9px; color: var(--muted); font-size: .68rem; line-height: 1.35; }
-.moment--highlight { background: var(--soft-accent); }
-.moment--highlight .moment__dot { background: var(--accent); box-shadow: 0 0 0 5px var(--soft-accent); }
-.moment--highlight .moment__date, .moment--highlight .moment__title { color: var(--accent); }
-.moment__times { display: grid; gap: 8px; margin-top: 10px; }
-.moment__time { display: grid; grid-template-columns: auto 1fr; gap: 6px; align-items: baseline; }
-.moment__time time { color: var(--accent); font-size: .68rem; font-weight: 800; font-variant-numeric: tabular-nums; }
-.moment__time span { color: var(--black); font-size: .62rem; font-weight: 700; line-height: 1.2; }
-@media (max-width: 760px) {
-  .scene { padding-top: calc(var(--safe-top) + 38px); padding-bottom: calc(var(--safe-bottom) + 38px); }
-  .scene__number { top: calc(var(--safe-top) + 22px); }
-  .welcome__mark { margin-bottom: 26px; }
-  .welcome h1 { font-size: clamp(3.7rem, 18vw, 6.8rem); }
-  .welcome__date { margin-top: 24px; font-size: .65rem; }
-  .counter__heading { margin-bottom: 34px; }
-  .counter h2 { font-size: clamp(2.8rem, 13vw, 5rem); }
-  .counter__panel { display: block; }
-  .counter__days { padding: 26px 0 25px; border-right: 0; }
-  .counter__days-number { font-size: clamp(4.3rem, 21vw, 7rem); }
-  .clock { min-height: 116px; border-top: 1px solid var(--line); }
-  .clock__value { font-size: clamp(1.8rem, 9vw, 2.7rem); }
-  .counter__since { font-size: .62rem; line-height: 1.5; }
-  .memories { justify-content: flex-start; padding-top: calc(var(--safe-top) + 66px); }
-  .memories__heading { margin-bottom: 24px; }
-  .memories h2 { font-size: clamp(2.8rem, 13vw, 5rem); }
-  .timeline { display: block; overflow: hidden; }
-  .moment { display: grid; min-height: 0; grid-template-columns: 14px 1fr; column-gap: 12px; padding: 13px 14px; }
-  .moment + .moment { border-top: 1px solid var(--line); border-left: 0; }
-  .moment__dot { grid-row: span 2; width: 8px; height: 8px; margin: 3px 0 0 2px; }
-  .moment__date { align-self: end; font-size: .66rem; }
-  .moment__title { margin-top: 4px; font-size: .64rem; }
-  .moment--highlight { padding-top: 15px; padding-bottom: 15px; }
-  .moment__times { grid-column: 2; margin-top: 7px; }
-  .moment__time time { font-size: .65rem; }
-  .moment__time span { font-size: .6rem; }
-  .tap-hint { bottom: calc(var(--safe-bottom) + 20px); font-size: .58rem; }
-}
-@media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition-duration: 1ms !important; animation-duration: 1ms !important; } }
+:root{--white:#fff;--ink:#181818;--soft:#737373;--line:#dedbd7;--accent:#d66f5c;--pad:clamp(24px,8vw,120px);--top:env(safe-area-inset-top,0px);--bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box;margin:0;padding:0}html,body{height:100%;overflow:hidden;background:var(--white)}body{color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif;-webkit-font-smoothing:antialiased;user-select:none}.stage{position:relative;height:100svh;overflow:hidden;cursor:pointer}.page{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:calc(var(--top) + 36px) var(--pad) calc(var(--bottom) + 36px);background:var(--white);opacity:0;visibility:hidden;pointer-events:none;transform:translateY(12px);transition:opacity .55s ease,transform .55s ease}.page.active{opacity:1;visibility:visible;pointer-events:auto;transform:none}.page-no{position:absolute;top:calc(var(--top) + 28px);left:var(--pad);font-size:.65rem;letter-spacing:.16em;color:var(--soft)}.next{position:absolute;bottom:calc(var(--bottom) + 28px);font-size:.63rem;letter-spacing:.15em;text-transform:uppercase;color:var(--soft)}.next:after{display:inline-block;width:22px;height:1px;margin-left:10px;vertical-align:middle;background:var(--accent);content:""}
+.serif{font-family:Georgia,"Times New Roman",serif;font-weight:400}.accent{color:var(--accent)}
+/* welcome */
+.welcome{text-align:center}.welcome__rule{width:32px;height:1px;margin-bottom:30px;background:var(--accent)}.welcome__small{font-size:.65rem;letter-spacing:.2em;text-transform:uppercase;color:var(--soft)}.welcome h1{margin-top:20px;font-size:clamp(3rem,7vw,6.6rem);font-weight:400;letter-spacing:-.045em;line-height:.98}.welcome h1 em{display:block;color:var(--accent);font-style:italic}.welcome__date{margin-top:28px;font-size:.75rem;letter-spacing:.11em;color:var(--soft)}
+/* counter */
+.counter{align-items:stretch}.counter__intro,.counter__main,.counter__foot{width:min(100%,920px)}.counter__intro{margin-bottom:48px}.counter__label,.memory__label{font-size:.65rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--accent)}.counter h2{margin-top:14px;font-size:clamp(2.3rem,5.4vw,5rem);font-weight:400;letter-spacing:-.045em;line-height:.98}.counter h2 em{font-family:Georgia,"Times New Roman",serif;font-style:italic;color:var(--soft)}.counter__main{display:grid;grid-template-columns:1.1fr 1fr;border-top:1px solid var(--ink);border-bottom:1px solid var(--line)}.counter__days{padding:30px 38px 32px 0;border-right:1px solid var(--line)}.counter__number{display:block;font-size:clamp(4.4rem,10vw,8.2rem);font-weight:300;letter-spacing:-.07em;line-height:.82;font-variant-numeric:tabular-nums}.counter__days-label{display:block;margin-top:17px;font-size:.65rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--accent)}.clock{display:grid;grid-template-columns:repeat(3,1fr)}.clock__unit{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:11px}.clock__unit+.clock__unit{border-left:1px solid var(--line)}.clock__value{font-size:clamp(1.8rem,4vw,3.2rem);font-weight:400;font-variant-numeric:tabular-nums}.clock__label{font-size:.58rem;letter-spacing:.15em;text-transform:uppercase;color:var(--soft)}.counter__foot{display:flex;justify-content:space-between;margin-top:18px;font-size:.68rem;letter-spacing:.06em;color:var(--soft)}
+/* memories */
+.memories{justify-content:flex-start;padding-top:calc(var(--top) + 88px)}.memory__head{width:min(100%,920px);display:flex;align-items:end;justify-content:space-between;margin-bottom:34px}.memory__head h2{margin-top:13px;font-size:clamp(2.4rem,5.4vw,5rem);font-weight:400;letter-spacing:-.05em;line-height:.9}.memory__head h2 em{font-family:Georgia,"Times New Roman",serif;font-style:italic;color:var(--soft)}.memory__head-note{max-width:150px;margin-bottom:3px;font-family:Georgia,"Times New Roman",serif;font-size:.82rem;line-height:1.35;color:var(--soft);text-align:right}.timeline{position:relative;width:min(100%,920px);display:grid;grid-template-columns:repeat(7,1fr);border-top:1px solid var(--ink);border-bottom:1px solid var(--line)}.moment{min-width:0;min-height:148px;padding:20px 14px}.moment+.moment{border-left:1px solid var(--line)}.moment__dot{width:7px;height:7px;margin-bottom:28px;border-radius:50%;background:var(--ink)}.moment__date{display:block;font-size:.67rem;font-weight:700;letter-spacing:.04em;font-variant-numeric:tabular-nums}.moment__name{display:block;margin-top:9px;font-family:Georgia,"Times New Roman",serif;font-size:.78rem;line-height:1.25;color:var(--soft)}.moment--focus{background:#fff8f6}.moment--focus .moment__dot{background:var(--accent)}.moment--focus .moment__date{color:var(--accent)}.moment__events{display:grid;gap:7px;margin-top:10px}.event{display:grid;grid-template-columns:auto 1fr;gap:6px;align-items:baseline}.event time{font-size:.65rem;font-weight:700;color:var(--accent);font-variant-numeric:tabular-nums}.event span{font-size:.62rem;line-height:1.15;color:var(--ink)}
+@media(max-width:760px){.page{padding-top:calc(var(--top) + 32px);padding-bottom:calc(var(--bottom) + 32px)}.page-no{top:calc(var(--top) + 22px)}.welcome__rule{margin-bottom:25px}.welcome h1{font-size:clamp(3.2rem,15vw,5.3rem)}.welcome__date{margin-top:22px;font-size:.64rem}.counter__intro{margin-bottom:34px}.counter h2{font-size:clamp(2.5rem,12vw,4.2rem)}.counter__main{display:block}.counter__days{padding:25px 0 26px;border-right:0}.counter__number{font-size:clamp(4.6rem,21vw,7rem)}.clock{min-height:105px;border-top:1px solid var(--line)}.clock__value{font-size:clamp(1.7rem,8vw,2.4rem)}.counter__foot{display:block;line-height:1.6}.counter__foot span{display:block}.counter__foot span+span{margin-top:3px}.memories{padding-top:calc(var(--top) + 66px)}.memory__head{display:block;margin-bottom:23px}.memory__head h2{font-size:clamp(2.7rem,13vw,4.8rem)}.memory__head-note{margin-top:15px;text-align:left;font-size:.76rem}.timeline{display:block}.moment{display:grid;grid-template-columns:13px 1fr;column-gap:12px;min-height:0;padding:11px 13px}.moment+.moment{border-top:1px solid var(--line);border-left:0}.moment__dot{grid-row:span 2;width:7px;height:7px;margin:4px 0 0 2px}.moment__date{font-size:.64rem}.moment__name{margin-top:4px;font-size:.73rem}.moment--focus{padding-top:14px;padding-bottom:14px}.moment__events{grid-column:2;margin-top:7px}.event time{font-size:.63rem}.event span{font-size:.59rem}.next{bottom:calc(var(--bottom) + 18px);font-size:.57rem}}
+/* Coral-led palette: white carries the page, black stays a small detail. */
+:root{--white:#e87561;--ink:#171312;--soft:rgba(255,255,255,.72);--line:rgba(255,255,255,.32);--accent:#fff}
+body{color:var(--accent)}
+.moment--focus{background:rgba(255,255,255,.12)}
+@media(prefers-reduced-motion:reduce){.page{transition-duration:1ms}}
 </style>
 </head>
 <body>
 <main class="stage" id="stage" role="button" tabindex="0" aria-label="Page 1 of 3. Tap anywhere to continue">
-  <section class="scene active welcome" id="scene-1" aria-label="Happy Anniversary">
-    <span class="scene__number">01 / 03</span>
-    <div class="welcome__mark" aria-hidden="true">♥</div>
-    <h1>Happy <span>Anniversary</span></h1>
-    <p class="welcome__date">September 15 · Our wedding day</p>
-    <p class="tap-hint">Tap anywhere to continue</p>
+  <section class="page welcome active" id="page-1" aria-label="Happy Anniversary">
+    <span class="page-no">01 / 03</span><div class="welcome__rule"></div><p class="welcome__small">For the two of us</p><h1 class="serif">Happy <em>Anniversary</em></h1><p class="welcome__date">September 15 · Always, in every season</p><p class="next">Tap anywhere to continue</p>
   </section>
-  <section class="scene counter" id="scene-2" aria-label="Our time together">
-    <span class="scene__number">02 / 03</span>
-    <div class="counter__heading"><p class="counter__eyebrow">Since our first meeting</p><h2>Every day.<br><span>Still counting.</span></h2></div>
-    <div class="counter__panel" aria-live="off">
-      <div class="counter__days"><span class="counter__days-number" id="days">0</span><span class="counter__days-label">days together</span></div>
-      <div class="clock"><div class="clock__unit"><span class="clock__value" id="hours">00</span><span class="clock__label">Hours</span></div><div class="clock__unit"><span class="clock__value" id="minutes">00</span><span class="clock__label">Minutes</span></div><div class="clock__unit"><span class="clock__value" id="seconds">00</span><span class="clock__label">Seconds</span></div></div>
-    </div>
-    <p class="counter__since">June 19, 2018 · One moment became our timeline.</p>
-    <p class="tap-hint">Tap anywhere to continue</p>
+  <section class="page counter" id="page-2" aria-label="Our time together">
+    <span class="page-no">02 / 03</span><div class="counter__intro"><p class="counter__label">A little measure of us</p><h2>Time passes.<br><em>We remain.</em></h2></div>
+    <div class="counter__main" aria-live="off"><div class="counter__days"><span class="counter__number" id="days">0</span><span class="counter__days-label">days together</span></div><div class="clock"><div class="clock__unit"><span class="clock__value" id="hours">00</span><span class="clock__label">hours</span></div><div class="clock__unit"><span class="clock__value" id="minutes">00</span><span class="clock__label">minutes</span></div><div class="clock__unit"><span class="clock__value" id="seconds">00</span><span class="clock__label">seconds</span></div></div></div>
+    <div class="counter__foot"><span>Since June 19, 2018</span><span>and still counting</span></div><p class="next">Tap anywhere to continue</p>
   </section>
-  <section class="scene memories" id="scene-3" aria-label="Our important moments">
-    <span class="scene__number">03 / 03</span>
-    <div class="memories__heading"><p class="memories__eyebrow">The moments that made us</p><h2>Our <span>story.</span></h2></div>
+  <section class="page memories" id="page-3" aria-label="Our important moments">
+    <span class="page-no">03 / 03</span><div class="memory__head"><div><p class="memory__label">A timeline of us</p><h2>Our <em>story</em></h2></div><p class="memory__head-note">The dates are small.<br>The memories are not.</p></div>
     <div class="timeline">
-      <article class="moment"><span class="moment__dot"></span><time class="moment__date" datetime="2018-06-19">2018.06.19</time><span class="moment__title">First meeting</span></article>
-      <article class="moment moment--highlight"><span class="moment__dot"></span><time class="moment__date" datetime="2018-09-06">2018.09.06</time><div class="moment__times"><div class="moment__time"><time datetime="2018-09-06T11:40:00+08:00">11:40</time><span>First dating</span></div><div class="moment__time"><time datetime="2018-09-06T13:00:00+08:00">13:00</time><span>Iris said yes</span></div></div></article>
-      <article class="moment"><span class="moment__dot"></span><time class="moment__date" datetime="2020-12-06">2020.12.06</time><span class="moment__title">The proposal</span></article>
-      <article class="moment"><span class="moment__dot"></span><time class="moment__date" datetime="2021-07-09">2021.07.09</time><span class="moment__title">Marriage registration</span></article>
-      <article class="moment"><span class="moment__dot"></span><time class="moment__date" datetime="2022-09-15">2022.09.15</time><span class="moment__title">Wedding day</span></article>
-      <article class="moment"><span class="moment__dot"></span><time class="moment__date" datetime="2026-09-15">2026.09.15</time><span class="moment__title">Another anniversary</span></article>
-      <article class="moment"><span class="moment__dot"></span><time class="moment__date">Today</time><span class="moment__title">Still us</span></article>
-    </div>
-    <p class="tap-hint">Tap to begin again</p>
+      <article class="moment"><span class="moment__dot"></span><time class="moment__date" datetime="2018-06-19">2018.06.19</time><span class="moment__name">First meeting</span></article>
+      <article class="moment moment--focus"><span class="moment__dot"></span><time class="moment__date" datetime="2018-09-06">2018.09.06</time><div class="moment__events"><div class="event"><time datetime="2018-09-06T11:40:00+08:00">11:40</time><span>First dating</span></div><div class="event"><time datetime="2018-09-06T13:00:00+08:00">13:00</time><span>Iris said yes</span></div></div></article>
+      <article class="moment"><span class="moment__dot"></span><time class="moment__date" datetime="2020-12-06">2020.12.06</time><span class="moment__name">The proposal</span></article>
+      <article class="moment"><span class="moment__dot"></span><time class="moment__date" datetime="2021-07-09">2021.07.09</time><span class="moment__name">Marriage registration</span></article>
+      <article class="moment"><span class="moment__dot"></span><time class="moment__date" datetime="2022-09-15">2022.09.15</time><span class="moment__name">Wedding day</span></article>
+      <article class="moment"><span class="moment__dot"></span><time class="moment__date" datetime="2026-09-15">2026.09.15</time><span class="moment__name">Another anniversary</span></article>
+      <article class="moment"><span class="moment__dot"></span><time class="moment__date">Today</time><span class="moment__name">Still us</span></article>
+    </div><p class="next">Tap to begin again</p>
   </section>
 </main>
 <script>
 (() => {
-  const stage = document.getElementById('stage');
-  const scenes = [...document.querySelectorAll('.scene')];
-  const start = new Date(2018, 5, 19, 0, 0, 0);
-  const dayMs = 86400000;
-  let current = 0; let locked = false;
-  const pad = value => String(value).padStart(2, '0');
-  const updateTimer = () => {
-    const elapsed = Math.max(0, Date.now() - start.getTime());
-    const days = Math.floor(elapsed / dayMs); const remainder = elapsed - days * dayMs;
-    document.getElementById('days').textContent = days.toLocaleString('en-US');
-    document.getElementById('hours').textContent = pad(Math.floor(remainder / 3600000));
-    document.getElementById('minutes').textContent = pad(Math.floor((remainder % 3600000) / 60000));
-    document.getElementById('seconds').textContent = pad(Math.floor((remainder % 60000) / 1000));
-  };
-  const goTo = next => {
-    if (locked) return; locked = true; scenes[current].classList.remove('active'); current = (next + scenes.length) % scenes.length; scenes[current].classList.add('active');
-    stage.setAttribute('aria-label', `Page ${current + 1} of 3. Tap anywhere to continue`); window.setTimeout(() => { locked = false; }, 460);
-  };
-  stage.addEventListener('click', () => goTo(current + 1));
-  stage.addEventListener('keydown', event => { if (['Enter', ' ', 'ArrowRight', 'ArrowDown'].includes(event.key)) { event.preventDefault(); goTo(current + 1); } if (['ArrowLeft', 'ArrowUp'].includes(event.key)) { event.preventDefault(); goTo(current - 1); } });
-  updateTimer(); window.setInterval(updateTimer, 250);
+  const pages = [...document.querySelectorAll('.page')]; const stage = document.getElementById('stage'); const start = new Date(2018, 5, 19, 0, 0, 0); let current = 0; let locked = false;
+  const pad = n => String(n).padStart(2, '0');
+  function update(){const ms=Math.max(0,Date.now()-start.getTime());const days=Math.floor(ms/86400000);const rem=ms-days*86400000;document.getElementById('days').textContent=days.toLocaleString('en-US');document.getElementById('hours').textContent=pad(Math.floor(rem/3600000));document.getElementById('minutes').textContent=pad(Math.floor(rem%3600000/60000));document.getElementById('seconds').textContent=pad(Math.floor(rem%60000/1000));}
+  function go(step){if(locked)return;locked=true;pages[current].classList.remove('active');current=(current+step+pages.length)%pages.length;pages[current].classList.add('active');stage.setAttribute('aria-label',`Page ${current+1} of 3. Tap anywhere to continue`);setTimeout(()=>{locked=false},560)}
+  stage.addEventListener('click',()=>go(1)); stage.addEventListener('keydown',e=>{if(['Enter',' ','ArrowRight','ArrowDown'].includes(e.key)){e.preventDefault();go(1)}else if(['ArrowLeft','ArrowUp'].includes(e.key)){e.preventDefault();go(-1)}}); update(); setInterval(update,250);
 })();
 </script>
 </body>
