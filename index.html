@@ -3,57 +3,795 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#e87561">
-<title>Our Time — Happy Anniversary</title>
+<meta name="theme-color" content="#040402">
+<title>Our Time</title>
 <style>
-:root{--white:#fff;--ink:#181818;--soft:#737373;--line:#dedbd7;--accent:#d66f5c;--pad:clamp(24px,8vw,120px);--top:env(safe-area-inset-top,0px);--bottom:env(safe-area-inset-bottom,0px)}
-*{box-sizing:border-box;margin:0;padding:0}html,body{height:100%;overflow:hidden;background:var(--white)}body{color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif;-webkit-font-smoothing:antialiased;user-select:none}.stage{position:relative;height:100svh;overflow:hidden;cursor:pointer}.page{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:calc(var(--top) + 36px) var(--pad) calc(var(--bottom) + 36px);background:var(--white);opacity:0;visibility:hidden;pointer-events:none;transform:translateY(12px);transition:opacity .55s ease,transform .55s ease}.page.active{opacity:1;visibility:visible;pointer-events:auto;transform:none}.page-no{position:absolute;top:calc(var(--top) + 28px);left:var(--pad);font-size:.65rem;letter-spacing:.16em;color:var(--soft)}.next{position:absolute;bottom:calc(var(--bottom) + 28px);font-size:.63rem;letter-spacing:.15em;text-transform:uppercase;color:var(--soft)}.next:after{display:inline-block;width:22px;height:1px;margin-left:10px;vertical-align:middle;background:var(--accent);content:""}
-.serif{font-family:Georgia,"Times New Roman",serif;font-weight:400}.accent{color:var(--accent)}
-/* welcome */
-.welcome{text-align:center}.welcome__rule{width:32px;height:1px;margin-bottom:30px;background:var(--accent)}.welcome__small{font-size:.65rem;letter-spacing:.2em;text-transform:uppercase;color:var(--soft)}.welcome h1{margin-top:20px;font-size:clamp(3rem,7vw,6.6rem);font-weight:400;letter-spacing:-.045em;line-height:.98}.welcome h1 em{display:block;color:var(--accent);font-style:italic}.welcome__date{margin-top:28px;font-size:.75rem;letter-spacing:.11em;color:var(--soft)}
-/* counter */
-.counter{align-items:stretch}.counter__intro,.counter__main,.counter__foot{width:min(100%,920px)}.counter__intro{margin-bottom:48px}.counter__label,.memory__label{font-size:.65rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--accent)}.counter h2{margin-top:14px;font-size:clamp(2.3rem,5.4vw,5rem);font-weight:400;letter-spacing:-.045em;line-height:.98}.counter h2 em{font-family:Georgia,"Times New Roman",serif;font-style:italic;color:var(--soft)}.counter__main{display:grid;grid-template-columns:1.1fr 1fr;border-top:1px solid var(--ink);border-bottom:1px solid var(--line)}.counter__days{padding:30px 38px 32px 0;border-right:1px solid var(--line)}.counter__number{display:block;font-size:clamp(4.4rem,10vw,8.2rem);font-weight:300;letter-spacing:-.07em;line-height:.82;font-variant-numeric:tabular-nums}.counter__days-label{display:block;margin-top:17px;font-size:.65rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--accent)}.clock{display:grid;grid-template-columns:repeat(3,1fr)}.clock__unit{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:11px}.clock__unit+.clock__unit{border-left:1px solid var(--line)}.clock__value{font-size:clamp(1.8rem,4vw,3.2rem);font-weight:400;font-variant-numeric:tabular-nums}.clock__label{font-size:.58rem;letter-spacing:.15em;text-transform:uppercase;color:var(--soft)}.counter__foot{display:flex;justify-content:space-between;margin-top:18px;font-size:.68rem;letter-spacing:.06em;color:var(--soft)}
-/* memories */
-.memories{justify-content:flex-start;padding-top:calc(var(--top) + 88px)}.memory__head{width:min(100%,920px);display:flex;align-items:end;justify-content:space-between;margin-bottom:34px}.memory__head h2{margin-top:13px;font-size:clamp(2.4rem,5.4vw,5rem);font-weight:400;letter-spacing:-.05em;line-height:.9}.memory__head h2 em{font-family:Georgia,"Times New Roman",serif;font-style:italic;color:var(--soft)}.memory__head-note{max-width:150px;margin-bottom:3px;font-family:Georgia,"Times New Roman",serif;font-size:.82rem;line-height:1.35;color:var(--soft);text-align:right}.timeline{position:relative;width:min(100%,920px);display:grid;grid-template-columns:repeat(7,1fr);border-top:1px solid var(--ink);border-bottom:1px solid var(--line)}.moment{min-width:0;min-height:148px;padding:20px 14px}.moment+.moment{border-left:1px solid var(--line)}.moment__dot{width:7px;height:7px;margin-bottom:28px;border-radius:50%;background:var(--ink)}.moment__date{display:block;font-size:.67rem;font-weight:700;letter-spacing:.04em;font-variant-numeric:tabular-nums}.moment__name{display:block;margin-top:9px;font-family:Georgia,"Times New Roman",serif;font-size:.78rem;line-height:1.25;color:var(--soft)}.moment--focus{background:#fff8f6}.moment--focus .moment__dot{background:var(--accent)}.moment--focus .moment__date{color:var(--accent)}.moment__events{display:grid;gap:7px;margin-top:10px}.event{display:grid;grid-template-columns:auto 1fr;gap:6px;align-items:baseline}.event time{font-size:.65rem;font-weight:700;color:var(--accent);font-variant-numeric:tabular-nums}.event span{font-size:.62rem;line-height:1.15;color:var(--ink)}
-@media(max-width:760px){.page{padding-top:calc(var(--top) + 32px);padding-bottom:calc(var(--bottom) + 32px)}.page-no{top:calc(var(--top) + 22px)}.welcome__rule{margin-bottom:25px}.welcome h1{font-size:clamp(3.2rem,15vw,5.3rem)}.welcome__date{margin-top:22px;font-size:.64rem}.counter__intro{margin-bottom:34px}.counter h2{font-size:clamp(2.5rem,12vw,4.2rem)}.counter__main{display:block}.counter__days{padding:25px 0 26px;border-right:0}.counter__number{font-size:clamp(4.6rem,21vw,7rem)}.clock{min-height:105px;border-top:1px solid var(--line)}.clock__value{font-size:clamp(1.7rem,8vw,2.4rem)}.counter__foot{display:block;line-height:1.6}.counter__foot span{display:block}.counter__foot span+span{margin-top:3px}.memories{padding-top:calc(var(--top) + 66px)}.memory__head{display:block;margin-bottom:23px}.memory__head h2{font-size:clamp(2.7rem,13vw,4.8rem)}.memory__head-note{margin-top:15px;text-align:left;font-size:.76rem}.timeline{display:block}.moment{display:grid;grid-template-columns:13px 1fr;column-gap:12px;min-height:0;padding:11px 13px}.moment+.moment{border-top:1px solid var(--line);border-left:0}.moment__dot{grid-row:span 2;width:7px;height:7px;margin:4px 0 0 2px}.moment__date{font-size:.64rem}.moment__name{margin-top:4px;font-size:.73rem}.moment--focus{padding-top:14px;padding-bottom:14px}.moment__events{grid-column:2;margin-top:7px}.event time{font-size:.63rem}.event span{font-size:.59rem}.next{bottom:calc(var(--bottom) + 18px);font-size:.57rem}}
-/* Coral-led palette: white carries the page, black stays a small detail. */
-:root{--white:#e87561;--ink:#171312;--soft:rgba(255,255,255,.72);--line:rgba(255,255,255,.32);--accent:#fff}
-body{color:var(--accent)}
-.moment--focus{background:rgba(255,255,255,.12)}
-@media(prefers-reduced-motion:reduce){.page{transition-duration:1ms}}
+
+/* ─── tokens ─── */
+:root {
+  --bg:   #040402;
+  --txt:  #ece8dc;
+  --gold: #cc9f3e;
+  --dim:  rgba(236,232,220,0.32);
+  --faint:rgba(236,232,220,0.12);
+  --pad:  clamp(20px,7vw,80px);
+  --sat:  env(safe-area-inset-top,0px);
+  --sab:  env(safe-area-inset-bottom,0px);
+}
+
+/* ─── reset ─── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;background:var(--bg)}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",sans-serif;
+  -webkit-font-smoothing:antialiased;
+  color:var(--txt);
+  user-select:none;
+  -webkit-tap-highlight-color:transparent;
+}
+
+/* ─── grain overlay ─── */
+.grain{
+  position:fixed;inset:0;z-index:900;
+  width:100%;height:100%;
+  pointer-events:none;opacity:.042;
+  mix-blend-mode:overlay;
+}
+
+/* ─── curtain cut ─── */
+.curtain{
+  position:fixed;inset:0;z-index:800;
+  background:var(--bg);
+  opacity:0;pointer-events:none;
+  transition:opacity .13s ease;
+}
+.curtain.on{opacity:1}
+
+/* ─── scenes ─── */
+.scene{
+  position:fixed;inset:0;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  padding:calc(var(--sat)+52px) var(--pad) calc(var(--sab)+52px);
+  opacity:0;pointer-events:none;
+  cursor:pointer;touch-action:manipulation;
+  will-change:opacity;
+}
+.scene.active{opacity:1;pointer-events:auto}
+
+/* ─── tap hint ─── */
+.tap-hint{
+  position:absolute;
+  bottom:calc(var(--sab) + 32px);
+  left:50%;transform:translateX(-50%);
+  font-size:.62rem;font-weight:600;
+  letter-spacing:.26em;text-transform:uppercase;
+  color:var(--dim);white-space:nowrap;
+  display:flex;align-items:center;gap:8px;
+  opacity:0;pointer-events:none;
+  transition:opacity .6s ease;
+}
+.tap-hint.show{
+  opacity:1;
+  animation:breathe 2.4s ease-in-out infinite;
+}
+.tap-hint::before,.tap-hint::after{
+  content:'';width:16px;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(204,159,62,.4));
+}
+.tap-hint::after{
+  background:linear-gradient(90deg,rgba(204,159,62,.4),transparent);
+}
+@keyframes breathe{0%,100%{opacity:.35;transform:translateX(-50%) translateY(0)}50%{opacity:.9;transform:translateX(-50%) translateY(-2px)}}
+
+
+/* ══════════════════════════════════════
+   SCENE 1 — THE NUMBER
+══════════════════════════════════════ */
+.s1-inner{
+  text-align:center;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+}
+
+.s1-kicker{
+  font-size:clamp(.62rem,1.6vw,.78rem);
+  font-weight:600;letter-spacing:.26em;text-transform:uppercase;
+  color:var(--gold);margin-bottom:clamp(32px,6vw,56px);
+}
+
+/* digit container */
+.s1-num{
+  font-size:clamp(5rem,24vw,19rem);
+  font-weight:100;line-height:.84;
+  letter-spacing:-.04em;font-variant-numeric:tabular-nums;
+  color:var(--txt);
+  text-shadow:0 0 140px rgba(204,159,62,.18);
+  transition:transform .3s ease;
+}
+.s1-digit{display:inline-block;transition:color .08s linear}
+.s1-comma{display:inline-block;color:rgba(236,232,220,.18)}
+
+/* when a digit locks in: flash gold → white */
+@keyframes lock-flash{
+  0%  {color:var(--gold);text-shadow:0 0 50px rgba(204,159,62,.95)}
+  100%{color:var(--txt); text-shadow:0 0 140px rgba(204,159,62,.18)}
+}
+.s1-digit.locked{animation:lock-flash .55s ease forwards}
+
+/* Mobile breathing shimmer on complete (pure opacity, no scale) */
+@media(max-width:680px){
+  .s1-num.heartbeat{
+    animation:breathe-shimmer 2.4s ease-in-out infinite;
+  }
+}
+@keyframes breathe-shimmer{
+  0%,100%{
+    opacity:.35;
+    text-shadow:0 0 50px rgba(204,159,62,.1);
+  }
+  50%{
+    opacity:1;
+    text-shadow:0 0 140px rgba(245,212,122,.7), 0 0 50px rgba(204,159,62,.85);
+  }
+}
+
+.s1-unit{
+  margin-top:clamp(14px,2.2vw,24px);
+  font-size:clamp(.62rem,1.6vw,.78rem);
+  font-weight:600;letter-spacing:.36em;text-transform:uppercase;
+  color:var(--dim);
+}
+
+
+/* ══════════════════════════════════════
+   SCENE 2 — THE TIMELINE
+══════════════════════════════════════ */
+.s2-kicker{
+  font-size:clamp(.62rem,1.6vw,.78rem);
+  font-weight:600;letter-spacing:.26em;text-transform:uppercase;
+  color:var(--gold);margin-bottom:clamp(48px,9vw,80px);
+}
+
+/* track area */
+.tl-wrap{
+  position:relative;
+  width:min(92vw,920px);
+  height:32px;
+  display:flex;align-items:center;
+}
+.tl-bg{
+  position:absolute;inset:0;
+  height:2px;top:50%;transform:translateY(-50%);
+  background:var(--faint);border-radius:2px;
+}
+.tl-fill{
+  position:absolute;top:50%;left:0;
+  height:3px;width:0%;
+  transform:translateY(-50%);
+  background:linear-gradient(90deg, rgba(204,159,62,.6), #f5d47a);
+  border-radius:2px;
+  box-shadow:0 0 20px 3px rgba(204,159,62,.75);
+  transition:none;
+  z-index:1;
+}
+/* glowing leading edge */
+.tl-fill::after{
+  content:'';
+  position:absolute;right:-7px;top:50%;
+  width:14px;height:14px;border-radius:50%;
+  background:#fff5db;
+  transform:translateY(-50%);
+  box-shadow:0 0 22px 8px rgba(245,212,122,.9), 0 0 40px 14px rgba(204,159,62,.4);
+  animation:orb 1.4s ease-in-out infinite;
+}
+@keyframes orb{0%,100%{box-shadow:0 0 20px 7px rgba(245,212,122,.95)}50%{box-shadow:0 0 34px 14px rgba(204,159,62,.45)}}
+
+/* milestone dot (zero-size anchor, positioned via left%) */
+.tl-dot{
+  position:absolute;top:50%;
+  width:0;height:0;
+  z-index:2;
+}
+.tl-dot-inner{
+  position:absolute;
+  width:13px;height:13px;border-radius:50%;
+  background:var(--bg);border:2px solid var(--gold);
+  box-shadow:0 0 10px 2px rgba(204,159,62,.4);
+  top:-6.5px;left:-6.5px;
+  scale:0;
+  transition:scale .55s cubic-bezier(.34,1.56,.64,1), border-color .3s, box-shadow .3s;
+}
+.tl-dot-inner.on{scale:1}
+
+/* Highlighted Special Milestones */
+.tl-dot.hl .tl-dot-inner{
+  width:17px;height:17px;
+  top:-8.5px;left:-8.5px;
+  background:#ffe9aa;border:2.5px solid #fff;
+  box-shadow:0 0 24px 8px rgba(245,212,122,.9), 0 0 45px 16px rgba(204,159,62,.45);
+}
+.tl-dot.hl .tl-dot-inner.on{
+  animation:pulse-hl 2s infinite ease-in-out;
+}
+@keyframes pulse-hl{
+  0%,100%{transform:scale(1);box-shadow:0 0 20px 6px rgba(245,212,122,.9)}
+  50%{transform:scale(1.2);box-shadow:0 0 32px 12px rgba(245,212,122,1),0 0 50px 20px rgba(204,159,62,.5)}
+}
+
+/* milestone label — appears below/above each dot */
+.tl-dot-label{
+  position:absolute;
+  top:22px;
+  left:50%;
+  transform:translateX(-50%) translateY(8px);
+  white-space:nowrap;text-align:center;
+  opacity:0;
+  transition:opacity .4s ease .1s, transform .4s cubic-bezier(.16,1,.3,1) .1s;
+}
+.tl-dot-label.on{
+  opacity:1;
+  transform:translateX(-50%) translateY(0);
+}
+/* alternate: odd/above */
+.tl-dot.above .tl-dot-label{
+  top:auto;bottom:22px;
+  transform:translateX(-50%) translateY(-8px);
+}
+.tl-dot.above .tl-dot-label.on{
+  transform:translateX(-50%) translateY(0);
+}
+
+.tl-dot-date{
+  font-size:clamp(.68rem,1.4vw,.82rem);
+  font-weight:700;letter-spacing:.06em;
+  font-variant-numeric:tabular-nums;
+  color:var(--gold);
+}
+.tl-dot-time{
+  font-size:clamp(.58rem,1.1vw,.68rem);
+  font-weight:500;letter-spacing:.04em;
+  color:rgba(236,232,220,.5);
+  margin-left:4px;
+}
+.tl-dot-name{
+  margin-top:4px;
+  font-size:clamp(.6rem,1.25vw,.74rem);
+  font-weight:500;letter-spacing:.06em;
+  color:var(--dim);
+}
+
+/* Highlighted labels */
+.tl-dot.hl .tl-dot-date{
+  color:#fff;
+  text-shadow:0 0 16px rgba(245,212,122,.9);
+  font-size:clamp(.74rem,1.5vw,.88rem);
+}
+.tl-dot.hl .tl-dot-name{
+  color:#f7df99;
+  font-weight:600;
+  text-shadow:0 0 12px rgba(204,159,62,.6);
+}
+.tl-dot.hl .tl-badge{
+  display:inline-block;
+  background:linear-gradient(135deg, #c8685c, #cc9f3e);
+  color:#fff;font-size:.52rem;font-weight:700;
+  letter-spacing:.08em;text-transform:uppercase;
+  padding:2px 6px;border-radius:4px;
+  margin-bottom:3px;
+  box-shadow:0 0 10px rgba(200,104,92,.6);
+}
+
+/* mobile: hide direct labels on dense screens, show active milestone bar, and hide tap hints */
+@media(max-width:680px){
+  .tap-hint{display:none!important}
+  .tl-dot-label{display:none}
+  .tl-cur{display:flex}
+}
+@media(min-width:681px){
+  .tl-cur{display:none}
+}
+
+/* current-label bar (mobile) */
+.tl-cur{
+  margin-top:36px;
+  flex-direction:column;align-items:center;
+  text-align:center;min-height:56px;
+}
+.tl-cur-date{
+  font-size:.9rem;font-weight:700;letter-spacing:.08em;
+  font-variant-numeric:tabular-nums;color:var(--gold);
+  transition:opacity .25s,transform .25s cubic-bezier(.16,1,.3,1);
+}
+.tl-cur-name{
+  font-size:.76rem;font-weight:500;letter-spacing:.06em;
+  color:var(--dim);margin-top:6px;
+  transition:opacity .25s,transform .25s cubic-bezier(.16,1,.3,1);
+}
+.tl-cur-badge{
+  display:none;
+  background:linear-gradient(135deg, #c8685c, #cc9f3e);
+  color:#fff;font-size:.54rem;font-weight:700;
+  letter-spacing:.08em;text-transform:uppercase;
+  padding:2px 8px;border-radius:4px;margin-bottom:6px;
+}
+.tl-cur.hl .tl-cur-date{color:#fff;text-shadow:0 0 16px rgba(245,212,122,.9)}
+.tl-cur.hl .tl-cur-name{color:#f7df99;font-weight:600}
+.tl-cur.hl .tl-cur-badge{display:inline-block}
+.tl-cur-date.fade,.tl-cur-name.fade{opacity:0;transform:translateY(4px)}
+
+
+/* ══════════════════════════════════════
+   SCENE 3 — THE CLOCK
+══════════════════════════════════════ */
+.s3-kicker{
+  font-size:clamp(.58rem,1.5vw,.72rem);
+  font-weight:600;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--gold);
+  margin-bottom:clamp(28px,5vw,52px);
+  text-align:center;
+}
+
+.clk{text-align:center}
+
+.clk-days{
+  display:flex;align-items:baseline;
+  justify-content:center;gap:clamp(10px,2vw,18px);
+  margin-bottom:clamp(14px,3vw,26px);
+}
+.clk-days-num{
+  font-size:clamp(4.5rem,20vw,16rem);
+  font-weight:100;line-height:.86;
+  letter-spacing:-.04em;font-variant-numeric:tabular-nums;
+  color:var(--txt);
+  text-shadow:0 0 100px rgba(204,159,62,.12);
+}
+.clk-days-lbl{
+  font-size:clamp(.6rem,1.8vw,.9rem);
+  font-weight:500;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--dim);align-self:flex-end;margin-bottom:.15em;
+}
+
+.clk-hms{
+  display:flex;align-items:baseline;
+  justify-content:center;
+}
+.cs{text-align:center}
+.cs-val{
+  display:block;
+  font-size:clamp(1.8rem,5.5vw,4.5rem);
+  font-weight:200;font-variant-numeric:tabular-nums;
+  letter-spacing:-.02em;
+  color:rgba(236,232,220,.58);line-height:1;
+}
+.cs-lbl{
+  display:block;margin-top:5px;
+  font-size:clamp(.5rem,.9vw,.6rem);
+  font-weight:700;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--dim);
+}
+.csep{
+  font-size:clamp(1.5rem,4.5vw,3.5rem);
+  font-weight:100;color:rgba(236,232,220,.1);
+  padding:0 clamp(6px,1.2vw,12px);
+  line-height:1;margin-bottom:clamp(14px,2.5vw,22px);
+}
+
+/* tick animation on seconds */
+.cs-val.tick{animation:sec-tick .2s ease}
+@keyframes sec-tick{
+  0%  {color:var(--gold)}
+  100%{color:rgba(236,232,220,.58)}
+}
+
+.clk-sub{
+  margin-top:clamp(20px,4vw,36px);
+  font-size:clamp(.54rem,1.1vw,.64rem);
+  font-weight:600;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--dim);text-align:center;
+}
+
+/* ─── reduced motion ─── */
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{
+    animation-duration:1ms!important;
+    transition-duration:1ms!important;
+    animation-iteration-count:1!important;
+  }
+}
 </style>
 </head>
 <body>
-<main class="stage" id="stage" role="button" tabindex="0" aria-label="Page 1 of 3. Tap anywhere to continue">
-  <section class="page welcome active" id="page-1" aria-label="Happy Anniversary">
-    <span class="page-no">01 / 03</span><div class="welcome__rule"></div><p class="welcome__small">For the two of us</p><h1 class="serif">Happy <em>Anniversary</em></h1><p class="welcome__date">September 15 · Always, in every season</p><p class="next">Tap anywhere to continue</p>
-  </section>
-  <section class="page counter" id="page-2" aria-label="Our time together">
-    <span class="page-no">02 / 03</span><div class="counter__intro"><p class="counter__label">A little measure of us</p><h2>Time passes.<br><em>We remain.</em></h2></div>
-    <div class="counter__main" aria-live="off"><div class="counter__days"><span class="counter__number" id="days">0</span><span class="counter__days-label">days together</span></div><div class="clock"><div class="clock__unit"><span class="clock__value" id="hours">00</span><span class="clock__label">hours</span></div><div class="clock__unit"><span class="clock__value" id="minutes">00</span><span class="clock__label">minutes</span></div><div class="clock__unit"><span class="clock__value" id="seconds">00</span><span class="clock__label">seconds</span></div></div></div>
-    <div class="counter__foot"><span>Since June 19, 2018</span><span>and still counting</span></div><p class="next">Tap anywhere to continue</p>
-  </section>
-  <section class="page memories" id="page-3" aria-label="Our important moments">
-    <span class="page-no">03 / 03</span><div class="memory__head"><div><p class="memory__label">A timeline of us</p><h2>Our <em>story</em></h2></div><p class="memory__head-note">The dates are small.<br>The memories are not.</p></div>
-    <div class="timeline">
-      <article class="moment"><span class="moment__dot"></span><time class="moment__date" datetime="2018-06-19">2018.06.19</time><span class="moment__name">First meeting</span></article>
-      <article class="moment moment--focus"><span class="moment__dot"></span><time class="moment__date" datetime="2018-09-06">2018.09.06</time><div class="moment__events"><div class="event"><time datetime="2018-09-06T11:40:00+08:00">11:40</time><span>First dating</span></div><div class="event"><time datetime="2018-09-06T13:00:00+08:00">13:00</time><span>Iris said yes</span></div></div></article>
-      <article class="moment"><span class="moment__dot"></span><time class="moment__date" datetime="2020-12-06">2020.12.06</time><span class="moment__name">The proposal</span></article>
-      <article class="moment"><span class="moment__dot"></span><time class="moment__date" datetime="2021-07-09">2021.07.09</time><span class="moment__name">Marriage registration</span></article>
-      <article class="moment"><span class="moment__dot"></span><time class="moment__date" datetime="2022-09-15">2022.09.15</time><span class="moment__name">Wedding day</span></article>
-      <article class="moment"><span class="moment__dot"></span><time class="moment__date" datetime="2026-09-15">2026.09.15</time><span class="moment__name">Another anniversary</span></article>
-      <article class="moment"><span class="moment__dot"></span><time class="moment__date">Today</time><span class="moment__name">Still us</span></article>
-    </div><p class="next">Tap to begin again</p>
-  </section>
-</main>
+
+<!-- grain -->
+<svg class="grain" aria-hidden="true">
+  <filter id="gf"><feTurbulence type="fractalNoise" baseFrequency=".65" numOctaves="3" stitchTiles="stitch"/>
+  <feColorMatrix type="saturate" values="0"/></filter>
+  <rect width="100%" height="100%" filter="url(#gf)" opacity=".35"/>
+</svg>
+
+<!-- cut curtain -->
+<div class="curtain" id="curtain"></div>
+
+
+<!-- ══ SCENE 1 ══ -->
+<section class="scene active" id="s1" aria-label="Scene 1 of 3">
+  <div class="s1-inner">
+    <p class="s1-kicker">Together since June&nbsp;19,&nbsp;2018</p>
+    <div class="s1-num" id="s1-num" aria-live="polite"></div>
+    <p class="s1-unit">days</p>
+  </div>
+  <div class="tap-hint" id="s1-tap">Tap anywhere to continue</div>
+</section>
+
+
+<!-- ══ SCENE 2 ══ -->
+<section class="scene" id="s2" aria-label="Scene 2 of 3">
+  <p class="s2-kicker">Our journey</p>
+  <div class="tl-wrap" id="tl-wrap">
+    <div class="tl-bg"></div>
+    <div class="tl-fill" id="tl-fill"></div>
+    <!-- dots injected by JS -->
+  </div>
+  <!-- mobile: current label -->
+  <div class="tl-cur" id="tl-cur">
+    <div class="tl-cur-badge" id="tl-cur-badge">Special Moment</div>
+    <div class="tl-cur-date" id="tl-cur-date"></div>
+    <div class="tl-cur-name" id="tl-cur-name"></div>
+  </div>
+  <div class="tap-hint" id="s2-tap">Tap anywhere to continue</div>
+</section>
+
+
+<!-- ══ SCENE 3 ══ -->
+<section class="scene" id="s3" aria-label="Scene 3 of 3">
+  <p class="s3-kicker">Every second, since that moment.</p>
+  <div class="clk">
+    <div class="clk-days">
+      <span class="clk-days-num" id="s3-d">0</span>
+      <span class="clk-days-lbl">days</span>
+    </div>
+    <div class="clk-hms">
+      <div class="cs"><span class="cs-val" id="s3-h">00</span><span class="cs-lbl">hrs</span></div>
+      <span class="csep">:</span>
+      <div class="cs"><span class="cs-val" id="s3-m">00</span><span class="cs-lbl">min</span></div>
+      <span class="csep">:</span>
+      <div class="cs"><span class="cs-val" id="s3-s">00</span><span class="cs-lbl">sec</span></div>
+    </div>
+  </div>
+  <p class="clk-sub">Since June&nbsp;19,&nbsp;2018 · 7:00&nbsp;PM</p>
+  <div class="tap-hint show">Tap to restart</div>
+</section>
+
+
 <script>
-(() => {
-  const pages = [...document.querySelectorAll('.page')]; const stage = document.getElementById('stage'); const start = new Date(2018, 5, 19, 0, 0, 0); let current = 0; let locked = false;
-  const pad = n => String(n).padStart(2, '0');
-  function update(){const ms=Math.max(0,Date.now()-start.getTime());const days=Math.floor(ms/86400000);const rem=ms-days*86400000;document.getElementById('days').textContent=days.toLocaleString('en-US');document.getElementById('hours').textContent=pad(Math.floor(rem/3600000));document.getElementById('minutes').textContent=pad(Math.floor(rem%3600000/60000));document.getElementById('seconds').textContent=pad(Math.floor(rem%60000/1000));}
-  function go(step){if(locked)return;locked=true;pages[current].classList.remove('active');current=(current+step+pages.length)%pages.length;pages[current].classList.add('active');stage.setAttribute('aria-label',`Page ${current+1} of 3. Tap anywhere to continue`);setTimeout(()=>{locked=false},560)}
-  stage.addEventListener('click',()=>go(1)); stage.addEventListener('keydown',e=>{if(['Enter',' ','ArrowRight','ArrowDown'].includes(e.key)){e.preventDefault();go(1)}else if(['ArrowLeft','ArrowUp'].includes(e.key)){e.preventDefault();go(-1)}}); update(); setInterval(update,250);
-})();
+(function () {
+  'use strict';
+
+  /* ────────────────────────────────
+     CONSTANTS
+  ──────────────────────────────── */
+  var LOVE_MIDNIGHT = new Date(2018, 5, 19, 0, 0, 0);   // for S1 day count
+  var LOVE_MOMENT   = new Date(2018, 5, 19, 19, 0, 0);  // 7pm for S3 timer
+  var DAY_MS = 86400000;
+  var fmt    = new Intl.NumberFormat('en-US');
+  var noMo   = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ────────────────────────────────
+     SCENE MANAGEMENT
+  ──────────────────────────────── */
+  var scenes     = [s('s1'), s('s2'), s('s3')];
+  var curtain    = s('curtain');
+  var current    = 0;
+  var locked     = false;
+  var s2Done     = false;
+
+  function s(id) { return document.getElementById(id); }
+
+  function goNext() {
+    if (locked) return;
+    if (current === 1 && !s2Done) return; // block during S2 animation
+    locked = true;
+    curtain.classList.add('on');
+    setTimeout(function () {
+      scenes[current].classList.remove('active');
+      current = (current + 1) % 3;
+      scenes[current].classList.add('active');
+      initScene(current);
+      curtain.classList.remove('on');
+      setTimeout(function () { locked = false; }, 380);
+    }, 140);
+  }
+
+  document.addEventListener('click', goNext);
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter' || e.key === ' ' || e.key === 'ArrowRight') {
+      e.preventDefault(); goNext();
+    }
+  });
+
+  function initScene(idx) {
+    if (idx === 0) initS1();
+    else if (idx === 1) initS2();
+    else if (idx === 2) initS3();
+  }
+
+  /* ────────────────────────────────
+     SCENE 1: DIGIT SCRAMBLE
+  ──────────────────────────────── */
+  var s1NumEl = s('s1-num');
+  var s1Tap   = s('s1-tap');
+  var s1Timers = [];
+
+  function initS1() {
+    s1Timers.forEach(function (t) { clearTimeout(t); clearInterval(t); });
+    s1Timers = [];
+    s1NumEl.innerHTML = '';
+    if (s1NumEl) s1NumEl.classList.remove('heartbeat');
+    if (s1Tap) s1Tap.classList.remove('show');
+
+    var days      = Math.floor((Date.now() - LOVE_MIDNIGHT) / DAY_MS);
+    var formatted = fmt.format(days);  // e.g. "2,986"
+    var digitIdx  = 0;
+    var maxLockTime = 0;
+
+    formatted.split('').forEach(function (ch) {
+      var span = document.createElement('span');
+
+      if (ch === ',') {
+        span.className   = 's1-comma';
+        span.textContent = ',';
+        s1NumEl.appendChild(span);
+        return;
+      }
+
+      var di = digitIdx++;
+      span.className   = 's1-digit';
+      span.textContent = noMo ? ch : '0';
+      s1NumEl.appendChild(span);
+
+      if (noMo) return;
+
+      var SCRAMBLE_START = di * 180;
+      var LOCK_AT        = SCRAMBLE_START + 600;
+      if (LOCK_AT > maxLockTime) maxLockTime = LOCK_AT;
+
+      var iv = null;
+      var t1 = setTimeout(function () {
+        span.style.color = 'rgba(236,232,220,0.18)';
+        iv = setInterval(function () {
+          span.textContent = Math.floor(Math.random() * 10);
+        }, 48);
+        s1Timers.push(iv);
+      }, SCRAMBLE_START);
+      s1Timers.push(t1);
+
+      var t2 = setTimeout(function () {
+        if (iv) clearInterval(iv);
+        span.textContent = ch;
+        span.style.color = '';
+        span.classList.remove('locked');
+        void span.offsetWidth;
+        span.classList.add('locked');
+      }, LOCK_AT);
+      s1Timers.push(t2);
+    });
+
+    // Reveal tap hint on desktop and activate heartbeat on mobile
+    var tHint = setTimeout(function () {
+      if (s1Tap) s1Tap.classList.add('show');
+      if (s1NumEl) s1NumEl.classList.add('heartbeat');
+    }, noMo ? 200 : maxLockTime + 400);
+    s1Timers.push(tHint);
+  }
+
+  /* ────────────────────────────────
+     SCENE 2: TIMELINE
+  ──────────────────────────────── */
+  var tlWrap    = s('tl-wrap');
+  var tlFill    = s('tl-fill');
+  var tlCur     = s('tl-cur');
+  var tlCBadge  = s('tl-cur-badge');
+  var tlCDate   = s('tl-cur-date');
+  var tlCName   = s('tl-cur-name');
+  var s2Tap     = s('s2-tap');
+
+  var MILESTONES = [
+    { pos: 0.00, date: '2018.06.19', time: '',      name: 'First meeting',                 above: false, hl: false },
+    { pos: 0.08, date: '2018.09.06', time: '11:40', name: 'I confessed my love · 11:40 AM', above: true,  hl: true, badge: 'Confession' },
+    { pos: 0.16, date: '2018.09.06', time: '13:00', name: 'She said yes · 1:00 PM',       above: false, hl: true, badge: 'Together' },
+    { pos: 0.38, date: '2020.12.06', time: '',      name: 'The proposal',                  above: true,  hl: false },
+    { pos: 0.48, date: '2021.07.09', time: '',      name: 'Marriage registration',         above: false, hl: false },
+    { pos: 0.62, date: '2022.09.15', time: '',      name: 'Wedding day',                   above: true,  hl: false },
+    { pos: 0.98, date: 'Today',      time: '',      name: 'Still counting',                above: false, hl: false }
+  ];
+
+  var tlProgress  = 0;
+  var tlNextIdx   = 0;
+  var tlPausing   = false;
+  var tlPauseEnd  = 0;
+  var tlLastT     = 0;
+  var tlRaf       = 0;
+  var TL_SPEED    = 0.20;  // progress per second
+  var TL_PAUSE_MS = 1350;
+
+  function buildDots() {
+    tlWrap.querySelectorAll('.tl-dot').forEach(function (d) { d.remove(); });
+
+    MILESTONES.forEach(function (ms, i) {
+      var anchor = document.createElement('div');
+      anchor.className = 'tl-dot' + (ms.above ? ' above' : '') + (ms.hl ? ' hl' : '');
+      anchor.id = 'tld-' + i;
+      anchor.style.left = (ms.pos * 100).toFixed(1) + '%';
+
+      var dot = document.createElement('div');
+      dot.className = 'tl-dot-inner';
+      dot.id = 'tli-' + i;
+
+      var lbl = document.createElement('div');
+      lbl.className = 'tl-dot-label';
+      lbl.id = 'tll-' + i;
+
+      if (ms.badge) {
+        var bEl = document.createElement('div');
+        bEl.className = 'tl-badge';
+        bEl.textContent = ms.badge;
+        lbl.appendChild(bEl);
+      }
+
+      var dEl = document.createElement('div');
+      dEl.className = 'tl-dot-date';
+      dEl.textContent = ms.date;
+      if (ms.time) {
+        var tSpan = document.createElement('span');
+        tSpan.className = 'tl-dot-time';
+        tSpan.textContent = ms.time;
+        dEl.appendChild(tSpan);
+      }
+
+      var nEl = document.createElement('div');
+      nEl.className = 'tl-dot-name';
+      nEl.textContent = ms.name;
+
+      lbl.appendChild(dEl);
+      lbl.appendChild(nEl);
+      anchor.appendChild(dot);
+      anchor.appendChild(lbl);
+      tlWrap.appendChild(anchor);
+    });
+  }
+
+  function showMilestone(idx) {
+    var dot = s('tli-' + idx);
+    var lbl = s('tll-' + idx);
+    if (dot) dot.classList.add('on');
+    if (lbl) setTimeout(function () { lbl.classList.add('on'); }, 140);
+
+    var ms = MILESTONES[idx];
+    if (tlCur) {
+      tlCDate.classList.add('fade');
+      tlCName.classList.add('fade');
+      setTimeout(function () {
+        if (ms.hl) {
+          tlCur.classList.add('hl');
+          if (tlCBadge) tlCBadge.textContent = ms.badge || 'Special Moment';
+        } else {
+          tlCur.classList.remove('hl');
+        }
+        tlCDate.textContent = ms.date + (ms.time ? '  ' + ms.time : '');
+        tlCName.textContent = ms.name;
+        tlCDate.classList.remove('fade');
+        tlCName.classList.remove('fade');
+      }, 200);
+    }
+  }
+
+  function tlTick(now) {
+    var dt = Math.min((now - tlLastT) / 1000, 0.1);
+    tlLastT = now;
+
+    if (tlPausing) {
+      if (now >= tlPauseEnd) {
+        tlPausing  = false;
+        tlNextIdx++;
+      }
+    } else if (tlNextIdx < MILESTONES.length) {
+      var target = MILESTONES[tlNextIdx].pos;
+      tlProgress  = Math.min(target, tlProgress + TL_SPEED * dt);
+      tlFill.style.width = (tlProgress * 100).toFixed(2) + '%';
+
+      if (tlProgress >= target) {
+        showMilestone(tlNextIdx);
+        if (tlNextIdx === MILESTONES.length - 1) {
+          s2Done = true;
+          tlFill.style.setProperty('box-shadow', '0 0 10px rgba(204,159,62,.4)');
+          setTimeout(function () {
+            if (s2Tap) s2Tap.classList.add('show');
+          }, 500);
+          return;
+        }
+        tlPausing  = true;
+        // give highlighted moments a slightly longer pause for emphasis
+        var pauseDuration = MILESTONES[tlNextIdx].hl ? TL_PAUSE_MS * 1.3 : TL_PAUSE_MS;
+        tlPauseEnd = now + pauseDuration;
+      }
+    }
+
+    tlRaf = requestAnimationFrame(tlTick);
+  }
+
+  function initS2() {
+    cancelAnimationFrame(tlRaf);
+    s2Done      = false;
+    tlProgress  = 0;
+    tlNextIdx   = 0;
+    tlPausing   = false;
+    tlFill.style.width = '0%';
+    if (s2Tap) s2Tap.classList.remove('show');
+    if (tlCur) {
+      tlCur.classList.remove('hl');
+      tlCDate.textContent = '';
+      tlCName.textContent = '';
+    }
+    buildDots();
+
+    setTimeout(function () {
+      showMilestone(0);
+      tlProgress = MILESTONES[0].pos;
+      tlNextIdx  = 0;  // pause ends with tlNextIdx++ → 1, so next target is confession (idx 1)
+      tlPausing  = true;
+      tlPauseEnd = performance.now() + TL_PAUSE_MS;
+      tlLastT    = performance.now();
+      tlRaf      = requestAnimationFrame(tlTick);
+    }, 380);
+  }
+
+  /* ────────────────────────────────
+     SCENE 3: TIMER
+  ──────────────────────────────── */
+  var s3D    = s('s3-d');
+  var s3H    = s('s3-h');
+  var s3M    = s('s3-m');
+  var s3Secs = s('s3-s');
+  var s3Iv   = null;
+  var prevSec = -1;
+
+  function updateClock() {
+    var el  = Math.max(0, Date.now() - LOVE_MOMENT);
+    var d   = Math.floor(el / DAY_MS);
+    var rem = el - d * DAY_MS;
+    var h   = Math.floor(rem / 3600000);
+    var m   = Math.floor((rem % 3600000) / 60000);
+    var sec = Math.floor((rem % 60000) / 1000);
+
+    s3D.textContent = fmt.format(d);
+    s3H.textContent = pad2(h);
+    s3M.textContent = pad2(m);
+    s3Secs.textContent = pad2(sec);
+
+    if (sec !== prevSec && !noMo) {
+      prevSec = sec;
+      s3Secs.classList.remove('tick');
+      void s3Secs.offsetWidth;
+      s3Secs.classList.add('tick');
+    }
+  }
+
+  function pad2(n) { return String(n).padStart(2, '0'); }
+
+  function initS3() {
+    clearInterval(s3Iv);
+    prevSec = -1;
+    updateClock();
+    s3Iv = setInterval(updateClock, 250);
+  }
+
+  /* ────────────────────────────────
+     BOOT
+  ──────────────────────────────── */
+  initS1();
+
+}());
 </script>
 </body>
 </html>
